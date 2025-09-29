@@ -1,5 +1,5 @@
-appId: com.nomewing.tintenklecksgallery
-productName: tintenklecks-gallery
+appId: nomewing.tintenklecks.gallery
+productName: Tintenklecks Gallery
 directories:
   buildResources: build
 files:
@@ -33,11 +33,11 @@ linux:
     - AppImage
     - snap
     - deb
-  maintainer: electronjs.org
+  maintainer: No Mewing
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
   provider: generic
-  url: https://example.com/auto-updates
+  # url: https://example.com/auto-updates
