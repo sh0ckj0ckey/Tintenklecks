@@ -1,11 +1,11 @@
 <template>
   <div class="tk-playground">
-    <TkButton theme="primary">Primary</TkButton>
-    <TkButton theme="secondary">Secondary</TkButton>
-    <TkButton theme="success">Success</TkButton>
-    <TkButton theme="danger">Danger</TkButton>
-    <TkButton theme="warning">Warning</TkButton>
-    <TkHyperlinkButton :border-radius="4">
+    <TkButton theme="primary" :deboss="true">Primary</TkButton>
+    <TkButton theme="secondary" :deboss="true">Secondary</TkButton>
+    <TkButton theme="success" :deboss="true">Success</TkButton>
+    <TkButton theme="danger" :deboss="true">Danger</TkButton>
+    <TkButton theme="warning" :deboss="true">Warning</TkButton>
+    <TkHyperlinkButton :border-radius="4" :emboss="true">
       <span class="tk-hyperlink-button-content">Click me</span>
     </TkHyperlinkButton>
   </div>
@@ -23,8 +23,9 @@ import TkHyperlinkButton from './components/TkHyperlinkButton.vue'
   gap: 8px;
 
   .tk-hyperlink-button-content {
-    font-size: 16px;
-    color: #99ebff;
+    font-size: 20px;
+    font-weight: bold;
+    color: #005391;
     margin: 8px 16px;
   }
 }

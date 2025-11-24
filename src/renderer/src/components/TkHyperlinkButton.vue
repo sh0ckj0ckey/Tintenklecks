@@ -1,6 +1,7 @@
 <template>
   <button
     class="tk-hyperlink-button"
+    :class="{ emboss: props.emboss }"
     :style="style"
     :disabled="props.disabled"
     type="button"
@@ -26,21 +27,9 @@ const emit = defineEmits<{
 }>()
 
 const style = computed(() => ({
-  borderRadius: props.borderRadius
-    ? typeof props.borderRadius === 'number'
-      ? `${props.borderRadius}px`
-      : props.borderRadius
-    : undefined,
-  height: props.height
-    ? typeof props.height === 'number'
-      ? `${props.height}px`
-      : props.height
-    : undefined,
-  width: props.width
-    ? typeof props.width === 'number'
-      ? `${props.width}px`
-      : props.width
-    : undefined
+  borderRadius: props.borderRadius ? (typeof props.borderRadius === 'number' ? `${props.borderRadius}px` : props.borderRadius) : undefined,
+  height: props.height ? (typeof props.height === 'number' ? `${props.height}px` : props.height) : undefined,
+  width: props.width ? (typeof props.width === 'number' ? `${props.width}px` : props.width) : undefined
 }))
 
 const handleClick = (event: MouseEvent): void => {
@@ -65,6 +54,13 @@ const handleClick = (event: MouseEvent): void => {
     filter 0.2s,
     opacity 0.2s,
     background-color 0.2s;
+
+  &.emboss {
+    background-color: #88888810;
+    box-shadow:
+      inset 1px 1px 2px #ffffff,
+      inset -1px -1px 2px #888888;
+  }
 
   &:hover:not(:disabled) {
     background-color: #88888828;

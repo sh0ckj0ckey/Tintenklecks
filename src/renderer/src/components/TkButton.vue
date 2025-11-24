@@ -2,7 +2,7 @@
   <button
     type="button"
     class="tk-button"
-    :class="`tk-button--${props.theme}`"
+    :class="[`tk-button--${props.theme}`, { deboss: props.deboss }]"
     :disabled="props.disabled"
     @click="handleClick"
   >
@@ -36,24 +36,29 @@ const handleClick = (event: MouseEvent): void => {
   align-items: center;
   justify-content: center;
   padding: 8px 16px;
-  border-style: solid;
-  border-width: 2px;
+  border: none;
   border-radius: 4px;
-  font-size: 15px;
-  font-weight: 400;
+  font-size: 16px;
+  font-weight: bold;
   cursor: default;
   user-select: none;
   transition:
     box-shadow 0.2s,
-    opacity 0.2s,
-    border-color 0.2s,
     color 0.2s;
 }
 
 .tk-button--primary {
-  background-color: #002fa7;
-  border-color: #002fa7;
   color: #f8f8f8;
+  background-color: #002fa7;
+  border: 1px solid #002074;
+  background: linear-gradient(to top, #4984b4, #619bcb);
+  box-shadow:
+    inset 0px 1px 0px rgba(255, 255, 255, 0.3),
+    inset 0px 0px 3px rgba(255, 255, 255, 0.5);
+
+  &.deboss {
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.5);
+  }
 
   &:hover:not(:disabled) {
     background-color: #0039cd;
@@ -68,7 +73,7 @@ const handleClick = (event: MouseEvent): void => {
   }
 
   &:focus-visible:not(:disabled) {
-    outline: 2px dashed #f8f8f8;
+    outline: 2px dashed #002074;
     outline-offset: 2px;
   }
 }
