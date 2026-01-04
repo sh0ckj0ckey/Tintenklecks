@@ -85,7 +85,7 @@ onBeforeUnmount(() => {
     overflow-x: hidden;
     overflow-y: auto;
     border-radius: 8px;
-    background-color: var(--background);
+    background-color: var(--tk-app-background);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     padding: 12px 16px;
     pointer-events: auto;
@@ -102,7 +102,7 @@ onBeforeUnmount(() => {
       overflow: hidden;
       font-size: 14px;
       font-weight: 400;
-      color: var(--text-01);
+      color: var(--tk-app-foreground);
       white-space: pre-wrap;
       word-wrap: normal;
     }

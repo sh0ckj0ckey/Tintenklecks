@@ -14,9 +14,9 @@
   --z-index-popup-min: 500;
   --z-index-popup-max: 999;
 
-  --text: #000;
-  --background: #fff;
-  --background-mute: #f2f2f2;
+  --tk-app-background: #f8f4f1;
+  --tk-app-background-deep: #efeae7;
+  --tk-app-foreground: #272320;
 }
 
 body {
@@ -25,8 +25,8 @@ body {
   margin: 0;
   overflow: hidden;
   line-height: 1.6;
-  color: var(--text);
-  background-color: var(--background);
+  color: var(--tk-app-foreground);
+  background-color: var(--tk-app-background);
   cursor: default;
   user-select: none;
   -moz-osx-font-smoothing: grayscale;
@@ -44,7 +44,7 @@ code {
   font-weight: 600;
   padding: 3px 5px;
   border-radius: 4px;
-  background-color: var(--background-mute);
+  background-color: var(--tk-app-background-deep);
   font-family:
     ui-monospace,
     SFMono-Regular,
