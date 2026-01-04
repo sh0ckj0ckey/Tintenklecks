@@ -1,19 +1,50 @@
 @import './base.css';
 
+:root {
+  /*全局 Toast 通知层级*/
+  --z-index-toast: 1002;
+
+  /*全局 MessageBox 通知层级*/
+  --z-index-messagebox: 1001;
+
+  /*全局对话框层级*/
+  --z-index-dialog: 1000;
+
+  /*全局气泡层级  通过 PopupZIndexManager 管理分配，解决多个 Popup 嵌套时的层级问题*/
+  --z-index-popup-min: 500;
+  --z-index-popup-max: 999;
+
+  --text: #000;
+  --background: #fff;
+  --background-mute: #f2f2f2;
+}
+
 body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
   overflow: hidden;
-  background-size: cover;
+  line-height: 1.6;
+  color: var(--text);
+  background-color: var(--background);
+  cursor: default;
   user-select: none;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  -webkit-user-drag: none;
+}
+
+input,
+textarea,
+code {
+  user-select: text;
 }
 
 code {
   font-weight: 600;
   padding: 3px 5px;
-  border-radius: 2px;
-  background-color: var(--color-background-mute);
+  border-radius: 4px;
+  background-color: var(--background-mute);
   font-family:
     ui-monospace,
     SFMono-Regular,
@@ -26,9 +57,24 @@ code {
 }
 
 #app {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  margin-bottom: 80px;
+  width: 100%;
+  height: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
