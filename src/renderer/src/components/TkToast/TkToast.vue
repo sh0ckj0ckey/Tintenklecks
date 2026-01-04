@@ -1,25 +1,25 @@
 <template>
-  <div :class="['background', placementClass, positionClass]">
+  <div :class="['background', placementClass]">
     <div class="content">
-      <img v-if="icon && icon === 'info'" src="@icons/messageBox/tips_info.png" />
-      <img v-if="icon && icon === 'success'" src="@icons/messageBox/tips_success.png" />
-      <img v-if="icon && icon === 'error'" src="@icons/messageBox/tips_error.png" />
+      <TkToastIcon v-if="icon !== 'none'" :type="icon" />
       <span>{{ text }}</span>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, computed } from 'vue'
+import { onMounted, onBeforeUnmount, computed } from 'vue'
+import TkToastIcon from './TkToastIcon.vue'
 
 const props = defineProps<{
-  icon: 'none' | 'info' | 'success' | 'error'
   text: string
+  icon: 'none' | 'info' | 'success' | 'error'
   duration: number
   placement: 'top' | 'center' | 'bottom'
   offset: number | string
-  isGlobal: boolean
 }>()
+
+const emit = defineEmits(['close'])
 
 const placementClass = computed(() => {
   switch (props.placement) {
@@ -34,41 +34,34 @@ const placementClass = computed(() => {
   }
 })
 
-const positionClass = computed(() => {
-  return props.isGlobal ? 'position-global' : 'position-local'
-})
-
-const offsetStyleValue = computed(() => {
+const offsetValue = computed(() => {
   return typeof props.offset === 'number' ? `${props.offset}px` : props.offset
 })
 
-const emit = defineEmits(['close'])
+let closeTimeout: ReturnType<typeof setTimeout>
 
 onMounted(() => {
-  setTimeout(() => {
+  closeTimeout = setTimeout(() => {
     emit('close')
   }, props.duration)
+})
+
+onBeforeUnmount(() => {
+  clearTimeout(closeTimeout)
 })
 </script>
 
 <style scoped>
 .background {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
-  z-index: var(--z-index-toast);
   pointer-events: none;
-  background-color: transparent;
 
   &.placement-top {
     align-items: flex-start;
-
-    .content {
-      margin-top: v-bind(offsetStyleValue);
-    }
+    padding-top: v-bind(offsetValue);
   }
 
   &.placement-center {
@@ -77,28 +70,25 @@ onMounted(() => {
 
   &.placement-bottom {
     align-items: flex-end;
-
-    .content {
-      margin-bottom: v-bind(offsetStyleValue);
-    }
+    padding-bottom: v-bind(offsetValue);
   }
 
   .content {
+    width: auto;
+    height: auto;
+    max-width: 80%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    gap: 12px;
     overflow-x: hidden;
     overflow-y: auto;
-    width: auto;
-    height: auto;
-    max-width: 80%;
-    pointer-events: auto;
     border-radius: 8px;
     background-color: var(--background);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-    gap: 12px;
     padding: 12px 16px;
+    pointer-events: auto;
 
     img {
       flex: none;
@@ -108,12 +98,12 @@ onMounted(() => {
     }
 
     span {
-      color: var(--text-01);
+      display: block;
+      overflow: hidden;
       font-size: 14px;
       font-weight: 400;
-      overflow: hidden;
-      display: block;
-      white-space: wrap;
+      color: var(--text-01);
+      white-space: pre-wrap;
       word-wrap: normal;
     }
   }
