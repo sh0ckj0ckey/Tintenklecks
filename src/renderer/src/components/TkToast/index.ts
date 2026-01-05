@@ -74,7 +74,7 @@ export const showToast = (options: ToastOptions): void => {
     mountNode.style.width = '100%'
     mountNode.style.height = '100%'
     mountNode.style.pointerEvents = 'none'
-    mountNode.style.zIndex = 'var(--z-index-toast)'
+    mountNode.style.zIndex = 'var(--z-index-toast, 1003)'
 
     if (!isGlobal) {
       mountNode.style.overflow = 'hidden'
