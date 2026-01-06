@@ -1,13 +1,14 @@
 <template>
   <Teleport to="body">
-    <div v-if="isOpen" ref="popupRef" :style="popupStyle" @mousedown.stop>
+    <div v-if="isOpen" ref="popupElementRef" :style="popupStyle" @mousedown.stop>
       <slot></slot>
     </div>
   </Teleport>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, onBeforeUnmount, nextTick, useTemplateRef, type ComponentPublicInstance, type CSSProperties } from 'vue'
+import { ref, watch, computed, onBeforeUnmount, nextTick, useTemplateRef, type CSSProperties } from 'vue'
+import { resolveElement, type ResolvedElement, type MaybeElement } from '@renderer/utils/dom'
 
 type CloseMode = 'click' | 'leave' | 'manual'
 
@@ -32,7 +33,7 @@ const props = withDefaults(
     /**
      * 浮窗定位的目标元素
      */
-    target: HTMLElement | ComponentPublicInstance
+    target: MaybeElement
 
     /**
      * 浮窗的宽度，默认为 'fit-content'
@@ -85,16 +86,19 @@ const props = withDefaults(
   }
 )
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['update:isOpen'])
 
-const popupRef = useTemplateRef<HTMLElement>('popupRef')
+const popupElementRef = useTemplateRef<HTMLElement>('popupElementRef')
+const targetElement = computed<ResolvedElement | null>(() => {
+  return resolveElement(props.target)
+})
 
 const popupStyle = ref<CSSProperties>({})
 
 onBeforeUnmount(() => {
   unbindGlobalEvents()
   unbindClickToCloseEvents()
-  unbindLeaveToCloseEvents(props.target, popupRef.value)
+  unbindLeaveToCloseEvents(targetElement.value, popupElementRef.value)
 
   if (requestAnimationFrameId) {
     window.cancelAnimationFrame(requestAnimationFrameId)
@@ -103,7 +107,7 @@ onBeforeUnmount(() => {
 
 watch(
   [
-    popupRef,
+    popupElementRef,
     () => props.isOpen,
     () => props.width,
     () => props.height,
@@ -113,14 +117,16 @@ watch(
     () => props.verticalOffset,
     () => props.target
   ],
-  async ([popup, isOpen, , , closeMode, , , , target], [prevPopup, , , , , , , , prevTarget], onCleanUp) => {
-    unbindGlobalEvents()
-    unbindClickToCloseEvents()
-    unbindLeaveToCloseEvents(prevTarget, prevPopup)
+  async ([popup, isOpen, , , closeMode, , , , target], _, onCleanUp) => {
+    const targetEl = resolveElement(target)
+    const popupEl = popup
 
     let isCancelled = false
     onCleanUp(() => {
       isCancelled = true
+      unbindGlobalEvents()
+      unbindClickToCloseEvents()
+      unbindLeaveToCloseEvents(targetEl, popupEl)
     })
 
     if (isOpen) {
@@ -143,7 +149,7 @@ watch(
       bindGlobalEvents()
       bindClickToCloseEvents()
       if (closeMode === 'leave') {
-        bindLeaveToCloseEvents(target, popup)
+        bindLeaveToCloseEvents(targetEl, popupEl)
       }
     }
   }
@@ -239,15 +245,15 @@ const updatePosition = async (): Promise<void> => {
 
   await nextTick()
 
-  const targetElement = props.target
-  const popupElement = popupRef.value
+  const targetEl = targetElement.value
+  const popupEl = popupElementRef.value
 
-  if (!targetElement || !popupElement) {
+  if (!targetEl || !popupEl) {
     return
   }
 
-  const targetRect = targetElement.getBoundingClientRect()
-  const popupRect = popupElement.getBoundingClientRect()
+  const targetRect = targetEl.getBoundingClientRect()
+  const popupRect = popupEl.getBoundingClientRect()
 
   let [left, top] = calculatePosition(targetRect, popupRect, props.placement, props.horizontalOffset, props.verticalOffset)
 
@@ -297,14 +303,14 @@ const unbindGlobalEvents = (): void => {
 const onMouseDown = (e: MouseEvent): void => {
   if (props.closeMode === 'leave') {
     // 移走关闭模式下，鼠标点击的位置不属于目标元素或者浮窗时，关闭浮窗
-    if (popupRef.value && popupRef.value.contains(e.target as Node)) {
+    if (popupElementRef.value && popupElementRef.value.contains(e.target as Node)) {
       return
-    } else if (props.target && props.target.contains(e.target as Node)) {
+    } else if (targetElement.value && targetElement.value.contains(e.target as Node)) {
       return
     }
   } else if (props.closeMode === 'click') {
     // 点击关闭模式下，鼠标点击的位置不属于浮窗时，关闭浮窗
-    if (popupRef.value && popupRef.value.contains(e.target as Node)) {
+    if (popupElementRef.value && popupElementRef.value.contains(e.target as Node)) {
       return
     }
   } else if (props.closeMode === 'manual') {
@@ -312,7 +318,7 @@ const onMouseDown = (e: MouseEvent): void => {
     return
   }
 
-  emit('close')
+  emit('update:isOpen', false)
 }
 
 const bindClickToCloseEvents = (): void => {
@@ -339,7 +345,7 @@ const clearCloseTimeout = (): void => {
 const startCloseTimeout = (): void => {
   clearCloseTimeout()
   closeTimeout = window.setTimeout(() => {
-    emit('close')
+    emit('update:isOpen', false)
   }, 250)
 }
 
@@ -347,23 +353,28 @@ const onMouseEnter = (): void => {
   clearCloseTimeout()
 }
 
-const onMouseLeave = (e: MouseEvent): void => {
-  const related = e.relatedTarget as Node | null
-  if ((props.target && props.target.contains(related)) || (popupRef.value && popupRef.value.contains(related))) {
+const onMouseLeave = (e: Event): void => {
+  const mouseEvent = e as MouseEvent
+
+  const related = mouseEvent.relatedTarget as Node | null
+  if (
+    (targetElement.value && targetElement.value.contains(related)) ||
+    (popupElementRef.value && popupElementRef.value.contains(related))
+  ) {
     return
   }
 
   startCloseTimeout()
 }
 
-const bindLeaveToCloseEvents = (target: HTMLElement | null | undefined, popup: HTMLElement | null | undefined): void => {
+const bindLeaveToCloseEvents = (target: ResolvedElement | null | undefined, popup: HTMLElement | null | undefined): void => {
   target?.addEventListener('mouseenter', onMouseEnter)
   target?.addEventListener('mouseleave', onMouseLeave)
   popup?.addEventListener('mouseenter', onMouseEnter)
   popup?.addEventListener('mouseleave', onMouseLeave)
 }
 
-const unbindLeaveToCloseEvents = (target: HTMLElement | null | undefined, popup: HTMLElement | null | undefined): void => {
+const unbindLeaveToCloseEvents = (target: ResolvedElement | null | undefined, popup: HTMLElement | null | undefined): void => {
   target?.removeEventListener('mouseenter', onMouseEnter)
   target?.removeEventListener('mouseleave', onMouseLeave)
   popup?.removeEventListener('mouseenter', onMouseEnter)

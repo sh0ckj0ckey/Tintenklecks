@@ -1,4 +1,5 @@
 import { h, render } from 'vue'
+import { resolveElement, type ResolvedElement, type MaybeElement } from '@renderer/utils/dom'
 import TkToast from './TkToast.vue'
 
 export interface ToastOptions {
@@ -32,13 +33,13 @@ export interface ToastOptions {
   /**
    * 指定 Toast 挂载的容器，默认挂载到 document.body 上
    */
-  container?: HTMLElement
+  container?: MaybeElement
 }
 
 /**
  * 管理不同容器的挂载节点，每个容器内只会同时显示一个 toast
  */
-const mountNodes = new WeakMap<HTMLElement, HTMLDivElement>()
+const mountNodes = new WeakMap<ResolvedElement, HTMLDivElement>()
 
 export const showToast = (options: ToastOptions): void => {
   const text = options.text
@@ -46,14 +47,23 @@ export const showToast = (options: ToastOptions): void => {
   const duration = options.duration ?? 3
   const placement = options.placement ?? 'top'
   const offset = options.offset ?? 32
-  const container = options.container ?? document.body
+
+  let container = resolveElement(options.container) ?? document.body
+
+  if (container instanceof SVGElement) {
+    if (import.meta.env.DEV) {
+      console.warn('[Tintenklecks] Toast container cannot be an SVGElement. ' + 'Falling back to document.body.')
+    }
+    container = document.body
+  }
+
   const isGlobal = container === document.body
 
-  if (!isGlobal) {
+  if (!isGlobal && import.meta.env.DEV) {
     const style = window.getComputedStyle(container)
     if (style.position === 'static') {
       console.warn(
-        `[TkToast] Target container has "position: static".\n` +
+        `[Tintenklecks] Target container has "position: static".\n` +
           `Toast may be positioned incorrectly.\n` +
           `Suggestion: Add "position: relative" or "absolute" to the container style.`,
         container
@@ -63,10 +73,14 @@ export const showToast = (options: ToastOptions): void => {
 
   let mountNode = mountNodes.get(container)
 
-  if (mountNode) {
+  if (mountNode && mountNode.isConnected) {
     render(null, mountNode)
   } else {
-    mountNode = document.createElement('div')
+    if (!mountNode) {
+      mountNode = document.createElement('div')
+      mountNodes.set(container, mountNode)
+    }
+
     mountNode.className = 'tk-toast-mount-node'
     mountNode.style.position = isGlobal ? 'fixed' : 'absolute'
     mountNode.style.top = '0'
@@ -76,13 +90,7 @@ export const showToast = (options: ToastOptions): void => {
     mountNode.style.pointerEvents = 'none'
     mountNode.style.zIndex = 'var(--z-index-toast, 1003)'
 
-    if (!isGlobal) {
-      mountNode.style.overflow = 'hidden'
-      mountNode.style.borderRadius = 'inherit'
-    }
-
     container.appendChild(mountNode)
-    mountNodes.set(container, mountNode)
   }
 
   const onClose = (): void => {

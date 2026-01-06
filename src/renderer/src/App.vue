@@ -1,9 +1,9 @@
 <template>
-  <TkPopupPage />
+  <TkToastPage />
 </template>
 
 <script setup lang="ts">
-import TkPopupPage from './pages/TkPopupPage.vue'
+import TkToastPage from './pages/TkToastPage.vue'
 </script>
 
 <style scoped></style>

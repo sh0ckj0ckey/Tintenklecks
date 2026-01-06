@@ -6,6 +6,9 @@
     <div ref="toastContainer" class="tk-toast-container">
       <span>This is a toast container.</span>
     </div>
+    <TkButton ref="vueComponentToastContainer" theme="secondary" :deboss="true" style="position: relative"
+      >This is a Vue Component toast container.</TkButton
+    >
   </div>
 </template>
 
@@ -14,7 +17,8 @@ import { useTemplateRef } from 'vue'
 import TkButton from '../components/TkButton.vue'
 import { showToast } from '../components/TkToast'
 
-const toastContainer = useTemplateRef<HTMLElement>('toastContainer')
+const toastContainer = useTemplateRef('toastContainer')
+const vueComponentToastContainer = useTemplateRef<HTMLElement>('vueComponentToastContainer')
 
 const onClickShowToast = (icon: 'info' | 'success' | 'error'): void => {
   showToast({
@@ -23,7 +27,7 @@ const onClickShowToast = (icon: 'info' | 'success' | 'error'): void => {
     duration: 5,
     placement: 'top',
     offset: 16,
-    container: toastContainer.value ?? undefined
+    container: vueComponentToastContainer.value ?? undefined
   })
 }
 </script>
