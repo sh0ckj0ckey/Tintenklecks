@@ -9,6 +9,7 @@
 <script lang="ts" setup>
 import { ref, watch, computed, onBeforeUnmount, nextTick, useTemplateRef, type CSSProperties } from 'vue'
 import { resolveElement, type ResolvedElement, type MaybeElement } from '@renderer/utils/dom'
+import { nextZIndex, releaseZIndex } from './PopupZIndexManager'
 
 type CloseMode = 'click' | 'leave' | 'manual'
 
@@ -116,15 +117,24 @@ watch(
     let targetEl: ResolvedElement | null = null
     let popupEl: HTMLElement | null = null
 
+    let currentZIndex: number | null = null
+
     let isCancelled = false
     onCleanUp(() => {
       isCancelled = true
       unbindGlobalEvents()
       unbindClickToCloseEvents()
       unbindLeaveToCloseEvents(targetEl, popupEl)
+
+      if (currentZIndex !== null) {
+        releaseZIndex(currentZIndex)
+        currentZIndex = null
+      }
     })
 
     if (isOpen) {
+      currentZIndex = nextZIndex()
+
       await nextTick()
 
       if (isCancelled || !props.isOpen) {
@@ -135,7 +145,8 @@ watch(
       popupEl = popupElementRef.value
 
       popupStateStyle.value = {
-        visibility: 'hidden'
+        visibility: 'hidden',
+        zIndex: currentZIndex
       }
 
       await updatePosition()
@@ -145,7 +156,8 @@ watch(
       }
 
       popupStateStyle.value = {
-        visibility: 'visible'
+        visibility: 'visible',
+        zIndex: currentZIndex
       }
 
       bindGlobalEvents()
