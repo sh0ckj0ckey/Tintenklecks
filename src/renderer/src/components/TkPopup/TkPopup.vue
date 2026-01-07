@@ -88,12 +88,16 @@ const props = withDefaults(
 
 const emit = defineEmits(['update:isOpen'])
 
-const popupElementRef = useTemplateRef<HTMLElement>('popupElementRef')
-const targetElement = computed<ResolvedElement | null>(() => {
-  return resolveElement(props.target)
-})
+const popupElementRef = useTemplateRef('popupElementRef')
+const targetElement = computed<ResolvedElement | null>(() => resolveElement(props.target))
 
-const popupStyle = ref<CSSProperties>({})
+const popupLayoutStyle = ref<CSSProperties>({})
+const popupStateStyle = ref<CSSProperties>({})
+const popupStyle = computed<CSSProperties>(() => ({
+  position: 'fixed',
+  ...popupLayoutStyle.value,
+  ...popupStateStyle.value
+}))
 
 onBeforeUnmount(() => {
   unbindGlobalEvents()
@@ -102,24 +106,15 @@ onBeforeUnmount(() => {
 
   if (requestAnimationFrameId) {
     window.cancelAnimationFrame(requestAnimationFrameId)
+    requestAnimationFrameId = null
   }
 })
 
 watch(
-  [
-    popupElementRef,
-    () => props.isOpen,
-    () => props.width,
-    () => props.height,
-    () => props.closeMode,
-    () => props.placement,
-    () => props.horizontalOffset,
-    () => props.verticalOffset,
-    () => props.target
-  ],
-  async ([popup, isOpen, , , closeMode, , , , target], _, onCleanUp) => {
-    const targetEl = resolveElement(target)
-    const popupEl = popup
+  [() => props.isOpen, () => props.closeMode, () => props.target],
+  async ([isOpen, closeMode], _, onCleanUp) => {
+    let targetEl: ResolvedElement | null = null
+    let popupEl: HTMLElement | null = null
 
     let isCancelled = false
     onCleanUp(() => {
@@ -130,8 +125,16 @@ watch(
     })
 
     if (isOpen) {
-      popupStyle.value = {
-        ...popupStyle.value,
+      await nextTick()
+
+      if (isCancelled || !props.isOpen) {
+        return
+      }
+
+      targetEl = targetElement.value
+      popupEl = popupElementRef.value
+
+      popupStateStyle.value = {
         visibility: 'hidden'
       }
 
@@ -141,8 +144,7 @@ watch(
         return
       }
 
-      popupStyle.value = {
-        ...popupStyle.value,
+      popupStateStyle.value = {
         visibility: 'visible'
       }
 
@@ -152,6 +154,18 @@ watch(
         bindLeaveToCloseEvents(targetEl, popupEl)
       }
     }
+  },
+  { immediate: true }
+)
+
+watch(
+  [() => props.width, () => props.height, () => props.placement, () => props.horizontalOffset, () => props.verticalOffset],
+  async () => {
+    if (!props.isOpen) {
+      return
+    }
+
+    await updatePosition()
   }
 )
 
@@ -236,11 +250,13 @@ const calculatePosition = (
 }
 
 const updatePosition = async (): Promise<void> => {
-  popupStyle.value = {
-    position: 'fixed',
-    width: typeof props.width === 'number' ? props.width + 'px' : props.width,
-    height: typeof props.height === 'number' ? props.height + 'px' : props.height,
-    zIndex: 'var(--z-index-popup, 1000)'
+  const width = typeof props.width === 'number' ? props.width + 'px' : props.width
+  const height = typeof props.height === 'number' ? props.height + 'px' : props.height
+
+  popupLayoutStyle.value = {
+    ...popupLayoutStyle.value,
+    width,
+    height
   }
 
   await nextTick()
@@ -260,18 +276,19 @@ const updatePosition = async (): Promise<void> => {
   left = Math.max(0, Math.min(left, window.innerWidth - popupRect.width))
   top = Math.max(0, Math.min(top, window.innerHeight - popupRect.height))
 
-  popupStyle.value = {
-    ...popupStyle.value,
+  popupLayoutStyle.value = {
+    width,
+    height,
     left: `${left}px`,
     top: `${top}px`
   }
 }
 
-// #region 点击其他区域以关闭浮窗
+// #region 窗口尺寸变化或者页面滚动更新位置
 
 let requestAnimationFrameId: number | null = null
 
-const handleGlobalReposition = (): void => {
+const onGlobalReposition = (): void => {
   if (!props.isOpen) {
     return
   }
@@ -287,13 +304,13 @@ const handleGlobalReposition = (): void => {
 }
 
 const bindGlobalEvents = (): void => {
-  window.addEventListener('resize', handleGlobalReposition)
-  window.addEventListener('scroll', handleGlobalReposition, true)
+  window.addEventListener('resize', onGlobalReposition)
+  window.addEventListener('scroll', onGlobalReposition, true)
 }
 
 const unbindGlobalEvents = (): void => {
-  window.removeEventListener('resize', handleGlobalReposition)
-  window.removeEventListener('scroll', handleGlobalReposition, true)
+  window.removeEventListener('resize', onGlobalReposition)
+  window.removeEventListener('scroll', onGlobalReposition, true)
 }
 
 // #endregion
