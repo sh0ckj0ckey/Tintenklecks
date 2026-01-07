@@ -1,17 +1,17 @@
 @import './base.css';
 
 :root {
-  /* 全局 Toast 通知层级 */
-  --z-index-toast: 1003;
+  /* 全局 ContentDialog 层级 */
+  --z-index-content-dialog: 9997;
 
   /* 全局 MessageBox 通知层级 */
-  --z-index-messagebox: 1002;
+  --z-index-message-box: 9998;
 
-  /* 全局 ContentDialog 层级 */
-  --z-index-dialog: 1001;
+  /* 全局 Toast 通知层级 */
+  --z-index-toast: 9999;
 
-  /* 全局 Popup 层级 */
-  --z-index-popup: 1000;
+  /* 全局 Popup 层级 通过 PopupZIndexManager 管理分配，以解决多个 Popup 嵌套时的层级问题*/
+  --z-index-popup-start: 10000;
 
   --tk-app-background: #f8f4f1;
   --tk-app-background-deep: #efeae7;
