@@ -12,8 +12,8 @@
 </template>
 
 <script setup lang="ts">
-import TkButton from '../components/TkButton.vue'
-import TkHyperlinkButton from '../components/TkHyperlinkButton.vue'
+import TkButton from '../components/TkButtons/TkButton.vue'
+import TkHyperlinkButton from '../components/TkButtons/TkHyperlinkButton.vue'
 </script>
 
 <style scoped>

@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { ref, useTemplateRef } from 'vue'
-import TkButton from '../components/TkButton.vue'
+import TkButton from '../components/TkButtons/TkButton.vue'
 import TkPopup from '../components/TkPopup/TkPopup.vue'
 
 const primaryButtonRef = useTemplateRef<HTMLElement>('primaryButtonRef')

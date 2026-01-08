@@ -28,6 +28,20 @@ const handleClick = (event: MouseEvent): void => {
 }
 </script>
 
+<style>
+@property --tk-button--primary-background-start {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #4984b4;
+}
+
+@property --tk-button--primary-background-end {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #619bcb;
+}
+</style>
+
 <style scoped>
 .tk-button {
   display: inline-flex;
@@ -41,15 +55,17 @@ const handleClick = (event: MouseEvent): void => {
   cursor: default;
   user-select: none;
   transition:
+    --tk-button--primary-background-start 0.15s,
+    --tk-button--primary-background-end 0.15s,
     box-shadow 0.2s,
     color 0.2s;
 }
 
 .tk-button--primary {
   color: #f8f8f8;
-  background-color: #002fa7;
+  /* background-color: #002fa7; */
   border: 1px solid #002074;
-  background: linear-gradient(to top, #4984b4, #619bcb);
+  background: linear-gradient(to top, var(--tk-button--primary-background-start), var(--tk-button--primary-background-end));
   box-shadow:
     inset 0px 1px 0px rgba(255, 255, 255, 0.3),
     inset 0px 0px 3px rgba(255, 255, 255, 0.5);
@@ -59,14 +75,16 @@ const handleClick = (event: MouseEvent): void => {
   }
 
   &:hover:not(:disabled) {
-    background-color: #0039cd;
-    border-color: #0039cd;
+    --tk-button--primary-background-start: color-mix(in srgb, #4984b4, white 10%);
+    --tk-button--primary-background-end: color-mix(in srgb, #619bcb, white 10%);
+
     color: #f8f8f8;
   }
 
   &:active:not(:disabled) {
-    background-color: #002074;
-    border-color: #002074;
+    --tk-button--primary-background-start: color-mix(in srgb, #4984b4, black 10%);
+    --tk-button--primary-background-end: color-mix(in srgb, #619bcb, black 10%);
+
     color: #f8f8f88c;
   }
 

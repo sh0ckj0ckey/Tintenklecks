@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { useTemplateRef } from 'vue'
-import TkButton from '../components/TkButton.vue'
+import TkButton from '../components/TkButtons/TkButton.vue'
 import { showToast } from '../components/TkToast'
 
 const toastContainer = useTemplateRef('toastContainer')
