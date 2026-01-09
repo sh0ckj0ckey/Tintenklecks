@@ -1,8 +1,10 @@
-import { ElectronAPI } from '@electron-toolkit/preload'
-
 declare global {
   interface Window {
-    electron: ElectronAPI
-    api: unknown
+    appWindowAPI: {
+      close: () => void
+      minimize: () => void
+      maximize: () => void
+      onWindowStateChange: (callback: (state: 'maximized' | 'normal') => void) => () => void
+    }
   }
 }

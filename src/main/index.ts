@@ -3,13 +3,19 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
+let mainWindow: BrowserWindow | null = null
+
 function createWindow(): void {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
     show: false,
     autoHideMenuBar: true,
+    frame: true,
+    titleBarStyle: 'hidden',
+    titleBarOverlay: false,
+    // ...(process.platform !== 'darwin' ? { titleBarOverlay: { color: '#efeae7', height: 42 } } : {}),
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -18,7 +24,15 @@ function createWindow(): void {
   })
 
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
+    mainWindow?.show()
+  })
+
+  mainWindow.on('maximize', () => {
+    mainWindow?.webContents.send('window-state-change', 'maximized')
+  })
+
+  mainWindow.on('unmaximize', () => {
+    mainWindow?.webContents.send('window-state-change', 'normal')
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -34,6 +48,18 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
+
+ipcMain.on('window-close', () => mainWindow?.close())
+
+ipcMain.on('window-min', () => mainWindow?.minimize())
+
+ipcMain.on('window-max', () => {
+  if (mainWindow?.isMaximized()) {
+    mainWindow?.unmaximize()
+  } else {
+    mainWindow?.maximize()
+  }
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
