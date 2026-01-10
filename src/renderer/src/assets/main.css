@@ -16,6 +16,9 @@
   /* 全局 Toast 通知层级 */
   --tk-z-toast: 10000;
 
+  /* 应用程序标题栏高度 */
+  --tk-title-bar-height: 38px;
+
   --tk-color-background: #f8f4f1;
 
   --tk-color-background-deep: #efeae7;

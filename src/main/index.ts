@@ -12,6 +12,7 @@ function createWindow(): void {
     height: 670,
     show: false,
     autoHideMenuBar: true,
+    backgroundMaterial: 'mica',
     frame: true,
     titleBarStyle: 'hidden',
     titleBarOverlay: false,
