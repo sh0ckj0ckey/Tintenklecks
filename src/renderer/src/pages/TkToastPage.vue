@@ -48,7 +48,7 @@ const onClickShowToast = (icon: 'info' | 'success' | 'error'): void => {
     height: 96px;
     margin: 8px;
     border-radius: 8px;
-    background-color: var(--tk-app-background-deep);
+    background-color: var(--tk-color-background-deep);
   }
 }
 </style>

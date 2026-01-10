@@ -20,7 +20,7 @@
     overflow: hidden;
     width: 280px;
     height: 100%;
-    background-color: var(--tk-app-background);
+    background-color: var(--tk-color-background);
     z-index: 1;
   }
 
@@ -29,7 +29,7 @@
     overflow: hidden;
     width: 100%;
     height: 100%;
-    background-color: var(--tk-app-background-deep);
+    background-color: var(--tk-color-background-deep);
     z-index: 2;
     box-shadow: -4px 0 16px rgba(0, 0, 0, 0.1);
   }

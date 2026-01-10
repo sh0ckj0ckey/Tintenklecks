@@ -88,7 +88,8 @@ export const showToast = (options: ToastOptions): void => {
     mountNode.style.width = '100%'
     mountNode.style.height = '100%'
     mountNode.style.pointerEvents = 'none'
-    mountNode.style.zIndex = 'var(--z-index-toast, 9999)'
+
+    mountNode.style.zIndex = 'var(--tk-z-toast, 10000)'
 
     container.appendChild(mountNode)
   }

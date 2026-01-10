@@ -10,7 +10,7 @@
         width: 172px;
         height: 256px;
         border-radius: 8px;
-        background-color: var(--tk-app-background-deep);
+        background-color: var(--tk-color-background-deep);
         box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
       "
     >
@@ -25,7 +25,7 @@
         width: 256px;
         height: 172px;
         border-radius: 8px;
-        background-color: var(--tk-app-background-deep);
+        background-color: var(--tk-color-background-deep);
         box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
       "
     >

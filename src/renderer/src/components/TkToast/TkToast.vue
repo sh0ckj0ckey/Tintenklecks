@@ -137,7 +137,7 @@ onBeforeUnmount(() => {
       overflow: hidden;
       font-size: 14px;
       font-weight: 400;
-      color: var(--tk-app-foreground);
+      color: var(--tk-color-foreground);
       white-space: pre-wrap;
       word-wrap: normal;
     }
