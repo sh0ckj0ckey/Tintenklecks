@@ -25,9 +25,9 @@ const onClickShowToast = (icon: 'info' | 'success' | 'error'): void => {
     text: `Hello, this is a ${icon} tk-toast.`,
     icon: icon,
     duration: 5,
-    placement: 'top',
+    placement: 'bottom',
     offset: 16,
-    container: vueComponentToastContainer.value ?? undefined
+    container: undefined
   })
 }
 </script>
