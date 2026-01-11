@@ -19,11 +19,17 @@
   /* 应用程序标题栏高度 */
   --tk-title-bar-height: 38px;
 
-  --tk-color-background: #f8f4f1;
+  /* --tk-color-background: #f8f4f1;
 
   --tk-color-background-deep: #efeae7;
 
-  --tk-color-foreground: #272320;
+  --tk-color-foreground: #272320; */
+
+  --tk-color-background: transparent;
+
+  --tk-color-background-deep: #ffffff08;
+
+  --tk-color-foreground: #ffffff;
 }
 
 body {

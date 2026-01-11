@@ -95,22 +95,35 @@ const closeAppWindow = (): void => {
       justify-content: center;
       align-items: center;
       cursor: default;
-      transition: background-color 0.2s;
+      transition:
+        background-color 0.2s,
+        color 0.2s;
 
       &:hover {
-        background-color: var(--tk-color-background);
+        background-color: var(--tk-color-background-deep);
+        color: var(--tk-color-foreground);
+      }
+
+      &:active {
+        background-color: #ffffff06;
+        color: var(--tk-color-foreground);
       }
 
       &.close {
         &:hover {
-          background-color: #e81123;
+          background-color: #c42c1d;
+          color: white;
+        }
+
+        &:active {
+          background-color: #af291a;
           color: white;
         }
       }
 
       .app-title-bar-caption-button-icon {
-        width: 10px;
-        height: 10px;
+        width: 11px;
+        height: 11px;
         object-fit: contain;
       }
     }
