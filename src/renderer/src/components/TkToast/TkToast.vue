@@ -1,5 +1,5 @@
 <template>
-  <div :class="['toast-background', placementClass]">
+  <div :class="['toast-wrapper', placementClass]">
     <div class="toast-content">
       <svg
         v-if="icon !== 'none' && iconPaths[icon]"
@@ -70,25 +70,25 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.toast-background {
+.toast-wrapper {
   width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
   pointer-events: none;
 
   &.placement-top {
-    align-items: flex-start;
-    padding-top: v-bind(offsetValue);
+    align-self: flex-start;
+    margin-top: v-bind(offsetValue);
   }
 
   &.placement-center {
-    align-items: center;
+    align-self: center;
+    margin-top: v-bind(offsetValue);
   }
 
   &.placement-bottom {
-    align-items: flex-end;
-    padding-bottom: v-bind(offsetValue);
+    align-self: flex-end;
+    margin-bottom: v-bind(offsetValue);
   }
 
   .toast-content {
