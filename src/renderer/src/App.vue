@@ -22,7 +22,7 @@ import AppTitleBar from './AppTitleBar.vue'
   .tintenklecks-app-navigation {
     flex: none;
     overflow: hidden;
-    width: 280px;
+    width: 232px;
     height: 100%;
     padding-top: var(--tk-title-bar-height);
     box-sizing: border-box;
@@ -39,7 +39,7 @@ import AppTitleBar from './AppTitleBar.vue'
     box-sizing: border-box;
     background-color: var(--tk-color-background-deep);
     z-index: 2;
-    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.1);
+    box-shadow: -4px 0 16px 2px rgba(0, 0, 0, 0.1);
   }
 
   .tintenklecks-app-title-bar {

@@ -72,7 +72,7 @@ const closeAppWindow = (): void => {
     align-items: center;
     justify-content: flex-start;
     padding-left: 16px;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 400;
     -webkit-app-region: drag;
   }
