@@ -1,7 +1,7 @@
 <template>
   <header class="app-title-bar">
     <div class="app-title-bar-navigation-buttons">
-      <button v-if="isGoBackAvailable" class="app-title-bar-navigation-button">
+      <button v-if="canGoBack" class="app-title-bar-navigation-button" @click="tryGoBack">
         <IconWindowBack class="app-title-bar-navigation-button-icon" />
       </button>
     </div>
@@ -29,15 +29,16 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useBackNavigation } from '@renderer/composables/useBackNavigation'
 import IconWindowClose from '@renderer/components/TkIcons/IconWindowClose.vue'
 import IconWindowMaximize from '@renderer/components/TkIcons/IconWindowMaximize.vue'
 import IconWindowMinimize from '@renderer/components/TkIcons/IconWindowMinimize.vue'
 import IconWindowRestore from '@renderer/components/TkIcons/IconWindowRestore.vue'
 import IconWindowBack from '@renderer/components/TkIcons/IconWindowBack.vue'
 
-const isAppWindowMaximized = ref<boolean>(false)
+const { canGoBack, tryGoBack } = useBackNavigation()
 
-const isGoBackAvailable = ref<boolean>(false)
+const isAppWindowMaximized = ref<boolean>(false)
 
 let cleanupListener: (() => void) | undefined
 
@@ -83,9 +84,9 @@ const closeAppWindow = (): void => {
     -webkit-app-region: no-drag;
 
     .app-title-bar-navigation-button {
-      width: 34px;
-      height: 34px;
-      margin-left: 2px;
+      height: calc(100% - 10px);
+      aspect-ratio: 1 / 1;
+      margin-left: 5px;
       border: none;
       border-radius: 4px;
       background-color: transparent;

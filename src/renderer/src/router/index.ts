@@ -48,5 +48,7 @@ const routes = [
 
 export const router = createRouter({
   history: createWebHashHistory(),
-  routes
+  routes,
+  linkActiveClass: 'tk-navigation-item-active',
+  linkExactActiveClass: 'tk-navigation-item-exact-active'
 })

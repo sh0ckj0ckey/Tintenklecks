@@ -9,13 +9,17 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { RouteName } from '@renderer/router'
 import AppTitleBar from './AppTitleBar.vue'
 
 const router = useRouter()
 
-router.push({ name: RouteName.Toast })
+onMounted(async () => {
+  await router.replace({ name: RouteName.Home })
+  await router.push({ name: RouteName.Toast })
+})
 </script>
 
 <style scoped>
