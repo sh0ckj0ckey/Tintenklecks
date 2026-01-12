@@ -1,13 +1,21 @@
 <template>
   <div class="tintenklecks-app">
     <div class="tintenklecks-app-navigation"></div>
-    <div class="tintenklecks-app-frame"></div>
+    <div class="tintenklecks-app-frame">
+      <router-view />
+    </div>
     <AppTitleBar class="tintenklecks-app-title-bar" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
+import { RouteName } from '@renderer/router'
 import AppTitleBar from './AppTitleBar.vue'
+
+const router = useRouter()
+
+router.push({ name: RouteName.Toast })
 </script>
 
 <style scoped>
