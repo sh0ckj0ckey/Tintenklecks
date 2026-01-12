@@ -1,5 +1,11 @@
 <template>
   <header class="app-title-bar">
+    <div class="app-title-bar-navigation-buttons">
+      <button v-if="isGoBackAvailable" class="app-title-bar-navigation-button">
+        <IconWindowBack class="app-title-bar-navigation-button-icon" />
+      </button>
+    </div>
+
     <div class="app-title-bar-drag-region" @dblclick="toggleMaximizeAppWindow">
       <span>Tintenklecks Gallery</span>
     </div>
@@ -27,8 +33,11 @@ import IconWindowClose from '@renderer/components/TkIcons/IconWindowClose.vue'
 import IconWindowMaximize from '@renderer/components/TkIcons/IconWindowMaximize.vue'
 import IconWindowMinimize from '@renderer/components/TkIcons/IconWindowMinimize.vue'
 import IconWindowRestore from '@renderer/components/TkIcons/IconWindowRestore.vue'
+import IconWindowBack from '@renderer/components/TkIcons/IconWindowBack.vue'
 
 const isAppWindowMaximized = ref<boolean>(false)
+
+const isGoBackAvailable = ref<boolean>(false)
 
 let cleanupListener: (() => void) | undefined
 
@@ -64,6 +73,48 @@ const closeAppWindow = (): void => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  .app-title-bar-navigation-buttons {
+    flex: none;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    -webkit-app-region: no-drag;
+
+    .app-title-bar-navigation-button {
+      width: 34px;
+      height: 34px;
+      margin-left: 2px;
+      border: none;
+      border-radius: 4px;
+      background-color: transparent;
+      color: var(--tk-color-foreground);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: default;
+      transition:
+        background-color 0.2s,
+        color 0.2s;
+
+      &:hover {
+        background-color: var(--tk-color-background-deep);
+        color: var(--tk-color-foreground);
+      }
+
+      &:active {
+        background-color: #ffffff06;
+        color: var(--tk-color-foreground);
+      }
+
+      .app-title-bar-navigation-button-icon {
+        width: 11px;
+        height: 11px;
+        object-fit: contain;
+      }
+    }
+  }
 
   .app-title-bar-drag-region {
     flex: auto;
