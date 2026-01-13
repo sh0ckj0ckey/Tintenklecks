@@ -3,11 +3,9 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
-let mainWindow: BrowserWindow | null = null
-
 function createWindow(): void {
   // Create the browser window.
-  mainWindow = new BrowserWindow({
+  const mainWindow = new BrowserWindow({
     width: 960,
     height: 720,
     show: false,
@@ -25,15 +23,30 @@ function createWindow(): void {
   })
 
   mainWindow.on('ready-to-show', () => {
-    mainWindow?.show()
+    mainWindow.show()
+
+    mainWindow.webContents.send('window-focus-change', mainWindow?.isFocused())
+    mainWindow.webContents.send('window-state-change', mainWindow?.isMaximized() ? 'maximized' : 'normal')
   })
 
   mainWindow.on('maximize', () => {
-    mainWindow?.webContents.send('window-state-change', 'maximized')
+    mainWindow.webContents.send('window-state-change', 'maximized')
   })
 
   mainWindow.on('unmaximize', () => {
-    mainWindow?.webContents.send('window-state-change', 'normal')
+    mainWindow.webContents.send('window-state-change', 'normal')
+  })
+
+  mainWindow.on('focus', () => {
+    mainWindow.webContents.send('window-focus-change', true)
+  })
+
+  mainWindow.on('blur', () => {
+    mainWindow.webContents.send('window-focus-change', false)
+  })
+
+  mainWindow.on('closed', () => {
+    mainWindow.removeAllListeners()
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -50,15 +63,18 @@ function createWindow(): void {
   }
 }
 
-ipcMain.on('window-close', () => mainWindow?.close())
+ipcMain.on('window-close', (event) => BrowserWindow.fromWebContents(event.sender)?.close())
 
-ipcMain.on('window-min', () => mainWindow?.minimize())
+ipcMain.on('window-min', (event) => BrowserWindow.fromWebContents(event.sender)?.minimize())
 
-ipcMain.on('window-max', () => {
-  if (mainWindow?.isMaximized()) {
-    mainWindow?.unmaximize()
-  } else {
-    mainWindow?.maximize()
+ipcMain.on('window-max', (event) => {
+  const window = BrowserWindow.fromWebContents(event.sender)
+  if (window) {
+    if (window.isMaximized()) {
+      window.unmaximize()
+    } else {
+      window.maximize()
+    }
   }
 })
 

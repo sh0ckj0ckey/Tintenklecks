@@ -11,6 +11,13 @@ const appWindowAPI = {
     return () => {
       ipcRenderer.removeListener('window-state-change', cb)
     }
+  },
+  onWindowFocusChange: (callback: (isFocused: boolean) => void) => {
+    const cb = (_: Electron.IpcRendererEvent, isFocused: boolean): void => callback(isFocused)
+    ipcRenderer.on('window-focus-change', cb)
+    return () => {
+      ipcRenderer.removeListener('window-focus-change', cb)
+    }
   }
 }
 

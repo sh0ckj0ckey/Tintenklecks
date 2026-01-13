@@ -5,6 +5,7 @@ declare global {
       minimize: () => void
       maximize: () => void
       onWindowStateChange: (callback: (state: 'maximized' | 'normal') => void) => () => void
+      onWindowFocusChange: (callback: (isFocused: boolean) => void) => () => void
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <header class="app-title-bar">
+  <header :class="['app-title-bar', { 'app-title-bar-blurred': !isAppWindowFocused }]">
     <div class="app-title-bar-navigation-buttons">
       <button v-if="canGoBack" class="app-title-bar-navigation-button" @click="tryGoBack">
         <IconWindowBack class="app-title-bar-navigation-button-icon" />
@@ -39,19 +39,23 @@ import IconWindowBack from '@renderer/components/TkIcons/IconWindowBack.vue'
 const { canGoBack, tryGoBack } = useBackNavigation()
 
 const isAppWindowMaximized = ref<boolean>(false)
+const isAppWindowFocused = ref<boolean>(true)
 
-let cleanupListener: (() => void) | undefined
+let cleanupWindowStateListener: (() => void) | null = null
+let cleanupWindowFocusListener: (() => void) | null = null
 
 onMounted(() => {
-  cleanupListener = window.appWindowAPI.onWindowStateChange((state) => {
+  cleanupWindowStateListener = window.appWindowAPI.onWindowStateChange((state) => {
     isAppWindowMaximized.value = state === 'maximized'
+  })
+  cleanupWindowFocusListener = window.appWindowAPI.onWindowFocusChange((isFocused) => {
+    isAppWindowFocused.value = isFocused
   })
 })
 
 onBeforeUnmount(() => {
-  if (cleanupListener) {
-    cleanupListener()
-  }
+  cleanupWindowStateListener?.()
+  cleanupWindowFocusListener?.()
 })
 
 const minimizeAppWindow = (): void => {
@@ -74,6 +78,11 @@ const closeAppWindow = (): void => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  opacity: 1;
+
+  &.app-title-bar-blurred {
+    opacity: 0.7;
+  }
 
   .app-title-bar-navigation-buttons {
     flex: none;
@@ -152,12 +161,12 @@ const closeAppWindow = (): void => {
         color 0.2s;
 
       &:hover {
-        background-color: var(--tk-color-background-deep);
+        background-color: #ffffff09;
         color: var(--tk-color-foreground);
       }
 
       &:active {
-        background-color: #ffffff06;
+        background-color: var(--tk-color-background-deep);
         color: var(--tk-color-foreground);
       }
 
@@ -174,8 +183,8 @@ const closeAppWindow = (): void => {
       }
 
       .app-title-bar-caption-button-icon {
-        width: 11px;
-        height: 11px;
+        width: 10px;
+        height: 10px;
         object-fit: contain;
       }
     }
