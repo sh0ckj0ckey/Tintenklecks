@@ -4,7 +4,7 @@
     class="tk-button"
     :class="[`tk-button--${props.theme}`, { deboss: props.deboss }]"
     :disabled="props.disabled"
-    @click="handleClick"
+    @click="onClick"
   >
     <slot></slot>
   </button>
@@ -21,7 +21,7 @@ const emit = defineEmits<{
   (e: 'click', event: MouseEvent): void
 }>()
 
-const handleClick = (event: MouseEvent): void => {
+const onClick = (event: MouseEvent): void => {
   if (!props.disabled) {
     emit('click', event)
   }
@@ -113,6 +113,10 @@ const handleClick = (event: MouseEvent): void => {
     box-shadow 0.2s,
     color 0.2s,
     transform 0.1s;
+
+  &:disabled {
+    opacity: 0.6;
+  }
 }
 
 .tk-button--primary {

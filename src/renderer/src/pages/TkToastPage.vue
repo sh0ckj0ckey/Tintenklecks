@@ -1,5 +1,6 @@
 <template>
   <div class="tk-toast-page">
+    <TkButton theme="primary" :deboss="true" :disabled="true" @click="onClickShowToast('info')">Primary</TkButton>
     <TkButton theme="primary" :deboss="true" @click="onClickShowToast('info')">Primary</TkButton>
     <TkButton theme="secondary" :deboss="true" @click="onClickShowToast('info')">Secondary</TkButton>
     <TkButton theme="success" :deboss="true" @click="onClickShowToast('success')">Success</TkButton>
