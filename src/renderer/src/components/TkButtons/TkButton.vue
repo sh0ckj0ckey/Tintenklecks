@@ -12,7 +12,7 @@
 
 <script lang="ts" setup>
 const props = defineProps<{
-  theme: 'primary' | 'secondary' | 'success' | 'danger' | 'warning'
+  theme: 'primary' | 'secondary' | 'success' | 'warning' | 'danger'
   deboss?: boolean
   disabled?: boolean
 }>()
