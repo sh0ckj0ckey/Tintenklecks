@@ -3,8 +3,8 @@
     <TkButton theme="primary" :deboss="true" @click="onClickShowToast('info')">Primary</TkButton>
     <TkButton theme="secondary" :deboss="true" @click="onClickShowToast('info')">Secondary</TkButton>
     <TkButton theme="success" :deboss="true" @click="onClickShowToast('success')">Success</TkButton>
+    <TkButton theme="warning" :deboss="true" @click="onClickShowToast('warning')">Warning</TkButton>
     <TkButton theme="danger" :deboss="true" @click="onClickShowToast('error')">Danger</TkButton>
-    <TkButton theme="warning" :deboss="true" @click="onClickShowToast('error')">Warning</TkButton>
     <div ref="toastContainer" class="tk-toast-container">
       <span>This is a toast container.</span>
     </div>
@@ -22,12 +22,12 @@ import { showToast } from '../components/TkToast'
 const toastContainer = useTemplateRef('toastContainer')
 const vueComponentToastContainer = useTemplateRef<HTMLElement>('vueComponentToastContainer')
 
-const onClickShowToast = (icon: 'info' | 'success' | 'error'): void => {
+const onClickShowToast = (icon: 'info' | 'success' | 'warning' | 'error'): void => {
   showToast({
     text: `Hello, this is a ${icon} tk-toast.`,
     icon: icon,
     duration: 5,
-    placement: 'bottom',
+    placement: 'top',
     offset: 16,
     container: undefined
   })

@@ -6,7 +6,7 @@
         class="toast-icon"
         :class="`icon-${icon}`"
         fill="currentColor"
-        viewBox="0 0 24 24"
+        viewBox="0 0 16 16"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
       >
@@ -23,7 +23,7 @@ import { onMounted, onBeforeUnmount, computed } from 'vue'
 
 const props = defineProps<{
   text: string
-  icon: 'none' | 'info' | 'success' | 'error'
+  icon: 'none' | 'info' | 'success' | 'warning' | 'error'
   duration: number
   placement: 'top' | 'center' | 'bottom'
   offset: number | string
@@ -34,11 +34,13 @@ const emit = defineEmits<{
 }>()
 
 const iconPaths = {
-  info: 'M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z',
+  info: 'M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0ZM9 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM6.75 8a.75.75 0 0 0 0 1.5h.75v1.75a.75.75 0 0 0 1.5 0v-2.5A.75.75 0 0 0 8.25 8h-1.5Z',
   success:
-    'M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z',
+    'M15 8c0 .982-.472 1.854-1.202 2.402a2.995 2.995 0 0 1-.848 2.547 2.995 2.995 0 0 1-2.548.849A2.996 2.996 0 0 1 8 15a2.996 2.996 0 0 1-2.402-1.202 2.995 2.995 0 0 1-2.547-.848 2.995 2.995 0 0 1-.849-2.548A2.996 2.996 0 0 1 1 8c0-.982.472-1.854 1.202-2.402a2.995 2.995 0 0 1 .848-2.547 2.995 2.995 0 0 1 2.548-.849A2.995 2.995 0 0 1 8 1c.982 0 1.854.472 2.402 1.202a2.995 2.995 0 0 1 2.547.848c.695.695.978 1.645.849 2.548A2.996 2.996 0 0 1 15 8Zm-3.291-2.843a.75.75 0 0 1 .135 1.052l-4.25 5.5a.75.75 0 0 1-1.151.043l-2.25-2.5a.75.75 0 1 1 1.114-1.004l1.65 1.832 3.7-4.789a.75.75 0 0 1 1.052-.134Z',
+  warning:
+    'M6.701 2.25c.577-1 2.02-1 2.598 0l5.196 9a1.5 1.5 0 0 1-1.299 2.25H2.804a1.5 1.5 0 0 1-1.3-2.25l5.197-9ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 1 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z',
   error:
-    'M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z'
+    'M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14Zm2.78-4.22a.75.75 0 0 1-1.06 0L8 9.06l-1.72 1.72a.75.75 0 1 1-1.06-1.06L6.94 8 5.22 6.28a.75.75 0 0 1 1.06-1.06L8 6.94l1.72-1.72a.75.75 0 1 1 1.06 1.06L9.06 8l1.72 1.72a.75.75 0 0 1 0 1.06Z'
 }
 
 const placementClass = computed(() => {
@@ -98,7 +100,7 @@ onBeforeUnmount(() => {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 8px;
     overflow-x: hidden;
     overflow-y: auto;
     padding: 12px 16px;
@@ -125,8 +127,8 @@ onBeforeUnmount(() => {
 
     .toast-icon {
       flex: none;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       object-fit: scale-down;
 
       &.icon-info {
@@ -135,6 +137,10 @@ onBeforeUnmount(() => {
 
       &.icon-success {
         color: #0f7b0f;
+      }
+
+      &.icon-warning {
+        color: #fce100;
       }
 
       &.icon-error {

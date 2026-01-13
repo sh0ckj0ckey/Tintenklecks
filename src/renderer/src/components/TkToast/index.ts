@@ -2,7 +2,7 @@ import { h, render } from 'vue'
 import { resolveElement, type ResolvedElement, type MaybeElement } from '@renderer/utils/dom'
 import TkToast from './TkToast.vue'
 
-type ToastIcon = 'none' | 'info' | 'success' | 'error'
+type ToastIcon = 'none' | 'info' | 'success' | 'warning' | 'error'
 
 type ToastPlacement = 'top' | 'center' | 'bottom'
 
