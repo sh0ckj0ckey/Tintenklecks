@@ -78,13 +78,13 @@ const handleClick = (event: MouseEvent): void => {
 @property --tk-button--warning-background-start {
   syntax: '<color>';
   inherits: false;
-  initial-value: #ffc933;
+  initial-value: #ffdb70;
 }
 
 @property --tk-button--warning-background-end {
   syntax: '<color>';
   inherits: false;
-  initial-value: #e6a700;
+  initial-value: #e09600;
 }
 </style>
 
@@ -173,7 +173,7 @@ const handleClick = (event: MouseEvent): void => {
   }
 
   &:focus-visible:not(:disabled) {
-    outline: 2px dashed var(--tk-button--secondary-background-start);
+    outline: 2px dashed #7e7e7e;
     outline-offset: 2px;
   }
 }
@@ -209,21 +209,52 @@ const handleClick = (event: MouseEvent): void => {
   }
 }
 
+.tk-button--warning {
+  color: #1f1f1f;
+  border: 1px solid #594118;
+  background: linear-gradient(to bottom, var(--tk-button--warning-background-start), var(--tk-button--warning-background-end));
+  box-shadow:
+    inset 0px 1px 0px rgba(255, 255, 255, 0.65),
+    inset 0px 0px 3px rgba(255, 255, 255, 0.95);
+
+  &.deboss {
+    text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.4);
+  }
+
+  &:hover:not(:disabled) {
+    --tk-button--warning-background-start: color-mix(in srgb, #ffdb70, white 20%);
+    --tk-button--warning-background-end: color-mix(in srgb, #e09600, white 20%);
+    color: #1f1f1f;
+  }
+
+  &:active:not(:disabled) {
+    --tk-button--warning-background-start: color-mix(in srgb, #ffdb70, black 10%);
+    --tk-button--warning-background-end: color-mix(in srgb, #e09600, black 10%);
+    color: #1f1f1f8c;
+    transform: translateY(1px);
+  }
+
+  &:focus-visible:not(:disabled) {
+    outline: 2px dashed var(--tk-button--warning-background-start);
+    outline-offset: 2px;
+  }
+}
+
 .tk-button--danger {
   color: #fff1f0;
   border: 1px solid #4a1a1a;
   background: linear-gradient(to bottom, var(--tk-button--danger-background-start), var(--tk-button--danger-background-end));
   box-shadow:
     inset 0px 1px 0px rgba(255, 255, 255, 0.25),
-    inset 0px 0px 3px rgba(255, 255, 255, 0.4);
+    inset 0px 0px 3px rgba(255, 255, 255, 0.75);
 
   &.deboss {
     text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.5);
   }
 
   &:hover:not(:disabled) {
-    --tk-button--danger-background-start: color-mix(in srgb, #ff4b59, white 10%);
-    --tk-button--danger-background-end: color-mix(in srgb, #d10014, white 10%);
+    --tk-button--danger-background-start: color-mix(in srgb, #ff4b59, white 16%);
+    --tk-button--danger-background-end: color-mix(in srgb, #d10014, white 16%);
     color: #fff1f0;
   }
 
@@ -236,37 +267,6 @@ const handleClick = (event: MouseEvent): void => {
 
   &:focus-visible:not(:disabled) {
     outline: 2px dashed var(--tk-button--danger-background-start);
-    outline-offset: 2px;
-  }
-}
-
-.tk-button--warning {
-  color: #1f1f1f;
-  border: 1px solid #594118;
-  background: linear-gradient(to bottom, var(--tk-button--warning-background-start), var(--tk-button--warning-background-end));
-  box-shadow:
-    inset 0px 1px 0px rgba(255, 255, 255, 0.3),
-    inset 0px 0px 3px rgba(255, 255, 255, 0.4);
-
-  &.deboss {
-    text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.4);
-  }
-
-  &:hover:not(:disabled) {
-    --tk-button--warning-background-start: color-mix(in srgb, #ffc933, white 16%);
-    --tk-button--warning-background-end: color-mix(in srgb, #e6a700, white 16%);
-    color: #1f1f1f;
-  }
-
-  &:active:not(:disabled) {
-    --tk-button--warning-background-start: color-mix(in srgb, #ffc933, black 10%);
-    --tk-button--warning-background-end: color-mix(in srgb, #e6a700, black 10%);
-    color: #1f1f1f8c;
-    transform: translateY(1px);
-  }
-
-  &:focus-visible:not(:disabled) {
-    outline: 2px dashed var(--tk-button--warning-background-start);
     outline-offset: 2px;
   }
 }
