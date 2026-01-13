@@ -101,17 +101,27 @@ onBeforeUnmount(() => {
     gap: 4px;
     overflow-x: hidden;
     overflow-y: auto;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    /* background-image: linear-gradient(#f0f0f0, #f0f0f3), linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(0, 0, 0, 0.01) 100%); */
-    background-image: linear-gradient(#1f1f1f, #202020), linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-    box-shadow:
-      rgba(9, 30, 66, 0.15) 0px 1px 1px,
-      rgba(9, 30, 66, 0.08) 0px 0px 1px 1px;
     padding: 12px 16px;
     pointer-events: auto;
+
+    border: 1px solid transparent;
+    border-radius: 4px;
+
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    background-image:
+      linear-gradient(#1f1f1f, #202020),
+      linear-gradient(
+        165deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(255, 255, 255, 0.02) 40%,
+        rgba(255, 255, 255, 0.02) 60%,
+        rgba(255, 255, 255, 0.04) 100%
+      );
+
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
+      rgba(0, 0, 0, 0.4) 0px 4px 12px;
 
     .toast-icon {
       flex: none;
