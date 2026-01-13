@@ -56,35 +56,35 @@ const handleClick = (event: MouseEvent): void => {
 @property --tk-button--success-background-start {
   syntax: '<color>';
   inherits: false;
-  initial-value: #6a9e69;
+  initial-value: #1db054;
 }
 @property --tk-button--success-background-end {
   syntax: '<color>';
   inherits: false;
-  initial-value: #4b7a4a;
+  initial-value: #0b6b30;
 }
 
 @property --tk-button--danger-background-start {
   syntax: '<color>';
   inherits: false;
-  initial-value: #cd6e6e;
+  initial-value: #ff4b59;
 }
 @property --tk-button--danger-background-end {
   syntax: '<color>';
   inherits: false;
-  initial-value: #a34848;
+  initial-value: #d10014;
 }
 
 @property --tk-button--warning-background-start {
   syntax: '<color>';
   inherits: false;
-  initial-value: #e0b060;
+  initial-value: #ffc933;
 }
 
 @property --tk-button--warning-background-end {
   syntax: '<color>';
   inherits: false;
-  initial-value: #b58942;
+  initial-value: #e6a700;
 }
 </style>
 
@@ -191,14 +191,14 @@ const handleClick = (event: MouseEvent): void => {
   }
 
   &:hover:not(:disabled) {
-    --tk-button--success-background-start: color-mix(in srgb, #6a9e69, white 10%);
-    --tk-button--success-background-end: color-mix(in srgb, #4b7a4a, white 10%);
+    --tk-button--success-background-start: color-mix(in srgb, #1db054, white 10%);
+    --tk-button--success-background-end: color-mix(in srgb, #0b6b30, white 10%);
     color: #f0fdf4;
   }
 
   &:active:not(:disabled) {
-    --tk-button--success-background-start: color-mix(in srgb, #6a9e69, black 10%);
-    --tk-button--success-background-end: color-mix(in srgb, #4b7a4a, black 10%);
+    --tk-button--success-background-start: color-mix(in srgb, #1db054, black 10%);
+    --tk-button--success-background-end: color-mix(in srgb, #0b6b30, black 10%);
     color: #f0fdf48c;
     transform: translateY(1px);
   }
@@ -222,15 +222,15 @@ const handleClick = (event: MouseEvent): void => {
   }
 
   &:hover:not(:disabled) {
-    --tk-button--danger-background-start: color-mix(in srgb, #cd6e6e, white 10%);
-    --tk-button--danger-background-end: color-mix(in srgb, #a34848, white 10%);
+    --tk-button--danger-background-start: color-mix(in srgb, #ff4b59, white 10%);
+    --tk-button--danger-background-end: color-mix(in srgb, #d10014, white 10%);
     color: #fff1f0;
   }
 
   &:active:not(:disabled) {
-    --tk-button--danger-background-start: color-mix(in srgb, #cd6e6e, black 10%);
-    --tk-button--danger-background-end: color-mix(in srgb, #a34848, black 10%);
-    color: #fff1f08c;
+    --tk-button--danger-background-start: color-mix(in srgb, #ff4b59, black 10%);
+    --tk-button--danger-background-end: color-mix(in srgb, #d10014, black 10%);
+    color: #fff1f0b2;
     transform: translateY(1px);
   }
 
@@ -241,7 +241,7 @@ const handleClick = (event: MouseEvent): void => {
 }
 
 .tk-button--warning {
-  color: #fffbe6;
+  color: #1f1f1f;
   border: 1px solid #594118;
   background: linear-gradient(to bottom, var(--tk-button--warning-background-start), var(--tk-button--warning-background-end));
   box-shadow:
@@ -249,19 +249,19 @@ const handleClick = (event: MouseEvent): void => {
     inset 0px 0px 3px rgba(255, 255, 255, 0.4);
 
   &.deboss {
-    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.5);
+    text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.4);
   }
 
   &:hover:not(:disabled) {
-    --tk-button--warning-background-start: color-mix(in srgb, #e0b060, white 16%);
-    --tk-button--warning-background-end: color-mix(in srgb, #b58942, white 16%);
-    color: #fffbe6;
+    --tk-button--warning-background-start: color-mix(in srgb, #ffc933, white 16%);
+    --tk-button--warning-background-end: color-mix(in srgb, #e6a700, white 16%);
+    color: #1f1f1f;
   }
 
   &:active:not(:disabled) {
-    --tk-button--warning-background-start: color-mix(in srgb, #e0b060, black 10%);
-    --tk-button--warning-background-end: color-mix(in srgb, #b58942, black 10%);
-    color: #fffbe68c;
+    --tk-button--warning-background-start: color-mix(in srgb, #ffc933, black 10%);
+    --tk-button--warning-background-end: color-mix(in srgb, #e6a700, black 10%);
+    color: #1f1f1f8c;
     transform: translateY(1px);
   }
 
