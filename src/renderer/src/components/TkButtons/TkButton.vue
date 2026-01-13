@@ -52,6 +52,40 @@ const handleClick = (event: MouseEvent): void => {
   inherits: false;
   initial-value: #2c2c2e;
 }
+
+@property --tk-button--success-background-start {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #6a9e69;
+}
+@property --tk-button--success-background-end {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #4b7a4a;
+}
+
+@property --tk-button--danger-background-start {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #cd6e6e;
+}
+@property --tk-button--danger-background-end {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #a34848;
+}
+
+@property --tk-button--warning-background-start {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #e0b060;
+}
+
+@property --tk-button--warning-background-end {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #b58942;
+}
 </style>
 
 <style scoped>
@@ -70,6 +104,12 @@ const handleClick = (event: MouseEvent): void => {
     --tk-button--primary-background-end 0.15s,
     --tk-button--secondary-background-start 0.15s,
     --tk-button--secondary-background-end 0.15s,
+    --tk-button--success-background-start 0.15s,
+    --tk-button--success-background-end 0.15s,
+    --tk-button--danger-background-start 0.15s,
+    --tk-button--danger-background-end 0.15s,
+    --tk-button--warning-background-start 0.15s,
+    --tk-button--warning-background-end 0.15s,
     box-shadow 0.2s,
     color 0.2s,
     transform 0.1s;
@@ -139,56 +179,95 @@ const handleClick = (event: MouseEvent): void => {
 }
 
 .tk-button--success {
-  background-color: #52c41a;
-  color: #fff;
-  border-color: #52c41a;
+  color: #f0fdf4;
+  border: 1px solid #1e3a23;
+  background: linear-gradient(to bottom, var(--tk-button--success-background-start), var(--tk-button--success-background-end));
+  box-shadow:
+    inset 0px 1px 0px rgba(255, 255, 255, 0.25),
+    inset 0px 0px 3px rgba(255, 255, 255, 0.4);
 
-  &:hover:not(:disabled),
-  &:focus-visible:not(:disabled) {
-    background-color: #73d13d;
-    border-color: #73d13d;
-    color: #fff;
+  &.deboss {
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.5);
   }
+
+  &:hover:not(:disabled) {
+    --tk-button--success-background-start: color-mix(in srgb, #6a9e69, white 10%);
+    --tk-button--success-background-end: color-mix(in srgb, #4b7a4a, white 10%);
+    color: #f0fdf4;
+  }
+
   &:active:not(:disabled) {
-    background-color: #389e0d;
-    border-color: #389e0d;
-    color: #fff;
+    --tk-button--success-background-start: color-mix(in srgb, #6a9e69, black 10%);
+    --tk-button--success-background-end: color-mix(in srgb, #4b7a4a, black 10%);
+    color: #f0fdf48c;
+    transform: translateY(1px);
+  }
+
+  &:focus-visible:not(:disabled) {
+    outline: 2px dashed var(--tk-button--success-background-start);
+    outline-offset: 2px;
   }
 }
 
 .tk-button--danger {
-  background-color: #370d24;
-  color: #fff;
-  border-color: #370d24;
+  color: #fff1f0;
+  border: 1px solid #4a1a1a;
+  background: linear-gradient(to bottom, var(--tk-button--danger-background-start), var(--tk-button--danger-background-end));
+  box-shadow:
+    inset 0px 1px 0px rgba(255, 255, 255, 0.25),
+    inset 0px 0px 3px rgba(255, 255, 255, 0.4);
 
-  &:hover:not(:disabled),
-  &:focus-visible:not(:disabled) {
-    background-color: #370d24;
-    border-color: #370d24;
-    color: #fff;
+  &.deboss {
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.5);
   }
+
+  &:hover:not(:disabled) {
+    --tk-button--danger-background-start: color-mix(in srgb, #cd6e6e, white 10%);
+    --tk-button--danger-background-end: color-mix(in srgb, #a34848, white 10%);
+    color: #fff1f0;
+  }
+
   &:active:not(:disabled) {
-    background-color: #370d24;
-    border-color: #370d24;
-    color: #fff;
+    --tk-button--danger-background-start: color-mix(in srgb, #cd6e6e, black 10%);
+    --tk-button--danger-background-end: color-mix(in srgb, #a34848, black 10%);
+    color: #fff1f08c;
+    transform: translateY(1px);
+  }
+
+  &:focus-visible:not(:disabled) {
+    outline: 2px dashed var(--tk-button--danger-background-start);
+    outline-offset: 2px;
   }
 }
 
 .tk-button--warning {
-  background-color: #faad14;
-  color: #fff;
-  border-color: #faad14;
+  color: #fffbe6;
+  border: 1px solid #594118;
+  background: linear-gradient(to bottom, var(--tk-button--warning-background-start), var(--tk-button--warning-background-end));
+  box-shadow:
+    inset 0px 1px 0px rgba(255, 255, 255, 0.3),
+    inset 0px 0px 3px rgba(255, 255, 255, 0.4);
 
-  &:hover:not(:disabled),
-  &:focus-visible:not(:disabled) {
-    background-color: #ffd666;
-    border-color: #ffd666;
-    color: #fff;
+  &.deboss {
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.5);
   }
+
+  &:hover:not(:disabled) {
+    --tk-button--warning-background-start: color-mix(in srgb, #e0b060, white 16%);
+    --tk-button--warning-background-end: color-mix(in srgb, #b58942, white 16%);
+    color: #fffbe6;
+  }
+
   &:active:not(:disabled) {
-    background-color: #d48806;
-    border-color: #d48806;
-    color: #fff;
+    --tk-button--warning-background-start: color-mix(in srgb, #e0b060, black 10%);
+    --tk-button--warning-background-end: color-mix(in srgb, #b58942, black 10%);
+    color: #fffbe68c;
+    transform: translateY(1px);
+  }
+
+  &:focus-visible:not(:disabled) {
+    outline: 2px dashed var(--tk-button--warning-background-start);
+    outline-offset: 2px;
   }
 }
 </style>

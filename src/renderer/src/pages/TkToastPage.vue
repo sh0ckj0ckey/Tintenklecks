@@ -4,6 +4,7 @@
     <TkButton theme="secondary" :deboss="true" @click="onClickShowToast('info')">Secondary</TkButton>
     <TkButton theme="success" :deboss="true" @click="onClickShowToast('success')">Success</TkButton>
     <TkButton theme="danger" :deboss="true" @click="onClickShowToast('error')">Danger</TkButton>
+    <TkButton theme="warning" :deboss="true" @click="onClickShowToast('error')">Warning</TkButton>
     <div ref="toastContainer" class="tk-toast-container">
       <span>This is a toast container.</span>
     </div>
@@ -41,6 +42,7 @@ const onClickShowToast = (icon: 'info' | 'success' | 'error'): void => {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
+  padding: 16px;
   gap: 8px;
 
   .tk-toast-container {
