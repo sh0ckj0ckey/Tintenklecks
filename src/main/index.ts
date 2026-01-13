@@ -25,8 +25,8 @@ function createWindow(): void {
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
 
-    mainWindow.webContents.send('window-focus-change', mainWindow?.isFocused())
     mainWindow.webContents.send('window-state-change', mainWindow?.isMaximized() ? 'maximized' : 'normal')
+    mainWindow.webContents.send('window-focus-change', mainWindow?.isFocused())
   })
 
   mainWindow.on('maximize', () => {
