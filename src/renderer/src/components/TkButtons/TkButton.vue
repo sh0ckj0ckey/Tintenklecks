@@ -32,13 +32,25 @@ const handleClick = (event: MouseEvent): void => {
 @property --tk-button--primary-background-start {
   syntax: '<color>';
   inherits: false;
-  initial-value: #4984b4;
+  initial-value: #619bcb;
 }
 
 @property --tk-button--primary-background-end {
   syntax: '<color>';
   inherits: false;
-  initial-value: #619bcb;
+  initial-value: #4984b4;
+}
+
+@property --tk-button--secondary-background-start {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #3a3a3c;
+}
+
+@property --tk-button--secondary-background-end {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #2c2c2e;
 }
 </style>
 
@@ -48,24 +60,26 @@ const handleClick = (event: MouseEvent): void => {
   align-items: center;
   justify-content: center;
   padding: 8px 16px;
-  border: none;
+  border: 1px solid transparent;
   border-radius: 4px;
   font-size: 16px;
   font-weight: bold;
   cursor: default;
-  user-select: none;
   transition:
     --tk-button--primary-background-start 0.15s,
     --tk-button--primary-background-end 0.15s,
+    --tk-button--secondary-background-start 0.15s,
+    --tk-button--secondary-background-end 0.15s,
     box-shadow 0.2s,
-    color 0.2s;
+    color 0.2s,
+    transform 0.1s;
 }
 
 .tk-button--primary {
-  color: #f8f8f8;
   /* background-color: #002fa7; */
+  color: #f8f8f8;
   border: 1px solid #002074;
-  background: linear-gradient(to top, var(--tk-button--primary-background-start), var(--tk-button--primary-background-end));
+  background: linear-gradient(to bottom, var(--tk-button--primary-background-start), var(--tk-button--primary-background-end));
   box-shadow:
     inset 0px 1px 0px rgba(255, 255, 255, 0.3),
     inset 0px 0px 3px rgba(255, 255, 255, 0.5);
@@ -75,40 +89,52 @@ const handleClick = (event: MouseEvent): void => {
   }
 
   &:hover:not(:disabled) {
-    --tk-button--primary-background-start: color-mix(in srgb, #4984b4, white 10%);
-    --tk-button--primary-background-end: color-mix(in srgb, #619bcb, white 10%);
-
+    --tk-button--primary-background-start: color-mix(in srgb, #619bcb, white 10%);
+    --tk-button--primary-background-end: color-mix(in srgb, #4984b4, white 10%);
     color: #f8f8f8;
   }
 
   &:active:not(:disabled) {
-    --tk-button--primary-background-start: color-mix(in srgb, #4984b4, black 10%);
-    --tk-button--primary-background-end: color-mix(in srgb, #619bcb, black 10%);
-
+    --tk-button--primary-background-start: color-mix(in srgb, #619bcb, black 10%);
+    --tk-button--primary-background-end: color-mix(in srgb, #4984b4, black 10%);
     color: #f8f8f88c;
+    transform: translateY(1px);
   }
 
   &:focus-visible:not(:disabled) {
-    outline: 2px dashed #002074;
+    outline: 2px dashed var(--tk-button--primary-background-start);
     outline-offset: 2px;
   }
 }
 
 .tk-button--secondary {
-  background-color: #f0f0f0;
-  color: #333;
-  border-color: #d9d9d9;
+  color: #f8f8f8;
+  border: 1px solid #1a1a1a;
+  background: linear-gradient(to bottom, var(--tk-button--secondary-background-start), var(--tk-button--secondary-background-end));
+  box-shadow:
+    inset 0px 1px 0px rgba(255, 255, 255, 0.1),
+    inset 0px 0px 3px rgba(255, 255, 255, 0.05);
 
-  &:hover:not(:disabled),
-  &:focus-visible:not(:disabled) {
-    background-color: #e0e0e0;
-    border-color: #bfbfbf;
-    color: #333;
+  &.deboss {
+    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.5);
   }
+
+  &:hover:not(:disabled) {
+    --tk-button--secondary-background-start: color-mix(in srgb, #3a3a3c, white 4%);
+    --tk-button--secondary-background-end: color-mix(in srgb, #2c2c2e, white 4%);
+    color: #f8f8f8;
+  }
+
   &:active:not(:disabled) {
-    background-color: #d9d9d9;
-    border-color: #bfbfbf;
-    color: #333;
+    --tk-button--secondary-background-start: color-mix(in srgb, #3a3a3c, black 10%);
+    --tk-button--secondary-background-end: color-mix(in srgb, #2c2c2e, black 10%);
+    color: #f8f8f88c;
+    transform: translateY(1px);
+  }
+
+  &:focus-visible:not(:disabled) {
+    outline: 2px dashed var(--tk-button--secondary-background-start);
+    outline-offset: 2px;
   }
 }
 
