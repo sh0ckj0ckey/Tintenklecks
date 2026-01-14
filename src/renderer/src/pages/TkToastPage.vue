@@ -1,23 +1,32 @@
 <template>
   <div class="tk-toast-page">
-    <TkButton theme="primary" :deboss="true" :disabled="true" @click="onClickShowToast('info')">Primary</TkButton>
-    <TkButton theme="primary" :deboss="true" @click="onClickShowToast('info')">Primary</TkButton>
-    <TkButton theme="secondary" :deboss="true" @click="onClickShowToast('info')">Secondary</TkButton>
-    <TkButton theme="success" :deboss="true" @click="onClickShowToast('success')">Success</TkButton>
-    <TkButton theme="warning" :deboss="true" @click="onClickShowToast('warning')">Warning</TkButton>
-    <TkButton theme="danger" :deboss="true" @click="onClickShowToast('error')">Danger</TkButton>
-    <div ref="toastContainer" class="tk-toast-container">
-      <span>This is a toast container.</span>
+    <div>
+      <TkButton theme="primary" :deboss="true" @click="onClickShowToast('info')">Primary</TkButton>
+      <TkButton theme="secondary" :deboss="true" @click="onClickShowToast('info')">Secondary</TkButton>
+      <TkButton theme="success" :deboss="true" @click="onClickShowToast('success')">Success</TkButton>
+      <TkButton theme="warning" :deboss="true" @click="onClickShowToast('warning')">Warning</TkButton>
+      <TkButton theme="danger" :deboss="true" @click="onClickShowToast('error')">Danger</TkButton>
     </div>
-    <TkButton ref="vueComponentToastContainer" theme="secondary" :deboss="true" style="position: relative"
-      >This is a Vue Component toast container.</TkButton
-    >
+    <div>
+      <TkButton theme="primary" :deboss="true" :disabled="true" @click="onClickShowToast('info')">Primary</TkButton>
+      <TkButton theme="secondary" :deboss="true" :disabled="false" @click="onClickShowToastInElement('info')">Show in Element</TkButton>
+      <div ref="toastContainer" class="tk-toast-container">
+        <span>This is a toast container.</span>
+      </div>
+    </div>
+    <div>
+      <TkHyperlinkButton :emboss="true" @click="onClickShowToastInComponent('info')"> Hyperlink Button </TkHyperlinkButton>
+      <TkButton ref="vueComponentToastContainer" style="position: relative; height: 64px" theme="primary" :deboss="true">
+        This is a Vue Component toast container.
+      </TkButton>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useTemplateRef } from 'vue'
 import TkButton from '../components/TkButtons/TkButton.vue'
+import TkHyperlinkButton from '../components/TkButtons/TkHyperlinkButton.vue'
 import { showToast } from '../components/TkToast'
 
 const toastContainer = useTemplateRef('toastContainer')
@@ -31,6 +40,28 @@ const onClickShowToast = (icon: 'info' | 'success' | 'warning' | 'error'): void 
     placement: 'top',
     offset: 32,
     container: undefined
+  })
+}
+
+const onClickShowToastInElement = (icon: 'info' | 'success' | 'warning' | 'error'): void => {
+  showToast({
+    text: `Hello, this is a ${icon} tk-toast.`,
+    icon: icon,
+    duration: 5,
+    placement: 'center',
+    offset: 0,
+    container: toastContainer.value
+  })
+}
+
+const onClickShowToastInComponent = (icon: 'info' | 'success' | 'warning' | 'error'): void => {
+  showToast({
+    text: `Hello, this is a ${icon} tk-toast.`,
+    icon: icon,
+    duration: 5,
+    placement: 'center',
+    offset: 0,
+    container: vueComponentToastContainer.value
   })
 }
 </script>
