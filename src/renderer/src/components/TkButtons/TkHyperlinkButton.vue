@@ -1,6 +1,8 @@
 <template>
   <button type="button" class="tk-hyperlink-button" :class="{ emboss: props.emboss }" :disabled="props.disabled" @click="onClick">
-    <slot></slot>
+    <span class="tk-hyperlink-button-content">
+      <slot></slot>
+    </span>
   </button>
 </template>
 
@@ -27,29 +29,57 @@ const onClick = (event: MouseEvent): void => {
   align-items: center;
   justify-content: center;
   padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
   background-color: transparent;
-  font-size: 16px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 14px;
   font-weight: normal;
+  color: #0078d4;
   cursor: pointer;
+  transition:
+    transform 0.1s,
+    background-color 0.2s,
+    color 0.2s,
+    box-shadow 0.2s,
+    filter 0.2s;
+
+  .tk-hyperlink-button-content {
+    display: contents;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
 
   &.emboss {
-    text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.5);
+    filter: drop-shadow(-1px -1px 0px rgba(255, 255, 255, 0.08)) drop-shadow(1px 1px 0px rgba(0, 0, 0, 0.6));
   }
 
   &:hover:not(:disabled) {
-    background-color: #88888828;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #ffffffe6;
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+
+    &.emboss {
+      filter: drop-shadow(1px 1px 0px rgba(255, 255, 255, 0.15)) drop-shadow(-1px -1px 0px rgba(0, 0, 0, 0.6));
+    }
   }
 
   &:active:not(:disabled) {
-    background-color: #88888820;
-    filter: brightness(1);
-    opacity: 0.8;
+    transform: translateY(1px);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #ffffffb3;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.03);
   }
 
   &:focus-visible {
-    outline: 2px solid currentColor;
+    outline: 2px dashed currentColor;
     outline-offset: 2px;
   }
 }
