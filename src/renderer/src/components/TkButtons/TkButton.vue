@@ -6,7 +6,9 @@
     :disabled="props.disabled"
     @click="onClick"
   >
-    <slot></slot>
+    <span class="tk-button-content">
+      <slot></slot>
+    </span>
   </button>
 </template>
 
@@ -94,10 +96,12 @@ const onClick = (event: MouseEvent): void => {
   align-items: center;
   justify-content: center;
   padding: 8px 16px;
+  background-color: var(--tk-color-background-deep);
   border: 1px solid transparent;
   border-radius: 4px;
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 14px;
+  font-weight: normal;
+  color: var(--tk-color-foreground);
   cursor: default;
   transition:
     --tk-button--primary-background-start 0.15s,
@@ -110,9 +114,18 @@ const onClick = (event: MouseEvent): void => {
     --tk-button--danger-background-end 0.15s,
     --tk-button--warning-background-start 0.15s,
     --tk-button--warning-background-end 0.15s,
-    box-shadow 0.2s,
+    transform 0.1s,
     color 0.2s,
-    transform 0.1s;
+    box-shadow 0.2s;
+
+  .tk-button-content {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: inherit;
+    justify-content: inherit;
+    transition: filter 0.2s;
+  }
 
   &:disabled {
     opacity: 0.6;
@@ -120,7 +133,6 @@ const onClick = (event: MouseEvent): void => {
 }
 
 .tk-button--primary {
-  /* background-color: #002fa7; */
   color: #f8f8f8;
   border: 1px solid #002074;
   background: linear-gradient(to bottom, var(--tk-button--primary-background-start), var(--tk-button--primary-background-end));
@@ -128,14 +140,18 @@ const onClick = (event: MouseEvent): void => {
     inset 0px 1px 0px rgba(255, 255, 255, 0.3),
     inset 0px 0px 3px rgba(255, 255, 255, 0.5);
 
-  &.deboss {
-    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.5);
+  &.deboss .tk-button-content {
+    filter: drop-shadow(0px -1px 0px rgba(0, 0, 0, 0.5)) drop-shadow(0px 1px 0px rgba(255, 255, 255, 0.15));
   }
 
   &:hover:not(:disabled) {
     --tk-button--primary-background-start: color-mix(in srgb, #619bcb, white 10%);
     --tk-button--primary-background-end: color-mix(in srgb, #4984b4, white 10%);
     color: #f8f8f8;
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.3),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.5);
   }
 
   &:active:not(:disabled) {
@@ -143,6 +159,10 @@ const onClick = (event: MouseEvent): void => {
     --tk-button--primary-background-end: color-mix(in srgb, #4984b4, black 10%);
     color: #f8f8f88c;
     transform: translateY(1px);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.3),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.5);
   }
 
   &:focus-visible:not(:disabled) {
@@ -159,14 +179,18 @@ const onClick = (event: MouseEvent): void => {
     inset 0px 1px 0px rgba(255, 255, 255, 0.1),
     inset 0px 0px 3px rgba(255, 255, 255, 0.05);
 
-  &.deboss {
-    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.5);
+  &.deboss .tk-button-content {
+    filter: drop-shadow(0px -1px 0px rgba(0, 0, 0, 0.5)) drop-shadow(0px 1px 0px rgba(255, 255, 255, 0.15));
   }
 
   &:hover:not(:disabled) {
     --tk-button--secondary-background-start: color-mix(in srgb, #3a3a3c, white 4%);
     --tk-button--secondary-background-end: color-mix(in srgb, #2c2c2e, white 4%);
     color: #f8f8f8;
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.1),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.05);
   }
 
   &:active:not(:disabled) {
@@ -174,10 +198,14 @@ const onClick = (event: MouseEvent): void => {
     --tk-button--secondary-background-end: color-mix(in srgb, #2c2c2e, black 10%);
     color: #f8f8f88c;
     transform: translateY(1px);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.1),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.05);
   }
 
   &:focus-visible:not(:disabled) {
-    outline: 2px dashed #7e7e7e;
+    outline: 2px dashed currentColor;
     outline-offset: 2px;
   }
 }
@@ -190,14 +218,18 @@ const onClick = (event: MouseEvent): void => {
     inset 0px 1px 0px rgba(255, 255, 255, 0.25),
     inset 0px 0px 3px rgba(255, 255, 255, 0.4);
 
-  &.deboss {
-    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.5);
+  &.deboss .tk-button-content {
+    filter: drop-shadow(0px -1px 0px rgba(0, 0, 0, 0.4)) drop-shadow(0px 1px 0px rgba(255, 255, 255, 0.2));
   }
 
   &:hover:not(:disabled) {
     --tk-button--success-background-start: color-mix(in srgb, #1db054, white 10%);
     --tk-button--success-background-end: color-mix(in srgb, #0b6b30, white 10%);
     color: #f0fdf4;
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.25),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.4);
   }
 
   &:active:not(:disabled) {
@@ -205,6 +237,10 @@ const onClick = (event: MouseEvent): void => {
     --tk-button--success-background-end: color-mix(in srgb, #0b6b30, black 10%);
     color: #f0fdf48c;
     transform: translateY(1px);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.25),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.4);
   }
 
   &:focus-visible:not(:disabled) {
@@ -221,14 +257,18 @@ const onClick = (event: MouseEvent): void => {
     inset 0px 1px 0px rgba(255, 255, 255, 0.65),
     inset 0px 0px 3px rgba(255, 255, 255, 0.95);
 
-  &.deboss {
-    text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.4);
+  &.deboss .tk-button-content {
+    filter: drop-shadow(0px -1px 0px rgba(0, 0, 0, 0.25)) drop-shadow(0px 1px 0px rgba(255, 255, 255, 0.6));
   }
 
   &:hover:not(:disabled) {
     --tk-button--warning-background-start: color-mix(in srgb, #ffdb70, white 20%);
     --tk-button--warning-background-end: color-mix(in srgb, #e09600, white 20%);
     color: #1f1f1f;
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.65),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.95);
   }
 
   &:active:not(:disabled) {
@@ -236,6 +276,10 @@ const onClick = (event: MouseEvent): void => {
     --tk-button--warning-background-end: color-mix(in srgb, #e09600, black 10%);
     color: #1f1f1f8c;
     transform: translateY(1px);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.65),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.95);
   }
 
   &:focus-visible:not(:disabled) {
@@ -252,14 +296,18 @@ const onClick = (event: MouseEvent): void => {
     inset 0px 1px 0px rgba(255, 255, 255, 0.25),
     inset 0px 0px 3px rgba(255, 255, 255, 0.75);
 
-  &.deboss {
-    text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.5);
+  &.deboss .tk-button-content {
+    filter: drop-shadow(0px -1px 0px rgba(0, 0, 0, 0.5)) drop-shadow(0px 1px 0px rgba(255, 255, 255, 0.15));
   }
 
   &:hover:not(:disabled) {
     --tk-button--danger-background-start: color-mix(in srgb, #ff4b59, white 16%);
     --tk-button--danger-background-end: color-mix(in srgb, #d10014, white 16%);
     color: #fff1f0;
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.25),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.75);
   }
 
   &:active:not(:disabled) {
@@ -267,6 +315,10 @@ const onClick = (event: MouseEvent): void => {
     --tk-button--danger-background-end: color-mix(in srgb, #d10014, black 10%);
     color: #fff1f0b2;
     transform: translateY(1px);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.25),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.75);
   }
 
   &:focus-visible:not(:disabled) {
