@@ -106,7 +106,7 @@ onBeforeUnmount(() => {
     padding: 12px 16px;
     pointer-events: auto;
 
-    border: 1px solid transparent;
+    border: 1px solid #1a1a1a;
     border-radius: 4px;
 
     background-origin: border-box;
@@ -122,8 +122,10 @@ onBeforeUnmount(() => {
       );
 
     box-shadow:
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
-      rgba(0, 0, 0, 0.4) 0px 4px 12px;
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.15),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+      0 8px 20px rgba(0, 0, 0, 0.3),
+      0 2px 8px rgba(0, 0, 0, 0.2);
 
     .toast-icon {
       flex: none;

@@ -29,7 +29,7 @@ const onClickShowToast = (icon: 'info' | 'success' | 'warning' | 'error'): void 
     icon: icon,
     duration: 5,
     placement: 'top',
-    offset: 16,
+    offset: 32,
     container: undefined
   })
 }
