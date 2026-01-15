@@ -1,9 +1,9 @@
 <template>
   <header :class="['app-title-bar', { 'app-title-bar-blurred': !isAppWindowFocused }]">
     <div class="app-title-bar-navigation-buttons">
-      <button v-if="canGoBack" class="app-title-bar-navigation-button" @click="tryGoBack">
+      <TkHyperlinkButton v-if="canGoBack" :emboss="false" class="app-title-bar-navigation-button" @click="tryGoBack">
         <IconWindowBack class="app-title-bar-navigation-button-icon" />
-      </button>
+      </TkHyperlinkButton>
     </div>
 
     <div class="app-title-bar-drag-region" @dblclick="toggleMaximizeAppWindow">
@@ -30,6 +30,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useBackNavigation } from '@renderer/composables/useBackNavigation'
+import TkHyperlinkButton from './components/TkButtons/TkHyperlinkButton.vue'
 import IconWindowClose from '@renderer/components/TkIcons/IconWindowClose.vue'
 import IconWindowMaximize from '@renderer/components/TkIcons/IconWindowMaximize.vue'
 import IconWindowMinimize from '@renderer/components/TkIcons/IconWindowMinimize.vue'
@@ -132,7 +133,7 @@ const closeAppWindow = (): void => {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding-left: 16px;
+    padding-left: 12px;
     font-size: 12px;
     font-weight: 400;
     -webkit-app-region: drag;
