@@ -124,7 +124,6 @@ const onClick = (event: MouseEvent): void => {
     height: 100%;
     align-items: inherit;
     justify-content: inherit;
-    transition: filter 0.2s;
   }
 
   &:disabled {
