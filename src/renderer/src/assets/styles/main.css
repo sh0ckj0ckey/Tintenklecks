@@ -47,6 +47,10 @@ body {
   -webkit-user-drag: none;
 }
 
+img {
+  -webkit-user-drag: none;
+}
+
 input,
 textarea,
 code {

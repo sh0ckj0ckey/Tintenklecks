@@ -56,7 +56,7 @@ const onClick = (event: MouseEvent): void => {
   }
 
   &.emboss .tk-hyperlink-button-content {
-    filter: drop-shadow(-1px -1px 0px rgba(255, 255, 255, 0.08)) drop-shadow(1px 1px 0px rgba(0, 0, 0, 0.6));
+    filter: drop-shadow(-0.04em -0.06em 0px rgba(255, 255, 255, 0.08)) drop-shadow(0.04em 0.06em 0px rgba(0, 0, 0, 0.6));
   }
 
   &:hover:not(:disabled) {

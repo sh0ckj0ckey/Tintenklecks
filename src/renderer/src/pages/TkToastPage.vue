@@ -7,17 +7,17 @@
       <TkButton theme="warning" :deboss="true" @click="onClickShowToast('warning')">Warning</TkButton>
       <TkButton theme="danger" :deboss="true" @click="onClickShowToast('error')">Danger</TkButton>
     </div>
-    <div>
+    <div style="display: flex; gap: 8px">
       <TkButton theme="primary" :deboss="true" :disabled="true" @click="onClickShowToast('info')">Primary</TkButton>
       <TkButton theme="secondary" :deboss="true" :disabled="false" @click="onClickShowToastInElement('info')">Show in Element</TkButton>
       <div ref="toastContainer" class="tk-toast-container">
         <span>This is a toast container.</span>
       </div>
     </div>
-    <div>
+    <div style="display: flex; gap: 8px">
       <TkHyperlinkButton :emboss="true" @click="onClickShowToastInComponent('info')"> Hyperlink Button </TkHyperlinkButton>
-      <TkButton ref="vueComponentToastContainer" style="position: relative; height: 64px" theme="primary" :deboss="true">
-        This is a Vue Component toast container.
+      <TkButton ref="vueComponentToastContainer" style="position: relative" theme="primary" :deboss="true">
+        <img src="@renderer/assets/images/avatar.jpg" alt="Avatar" style="width: 128px; border-radius: 4px; object-fit: contain" />
       </TkButton>
     </div>
   </div>

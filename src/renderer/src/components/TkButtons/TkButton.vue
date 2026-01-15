@@ -141,7 +141,7 @@ const onClick = (event: MouseEvent): void => {
     inset 0px 0px 3px rgba(255, 255, 255, 0.5);
 
   &.deboss .tk-button-content {
-    filter: drop-shadow(0px -1px 0px rgba(0, 0, 0, 0.5)) drop-shadow(0px 1px 0px rgba(255, 255, 255, 0.15));
+    filter: drop-shadow(0px -0.06em 0px rgba(0, 0, 0, 0.5)) drop-shadow(0px 0.05em 0px rgba(255, 255, 255, 0.15));
   }
 
   &:hover:not(:disabled) {
@@ -180,7 +180,7 @@ const onClick = (event: MouseEvent): void => {
     inset 0px 0px 3px rgba(255, 255, 255, 0.05);
 
   &.deboss .tk-button-content {
-    filter: drop-shadow(0px -1px 0px rgba(0, 0, 0, 0.5)) drop-shadow(0px 1px 0px rgba(255, 255, 255, 0.15));
+    filter: drop-shadow(0px -0.08em 0px rgba(0, 0, 0, 0.5)) drop-shadow(0px 0.05em 0px rgba(255, 255, 255, 0.15));
   }
 
   &:hover:not(:disabled) {
@@ -219,7 +219,7 @@ const onClick = (event: MouseEvent): void => {
     inset 0px 0px 3px rgba(255, 255, 255, 0.4);
 
   &.deboss .tk-button-content {
-    filter: drop-shadow(0px -1px 0px rgba(0, 0, 0, 0.4)) drop-shadow(0px 1px 0px rgba(255, 255, 255, 0.2));
+    filter: drop-shadow(0px -0.08em 0px rgba(0, 0, 0, 0.4)) drop-shadow(0px 0.05em 0px rgba(255, 255, 255, 0.2));
   }
 
   &:hover:not(:disabled) {
@@ -258,7 +258,7 @@ const onClick = (event: MouseEvent): void => {
     inset 0px 0px 3px rgba(255, 255, 255, 0.95);
 
   &.deboss .tk-button-content {
-    filter: drop-shadow(0px -1px 0px rgba(0, 0, 0, 0.25)) drop-shadow(0px 1px 0px rgba(255, 255, 255, 0.6));
+    filter: drop-shadow(0px -0.05em 0px rgba(0, 0, 0, 0.25)) drop-shadow(0px 0.08em 0px rgba(255, 255, 255, 0.6));
   }
 
   &:hover:not(:disabled) {
@@ -297,7 +297,7 @@ const onClick = (event: MouseEvent): void => {
     inset 0px 0px 3px rgba(255, 255, 255, 0.75);
 
   &.deboss .tk-button-content {
-    filter: drop-shadow(0px -1px 0px rgba(0, 0, 0, 0.5)) drop-shadow(0px 1px 0px rgba(255, 255, 255, 0.15));
+    filter: drop-shadow(0px -0.05em 0px rgba(0, 0, 0, 0.5)) drop-shadow(0px 0.05em 0px rgba(255, 255, 255, 0.15));
   }
 
   &:hover:not(:disabled) {
