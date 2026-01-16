@@ -96,7 +96,7 @@ const onClick = (event: MouseEvent): void => {
   align-items: center;
   justify-content: center;
   padding: 8px 16px;
-  background-color: var(--tk-color-background-deep);
+  background-color: transparent;
   border: 1px solid transparent;
   border-radius: 4px;
   font-size: 14px;
