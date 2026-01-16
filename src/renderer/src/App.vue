@@ -19,6 +19,7 @@ const router = useRouter()
 onMounted(async () => {
   await router.replace({ name: RouteName.Home })
   await router.push({ name: RouteName.Toast })
+  await router.push({ name: RouteName.Buttons })
 })
 </script>
 
