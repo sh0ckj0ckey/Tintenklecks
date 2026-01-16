@@ -133,7 +133,7 @@ const onClick = (event: MouseEvent): void => {
 
 .tk-button--primary {
   color: #f8f8f8;
-  border: 1px solid #002074;
+  border: 1px solid #153483;
   background: linear-gradient(to bottom, var(--tk-button--primary-background-start), var(--tk-button--primary-background-end));
   box-shadow:
     inset 0px 1px 0px rgba(255, 255, 255, 0.3),
@@ -172,7 +172,7 @@ const onClick = (event: MouseEvent): void => {
 
 .tk-button--secondary {
   color: #f8f8f8;
-  border: 1px solid #1a1a1a;
+  border: 1px solid #202020;
   background: linear-gradient(to bottom, var(--tk-button--secondary-background-start), var(--tk-button--secondary-background-end));
   box-shadow:
     inset 0px 1px 0px rgba(255, 255, 255, 0.1),
