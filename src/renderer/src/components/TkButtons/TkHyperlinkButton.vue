@@ -1,5 +1,11 @@
 <template>
-  <button type="button" class="tk-hyperlink-button" :class="{ emboss: props.emboss }" :disabled="props.disabled" @click="onClick">
+  <button
+    type="button"
+    class="tk-hyperlink-button"
+    :class="[`tk-hyperlink-button--${props.theme}`, { emboss: props.emboss }]"
+    :disabled="props.disabled"
+    @click="onClick"
+  >
     <span class="tk-hyperlink-button-content">
       <slot></slot>
     </span>
@@ -8,6 +14,7 @@
 
 <script lang="ts" setup>
 const props = defineProps<{
+  theme: 'primary' | 'secondary' | 'success' | 'warning' | 'danger'
   emboss?: boolean
   disabled?: boolean
 }>()
@@ -25,6 +32,12 @@ const onClick = (event: MouseEvent): void => {
 
 <style scoped>
 .tk-hyperlink-button {
+  --tk-button--primary-foreground: #619bcb;
+  --tk-button--secondary-foreground: #3a3a3c;
+  --tk-button--success-foreground: #1db054;
+  --tk-button--warning-foreground: #ffdb70;
+  --tk-button--danger-foreground: #ff4b59;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
