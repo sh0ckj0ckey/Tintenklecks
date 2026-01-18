@@ -98,6 +98,12 @@ const onClick = (event: MouseEvent): void => {
   --tk-button--warning-foreground: #1f1f1f;
   --tk-button--danger-foreground: #fff1f0;
 
+  --tk-button--primary-bordercolor: #153483;
+  --tk-button--secondary-bordercolor: #202020;
+  --tk-button--success-bordercolor: #1e3a23;
+  --tk-button--warning-bordercolor: #594118;
+  --tk-button--danger-bordercolor: #4a1a1a;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -138,7 +144,7 @@ const onClick = (event: MouseEvent): void => {
 
 .tk-button--primary {
   color: var(--tk-button--primary-foreground);
-  border: 1px solid #153483;
+  border: 1px solid var(--tk-button--primary-bordercolor);
   background: linear-gradient(to bottom, var(--tk-button--primary-background-start), var(--tk-button--primary-background-end));
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0),
@@ -177,7 +183,7 @@ const onClick = (event: MouseEvent): void => {
 
 .tk-button--secondary {
   color: var(--tk-button--secondary-foreground);
-  border: 1px solid #202020;
+  border: 1px solid var(--tk-button--secondary-bordercolor);
   background: linear-gradient(to bottom, var(--tk-button--secondary-background-start), var(--tk-button--secondary-background-end));
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0),
@@ -216,7 +222,7 @@ const onClick = (event: MouseEvent): void => {
 
 .tk-button--success {
   color: var(--tk-button--success-foreground);
-  border: 1px solid #1e3a23;
+  border: 1px solid var(--tk-button--success-bordercolor);
   background: linear-gradient(to bottom, var(--tk-button--success-background-start), var(--tk-button--success-background-end));
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0),
@@ -255,7 +261,7 @@ const onClick = (event: MouseEvent): void => {
 
 .tk-button--warning {
   color: var(--tk-button--warning-foreground);
-  border: 1px solid #594118;
+  border: 1px solid var(--tk-button--warning-bordercolor);
   background: linear-gradient(to bottom, var(--tk-button--warning-background-start), var(--tk-button--warning-background-end));
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0),
@@ -294,7 +300,7 @@ const onClick = (event: MouseEvent): void => {
 
 .tk-button--danger {
   color: var(--tk-button--danger-foreground);
-  border: 1px solid #4a1a1a;
+  border: 1px solid var(--tk-button--danger-bordercolor);
   background: linear-gradient(to bottom, var(--tk-button--danger-background-start), var(--tk-button--danger-background-end));
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0),
