@@ -66,17 +66,6 @@ const onClick = (event: MouseEvent): void => {
   initial-value: #0b6b30;
 }
 
-@property --tk-button--danger-background-start {
-  syntax: '<color>';
-  inherits: false;
-  initial-value: #ff4b59;
-}
-@property --tk-button--danger-background-end {
-  syntax: '<color>';
-  inherits: false;
-  initial-value: #d10014;
-}
-
 @property --tk-button--warning-background-start {
   syntax: '<color>';
   inherits: false;
@@ -88,15 +77,26 @@ const onClick = (event: MouseEvent): void => {
   inherits: false;
   initial-value: #e09600;
 }
+
+@property --tk-button--danger-background-start {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #ff4b59;
+}
+@property --tk-button--danger-background-end {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #d10014;
+}
 </style>
 
 <style scoped>
 .tk-button {
-  --tk-button-primary-foreground: #f8f8f8;
-  --tk-button-secondary-foreground: #f8f8f8;
-  --tk-button-success-foreground: #f0fdf4;
-  --tk-button-warning-foreground: #1f1f1f;
-  --tk-button-danger-foreground: #fff1f0;
+  --tk-button--primary-foreground: #f8f8f8;
+  --tk-button--secondary-foreground: #f8f8f8;
+  --tk-button--success-foreground: #f0fdf4;
+  --tk-button--warning-foreground: #1f1f1f;
+  --tk-button--danger-foreground: #fff1f0;
 
   display: inline-flex;
   align-items: center;
@@ -107,7 +107,6 @@ const onClick = (event: MouseEvent): void => {
   border-radius: 4px;
   font-size: 14px;
   font-weight: normal;
-  color: var(--tk-color-foreground);
   cursor: default;
   transition:
     --tk-button--primary-background-start 0.15s,
@@ -138,7 +137,7 @@ const onClick = (event: MouseEvent): void => {
 }
 
 .tk-button--primary {
-  color: var(--tk-button-primary-foreground);
+  color: var(--tk-button--primary-foreground);
   border: 1px solid #153483;
   background: linear-gradient(to bottom, var(--tk-button--primary-background-start), var(--tk-button--primary-background-end));
   box-shadow:
@@ -162,7 +161,7 @@ const onClick = (event: MouseEvent): void => {
   &:active:not(:disabled) {
     --tk-button--primary-background-start: color-mix(in srgb, #619bcb, black 10%);
     --tk-button--primary-background-end: color-mix(in srgb, #4984b4, black 10%);
-    color: color-mix(in srgb, var(--tk-button-primary-foreground), black 20%);
+    color: color-mix(in srgb, var(--tk-button--primary-foreground), black 20%);
     transform: translateY(1px);
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.2),
@@ -177,7 +176,7 @@ const onClick = (event: MouseEvent): void => {
 }
 
 .tk-button--secondary {
-  color: var(--tk-button-secondary-foreground);
+  color: var(--tk-button--secondary-foreground);
   border: 1px solid #202020;
   background: linear-gradient(to bottom, var(--tk-button--secondary-background-start), var(--tk-button--secondary-background-end));
   box-shadow:
@@ -201,7 +200,7 @@ const onClick = (event: MouseEvent): void => {
   &:active:not(:disabled) {
     --tk-button--secondary-background-start: color-mix(in srgb, #3a3a3c, black 10%);
     --tk-button--secondary-background-end: color-mix(in srgb, #2c2c2e, black 10%);
-    color: color-mix(in srgb, var(--tk-button-secondary-foreground), black 20%);
+    color: color-mix(in srgb, var(--tk-button--secondary-foreground), black 20%);
     transform: translateY(1px);
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.2),
@@ -216,7 +215,7 @@ const onClick = (event: MouseEvent): void => {
 }
 
 .tk-button--success {
-  color: var(--tk-button-success-foreground);
+  color: var(--tk-button--success-foreground);
   border: 1px solid #1e3a23;
   background: linear-gradient(to bottom, var(--tk-button--success-background-start), var(--tk-button--success-background-end));
   box-shadow:
@@ -240,7 +239,7 @@ const onClick = (event: MouseEvent): void => {
   &:active:not(:disabled) {
     --tk-button--success-background-start: color-mix(in srgb, #1db054, black 10%);
     --tk-button--success-background-end: color-mix(in srgb, #0b6b30, black 10%);
-    color: color-mix(in srgb, var(--tk-button-success-foreground), black 20%);
+    color: color-mix(in srgb, var(--tk-button--success-foreground), black 20%);
     transform: translateY(1px);
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.2),
@@ -255,7 +254,7 @@ const onClick = (event: MouseEvent): void => {
 }
 
 .tk-button--warning {
-  color: var(--tk-button-warning-foreground);
+  color: var(--tk-button--warning-foreground);
   border: 1px solid #594118;
   background: linear-gradient(to bottom, var(--tk-button--warning-background-start), var(--tk-button--warning-background-end));
   box-shadow:
@@ -279,7 +278,7 @@ const onClick = (event: MouseEvent): void => {
   &:active:not(:disabled) {
     --tk-button--warning-background-start: color-mix(in srgb, #ffdb70, black 10%);
     --tk-button--warning-background-end: color-mix(in srgb, #e09600, black 10%);
-    color: color-mix(in srgb, var(--tk-button-warning-foreground), black 20%);
+    color: color-mix(in srgb, var(--tk-button--warning-foreground), black 20%);
     transform: translateY(1px);
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.2),
@@ -294,7 +293,7 @@ const onClick = (event: MouseEvent): void => {
 }
 
 .tk-button--danger {
-  color: var(--tk-button-danger-foreground);
+  color: var(--tk-button--danger-foreground);
   border: 1px solid #4a1a1a;
   background: linear-gradient(to bottom, var(--tk-button--danger-background-start), var(--tk-button--danger-background-end));
   box-shadow:
@@ -318,7 +317,7 @@ const onClick = (event: MouseEvent): void => {
   &:active:not(:disabled) {
     --tk-button--danger-background-start: color-mix(in srgb, #ff4b59, black 10%);
     --tk-button--danger-background-end: color-mix(in srgb, #d10014, black 10%);
-    color: color-mix(in srgb, var(--tk-button-danger-foreground), black 20%);
+    color: color-mix(in srgb, var(--tk-button--danger-foreground), black 20%);
     transform: translateY(1px);
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.2),
