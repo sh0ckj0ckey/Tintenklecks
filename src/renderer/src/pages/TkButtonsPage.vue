@@ -8,8 +8,18 @@
       <TkButton theme="danger" :deboss="true">Danger</TkButton>
     </div>
     <div style="display: flex; gap: 8px">
-      <TkHyperlinkButton :emboss="true"> Hyperlink Button </TkHyperlinkButton>
-      <TkToggleButton v-model="isOn" theme="primary" :deboss="true"> Toggle Button </TkToggleButton>
+      <TkToggleButton v-model="isOn" theme="primary" :deboss="true">Primary</TkToggleButton>
+      <TkToggleButton v-model="isOn" theme="secondary" :deboss="true">Secondary</TkToggleButton>
+      <TkToggleButton v-model="isOn" theme="success" :deboss="true">Success</TkToggleButton>
+      <TkToggleButton v-model="isOn" theme="warning" :deboss="true">Warning</TkToggleButton>
+      <TkToggleButton v-model="isOn" theme="danger" :deboss="true">Danger</TkToggleButton>
+    </div>
+    <div style="display: flex; gap: 8px">
+      <TkHyperlinkButton theme="primary" :emboss="true">Primary</TkHyperlinkButton>
+      <TkHyperlinkButton theme="secondary" :emboss="true">Secondary</TkHyperlinkButton>
+      <TkHyperlinkButton theme="success" :emboss="true">Success</TkHyperlinkButton>
+      <TkHyperlinkButton theme="warning" :emboss="true">Warning</TkHyperlinkButton>
+      <TkHyperlinkButton theme="danger" :emboss="true">Danger</TkHyperlinkButton>
     </div>
   </div>
 </template>
