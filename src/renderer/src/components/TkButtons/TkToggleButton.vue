@@ -4,6 +4,8 @@
     class="tk-toggle-button"
     :class="[`tk-toggle-button--${props.theme}`, props.modelValue ? 'on' : 'off', { deboss: props.deboss }]"
     :disabled="props.disabled"
+    :aria-disabled="props.disabled"
+    :aria-pressed="props.modelValue"
     @click="onClick"
   >
     <span class="tk-toggle-button-content">
@@ -34,92 +36,58 @@ const onClick = (event: MouseEvent): void => {
 </script>
 
 <style>
-@property --tk-toggle-button--primary-background-start {
+@property --tk-toggle-button-background-linear-gradient-start {
   syntax: '<color>';
   inherits: false;
-  initial-value: #619bcb00;
+  initial-value: transparent;
 }
 
-@property --tk-toggle-button--primary-background-end {
+@property --tk-toggle-button-background-linear-gradient-end {
   syntax: '<color>';
   inherits: false;
-  initial-value: #4984b400;
-}
-
-@property --tk-toggle-button--secondary-background-start {
-  syntax: '<color>';
-  inherits: false;
-  initial-value: #3a3a3c00;
-}
-
-@property --tk-toggle-button--secondary-background-end {
-  syntax: '<color>';
-  inherits: false;
-  initial-value: #2c2c2e00;
-}
-
-@property --tk-toggle-button--success-background-start {
-  syntax: '<color>';
-  inherits: false;
-  initial-value: #1db05400;
-}
-@property --tk-toggle-button--success-background-end {
-  syntax: '<color>';
-  inherits: false;
-  initial-value: #0b6b3000;
-}
-
-@property --tk-toggle-button--danger-background-start {
-  syntax: '<color>';
-  inherits: false;
-  initial-value: #ff4b5900;
-}
-@property --tk-toggle-button--danger-background-end {
-  syntax: '<color>';
-  inherits: false;
-  initial-value: #d1001400;
-}
-
-@property --tk-toggle-button--warning-background-start {
-  syntax: '<color>';
-  inherits: false;
-  initial-value: #ffdb7000;
-}
-
-@property --tk-toggle-button--warning-background-end {
-  syntax: '<color>';
-  inherits: false;
-  initial-value: #e0960000;
+  initial-value: transparent;
 }
 </style>
 
 <style scoped>
 .tk-toggle-button {
+  --tk-toggle-button--primary-foreground: #f8f8f8;
+  --tk-toggle-button--secondary-foreground: #f8f8f8;
+  --tk-toggle-button--success-foreground: #f0fdf4;
+  --tk-toggle-button--warning-foreground: #1f1f1f;
+  --tk-toggle-button--danger-foreground: #fff1f0;
+
+  --tk-toggle-button--primary-border: #153483;
+  --tk-toggle-button--secondary-border: #202020;
+  --tk-toggle-button--success-border: #1e3a23;
+  --tk-toggle-button--warning-border: #594118;
+  --tk-toggle-button--danger-border: #4a1a1a;
+
+  --tk-toggle-button--primary-background-start: #619bcb;
+  --tk-toggle-button--primary-background-end: #4984b4;
+  --tk-toggle-button--secondary-background-start: #3a3a3c;
+  --tk-toggle-button--secondary-background-end: #2c2c2e;
+  --tk-toggle-button--success-background-start: #1db054;
+  --tk-toggle-button--success-background-end: #0b6b30;
+  --tk-toggle-button--warning-background-start: #ffdb70;
+  --tk-toggle-button--warning-background-end: #e09600;
+  --tk-toggle-button--danger-background-start: #ff4b59;
+  --tk-toggle-button--danger-background-end: #d10014;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 8px 16px;
-  background-color: transparent;
+  background: transparent;
   border: 1px solid transparent;
   border-radius: 4px;
   font-size: 14px;
   font-weight: normal;
-  color: var(--tk-color-foreground);
   cursor: default;
   transition:
-    --tk-toggle-button--primary-background-start 0.15s,
-    --tk-toggle-button--primary-background-end 0.15s,
-    --tk-toggle-button--secondary-background-start 0.15s,
-    --tk-toggle-button--secondary-background-end 0.15s,
-    --tk-toggle-button--success-background-start 0.15s,
-    --tk-toggle-button--success-background-end 0.15s,
-    --tk-toggle-button--danger-background-start 0.15s,
-    --tk-toggle-button--danger-background-end 0.15s,
-    --tk-toggle-button--warning-background-start 0.15s,
-    --tk-toggle-button--warning-background-end 0.15s,
-    transform 0.1s,
-    background-color 0.2s,
-    border-color 0.2s,
+    --tk-toggle-button-background-linear-gradient-start 0.2s,
+    --tk-toggle-button-background-linear-gradient-end 0.2s,
+    transform 0.2s,
     color 0.2s,
     box-shadow 0.2s;
 
@@ -137,299 +105,202 @@ const onClick = (event: MouseEvent): void => {
 }
 
 .tk-toggle-button--primary {
-  &.off {
-    background: linear-gradient(
-      to bottom,
-      var(--tk-toggle-button--primary-background-start),
-      var(--tk-toggle-button--primary-background-end)
-    );
-    box-shadow: none;
+  --tk-toggle-button-background-linear-gradient-start: var(--tk-toggle-button--primary-background-start);
+  --tk-toggle-button-background-linear-gradient-end: var(--tk-toggle-button--primary-background-end);
+  border: 1px solid var(--tk-toggle-button--primary-border);
+  color: var(--tk-toggle-button--primary-foreground);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0),
+    inset 0px 1px 0px rgba(255, 255, 255, 0.3),
+    inset 0px 0px 3px rgba(255, 255, 255, 0.5);
 
-    &:hover:not(:disabled) {
-      background-color: rgba(97, 155, 203, 0.15);
-    }
-    &:active:not(:disabled) {
-      --tk-toggle-button--primary-background-start: color-mix(in srgb, #619bcb, black 20%);
-      --tk-toggle-button--primary-background-end: color-mix(in srgb, #4984b4, black 20%);
-      color: #f8f8f88c;
-      transform: translateY(1px);
-      box-shadow:
-        inset 0px 3px 6px rgba(0, 0, 0, 0.4),
-        inset 0px 1px 2px rgba(0, 0, 0, 0.6),
-        0 1px 0 rgba(255, 255, 255, 0.1);
-    }
+  &.deboss .tk-toggle-button-content {
+    filter: drop-shadow(0 -0.06em 0 rgba(0, 0, 0, 0.35)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
   }
 
-  &.on {
-    --tk-toggle-button--primary-background-start: color-mix(in srgb, #619bcb, black 10%);
-    --tk-toggle-button--primary-background-end: color-mix(in srgb, #4984b4, black 10%);
-    color: #f8f8f8;
-    border: 1px solid #002074;
+  &:hover:not(:disabled) {
+    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--primary-background-start), white 10%);
+    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--primary-background-end), white 10%);
     box-shadow:
-      inset 0px 2px 5px rgba(0, 0, 0, 0.3),
-      inset 0px 1px 2px rgba(0, 0, 0, 0.5),
-      0 1px 0 rgba(255, 255, 255, 0.1);
+      0 2px 4px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.3),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.5);
+  }
 
-    &.deboss .tk-toggle-button-content {
-      filter: drop-shadow(0px -0.06em 0.5px rgba(0, 0, 0, 0.5)) drop-shadow(0px 0.05em 0.5px rgba(255, 255, 255, 0.15));
-    }
+  &:active:not(:disabled) {
+    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--primary-background-start), black 10%);
+    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--primary-background-end), black 10%);
+    color: color-mix(in srgb, var(--tk-toggle-button--primary-foreground), black 20%);
+    transform: translateY(1px);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.3),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.5);
+  }
 
-    &:hover:not(:disabled) {
-      --tk-toggle-button--primary-background-start: #619bcb;
-      --tk-toggle-button--primary-background-end: #4984b4;
-    }
-    &:active:not(:disabled) {
-      --tk-toggle-button--primary-background-start: color-mix(in srgb, #619bcb, black 20%);
-      --tk-toggle-button--primary-background-end: color-mix(in srgb, #4984b4, black 20%);
-      color: #f8f8f88c;
-      box-shadow:
-        inset 0px 3px 6px rgba(0, 0, 0, 0.5),
-        inset 0px 1px 2px rgba(0, 0, 0, 0.7);
-    }
-    &:focus-visible:not(:disabled) {
-      outline: 2px dashed var(--tk-toggle-button--primary-background-start);
-      outline-offset: 2px;
-    }
+  &:focus-visible:not(:disabled) {
+    outline: 2px dashed var(--tk-toggle-button-background-linear-gradient-start);
+    outline-offset: 2px;
   }
 }
 
-/* =========================================
-   Secondary Theme
-   ========================================= */
 .tk-toggle-button--secondary {
-  &.off {
-    background: linear-gradient(
-      to bottom,
-      var(--tk-toggle-button--secondary-background-start),
-      var(--tk-toggle-button--secondary-background-end)
-    );
-    box-shadow: none;
+  --tk-toggle-button-background-linear-gradient-start: var(--tk-toggle-button--secondary-background-start);
+  --tk-toggle-button-background-linear-gradient-end: var(--tk-toggle-button--secondary-background-end);
+  border: 1px solid var(--tk-toggle-button--secondary-border);
+  color: var(--tk-toggle-button--secondary-foreground);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0),
+    inset 0px 1px 0px rgba(255, 255, 255, 0.1),
+    inset 0px 0px 3px rgba(255, 255, 255, 0.05);
 
-    &:hover:not(:disabled) {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-    &:active:not(:disabled) {
-      --tk-toggle-button--secondary-background-start: color-mix(in srgb, #3a3a3c, black 20%);
-      --tk-toggle-button--secondary-background-end: color-mix(in srgb, #2c2c2e, black 20%);
-      color: #f8f8f88c;
-      transform: translateY(1px);
-      box-shadow:
-        inset 0px 3px 6px rgba(0, 0, 0, 0.4),
-        inset 0px 1px 2px rgba(0, 0, 0, 0.6),
-        0 1px 0 rgba(255, 255, 255, 0.05);
-    }
+  &.deboss .tk-toggle-button-content {
+    filter: drop-shadow(0 -0.08em 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
   }
 
-  &.on {
-    --tk-toggle-button--secondary-background-start: color-mix(in srgb, #3a3a3c, black 10%);
-    --tk-toggle-button--secondary-background-end: color-mix(in srgb, #2c2c2e, black 10%);
-    color: #f8f8f8;
-    border: 1px solid #1a1a1a;
+  &:hover:not(:disabled) {
+    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--secondary-background-start), white 4%);
+    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--secondary-background-end), white 4%);
     box-shadow:
-      inset 0px 2px 5px rgba(0, 0, 0, 0.3),
-      inset 0px 1px 2px rgba(0, 0, 0, 0.5),
-      0 1px 0 rgba(255, 255, 255, 0.05);
+      0 2px 4px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.1),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.05);
+  }
 
-    &.deboss .tk-toggle-button-content {
-      filter: drop-shadow(0px -0.08em 0.5px rgba(0, 0, 0, 0.5)) drop-shadow(0px 0.05em 0.5px rgba(255, 255, 255, 0.15));
-    }
+  &:active:not(:disabled) {
+    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--secondary-background-start), black 10%);
+    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--secondary-background-end), black 10%);
+    color: color-mix(in srgb, var(--tk-toggle-button--secondary-foreground), black 20%);
+    transform: translateY(1px);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.1),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.05);
+  }
 
-    &:hover:not(:disabled) {
-      --tk-toggle-button--secondary-background-start: #3a3a3c;
-      --tk-toggle-button--secondary-background-end: #2c2c2e;
-    }
-    &:active:not(:disabled) {
-      --tk-toggle-button--secondary-background-start: color-mix(in srgb, #3a3a3c, black 20%);
-      --tk-toggle-button--secondary-background-end: color-mix(in srgb, #2c2c2e, black 20%);
-      color: #f8f8f88c;
-      box-shadow:
-        inset 0px 3px 6px rgba(0, 0, 0, 0.5),
-        inset 0px 1px 2px rgba(0, 0, 0, 0.7);
-    }
-    &:focus-visible:not(:disabled) {
-      outline: 2px dashed currentColor;
-      outline-offset: 2px;
-    }
+  &:focus-visible:not(:disabled) {
+    outline: 2px dashed var(--tk-toggle-button-background-linear-gradient-start);
+    outline-offset: 2px;
   }
 }
 
-/* =========================================
-   Success Theme
-   ========================================= */
 .tk-toggle-button--success {
-  &.off {
-    background: linear-gradient(
-      to bottom,
-      var(--tk-toggle-button--success-background-start),
-      var(--tk-toggle-button--success-background-end)
-    );
-    box-shadow: none;
+  --tk-toggle-button-background-linear-gradient-start: var(--tk-toggle-button--success-background-start);
+  --tk-toggle-button-background-linear-gradient-end: var(--tk-toggle-button--success-background-end);
+  border: 1px solid var(--tk-toggle-button--success-border);
+  color: var(--tk-toggle-button--success-foreground);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0),
+    inset 0px 1px 0px rgba(255, 255, 255, 0.25),
+    inset 0px 0px 3px rgba(255, 255, 255, 0.4);
 
-    &:hover:not(:disabled) {
-      background-color: rgba(29, 176, 84, 0.15);
-    }
-    &:active:not(:disabled) {
-      --tk-toggle-button--success-background-start: color-mix(in srgb, #1db054, black 20%);
-      --tk-toggle-button--success-background-end: color-mix(in srgb, #0b6b30, black 20%);
-      color: #f0fdf48c;
-      transform: translateY(1px);
-      box-shadow:
-        inset 0px 3px 6px rgba(0, 0, 0, 0.4),
-        inset 0px 1px 2px rgba(0, 0, 0, 0.6),
-        0 1px 0 rgba(255, 255, 255, 0.1);
-    }
+  &.deboss .tk-toggle-button-content {
+    filter: drop-shadow(0 -0.04em 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0.06em 0 rgba(255, 255, 255, 0.15));
   }
 
-  &.on {
-    --tk-toggle-button--success-background-start: color-mix(in srgb, #1db054, black 10%);
-    --tk-toggle-button--success-background-end: color-mix(in srgb, #0b6b30, black 10%);
-    color: #f0fdf4;
-    border: 1px solid #1e3a23;
+  &:hover:not(:disabled) {
+    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--success-background-start), white 10%);
+    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--success-background-end), white 10%);
     box-shadow:
-      inset 0px 2px 5px rgba(0, 0, 0, 0.3),
-      inset 0px 1px 2px rgba(0, 0, 0, 0.5),
-      0 1px 0 rgba(255, 255, 255, 0.1);
+      0 2px 4px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.25),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.4);
+  }
 
-    &.deboss .tk-toggle-button-content {
-      filter: drop-shadow(0px -0.08em 0.5px rgba(0, 0, 0, 0.4)) drop-shadow(0px 0.05em 0.5px rgba(255, 255, 255, 0.2));
-    }
+  &:active:not(:disabled) {
+    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--success-background-start), black 10%);
+    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--success-background-end), black 10%);
+    color: color-mix(in srgb, var(--tk-toggle-button--success-foreground), black 20%);
+    transform: translateY(1px);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.25),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.4);
+  }
 
-    &:hover:not(:disabled) {
-      --tk-toggle-button--success-background-start: #1db054;
-      --tk-toggle-button--success-background-end: #0b6b30;
-    }
-    &:active:not(:disabled) {
-      --tk-toggle-button--success-background-start: color-mix(in srgb, #1db054, black 20%);
-      --tk-toggle-button--success-background-end: color-mix(in srgb, #0b6b30, black 20%);
-      color: #f0fdf48c;
-      box-shadow:
-        inset 0px 3px 6px rgba(0, 0, 0, 0.5),
-        inset 0px 1px 2px rgba(0, 0, 0, 0.7);
-    }
-    &:focus-visible:not(:disabled) {
-      outline: 2px dashed var(--tk-toggle-button--success-background-start);
-      outline-offset: 2px;
-    }
+  &:focus-visible:not(:disabled) {
+    outline: 2px dashed var(--tk-toggle-button-background-linear-gradient-start);
+    outline-offset: 2px;
   }
 }
 
-/* =========================================
-   Warning Theme
-   ========================================= */
 .tk-toggle-button--warning {
-  &.off {
-    background: linear-gradient(
-      to bottom,
-      var(--tk-toggle-button--warning-background-start),
-      var(--tk-toggle-button--warning-background-end)
-    );
-    box-shadow: none;
+  --tk-toggle-button-background-linear-gradient-start: var(--tk-toggle-button--warning-background-start);
+  --tk-toggle-button-background-linear-gradient-end: var(--tk-toggle-button--warning-background-end);
+  border: 1px solid var(--tk-toggle-button--warning-border);
+  color: var(--tk-toggle-button--warning-foreground);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0),
+    inset 0px 1px 0px rgba(255, 255, 255, 0.65),
+    inset 0px 0px 3px rgba(255, 255, 255, 0.95);
 
-    &:hover:not(:disabled) {
-      background-color: rgba(255, 219, 112, 0.2);
-    }
-    &:active:not(:disabled) {
-      --tk-toggle-button--warning-background-start: color-mix(in srgb, #ffdb70, black 20%);
-      --tk-toggle-button--warning-background-end: color-mix(in srgb, #e09600, black 20%);
-      color: #1f1f1f8c;
-      transform: translateY(1px);
-      box-shadow:
-        inset 0px 3px 6px rgba(0, 0, 0, 0.2),
-        inset 0px 1px 2px rgba(0, 0, 0, 0.3),
-        0 1px 0 rgba(255, 255, 255, 0.4);
-    }
+  &.deboss .tk-toggle-button-content {
+    filter: drop-shadow(0 -0.04em 0 rgba(0, 0, 0, 0.15)) drop-shadow(0 0.08em 0 rgba(255, 255, 255, 0.6));
   }
 
-  &.on {
-    --tk-toggle-button--warning-background-start: color-mix(in srgb, #ffdb70, black 10%);
-    --tk-toggle-button--warning-background-end: color-mix(in srgb, #e09600, black 10%);
-    color: #1f1f1f;
-    border: 1px solid #594118;
+  &:hover:not(:disabled) {
+    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--warning-background-start), white 20%);
+    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--warning-background-end), white 20%);
     box-shadow:
-      inset 0px 2px 5px rgba(0, 0, 0, 0.15),
-      inset 0px 1px 2px rgba(0, 0, 0, 0.25),
-      0 1px 0 rgba(255, 255, 255, 0.4);
+      0 2px 4px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.65),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.95);
+  }
 
-    &.deboss .tk-toggle-button-content {
-      filter: drop-shadow(0px -0.05em 0.5px rgba(0, 0, 0, 0.25)) drop-shadow(0px 0.08em 0.5px rgba(255, 255, 255, 0.6));
-    }
+  &:active:not(:disabled) {
+    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--warning-background-start), black 10%);
+    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--warning-background-end), black 10%);
+    color: color-mix(in srgb, var(--tk-toggle-button--warning-foreground), black 20%);
+    transform: translateY(1px);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.65),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.95);
+  }
 
-    &:hover:not(:disabled) {
-      --tk-toggle-button--warning-background-start: #ffdb70;
-      --tk-toggle-button--warning-background-end: #e09600;
-    }
-    &:active:not(:disabled) {
-      --tk-toggle-button--warning-background-start: color-mix(in srgb, #ffdb70, black 20%);
-      --tk-toggle-button--warning-background-end: color-mix(in srgb, #e09600, black 20%);
-      color: #1f1f1f8c;
-      box-shadow:
-        inset 0px 3px 6px rgba(0, 0, 0, 0.25),
-        inset 0px 1px 2px rgba(0, 0, 0, 0.35);
-    }
-    &:focus-visible:not(:disabled) {
-      outline: 2px dashed var(--tk-toggle-button--warning-background-start);
-      outline-offset: 2px;
-    }
+  &:focus-visible:not(:disabled) {
+    outline: 2px dashed var(--tk-toggle-button-background-linear-gradient-start);
+    outline-offset: 2px;
   }
 }
 
-/* =========================================
-   Danger Theme
-   ========================================= */
 .tk-toggle-button--danger {
-  &.off {
-    background: linear-gradient(
-      to bottom,
-      var(--tk-toggle-button--danger-background-start),
-      var(--tk-toggle-button--danger-background-end)
-    );
-    box-shadow: none;
+  --tk-toggle-button-background-linear-gradient-start: var(--tk-toggle-button--danger-background-start);
+  --tk-toggle-button-background-linear-gradient-end: var(--tk-toggle-button--danger-background-end);
+  border: 1px solid var(--tk-toggle-button--danger-border);
+  color: var(--tk-toggle-button--danger-foreground);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0),
+    inset 0px 1px 0px rgba(255, 255, 255, 0.25),
+    inset 0px 0px 3px rgba(255, 255, 255, 0.75);
 
-    &:hover:not(:disabled) {
-      background-color: rgba(255, 75, 89, 0.15);
-    }
-    &:active:not(:disabled) {
-      --tk-toggle-button--danger-background-start: color-mix(in srgb, #ff4b59, black 20%);
-      --tk-toggle-button--danger-background-end: color-mix(in srgb, #d10014, black 20%);
-      color: #fff1f0b2;
-      transform: translateY(1px);
-      box-shadow:
-        inset 0px 3px 6px rgba(0, 0, 0, 0.4),
-        inset 0px 1px 2px rgba(0, 0, 0, 0.6),
-        0 1px 0 rgba(255, 255, 255, 0.1);
-    }
+  &.deboss .tk-toggle-button-content {
+    filter: drop-shadow(0 -0.04em 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0.05em 0 rgba(255, 255, 255, 0.15));
   }
 
-  &.on {
-    --tk-toggle-button--danger-background-start: color-mix(in srgb, #ff4b59, black 10%);
-    --tk-toggle-button--danger-background-end: color-mix(in srgb, #d10014, black 10%);
-    color: #fff1f0;
-    border: 1px solid #4a1a1a;
+  &:hover:not(:disabled) {
+    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--danger-background-start), white 16%);
+    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--danger-background-end), white 16%);
     box-shadow:
-      inset 0px 2px 5px rgba(0, 0, 0, 0.3),
-      inset 0px 1px 2px rgba(0, 0, 0, 0.5),
-      0 1px 0 rgba(255, 255, 255, 0.1);
+      0 2px 4px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.25),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.75);
+  }
 
-    &.deboss .tk-toggle-button-content {
-      filter: drop-shadow(0px -0.05em 0.5px rgba(0, 0, 0, 0.5)) drop-shadow(0px 0.05em 0.5px rgba(255, 255, 255, 0.15));
-    }
+  &:active:not(:disabled) {
+    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--danger-background-start), black 10%);
+    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--danger-background-end), black 10%);
+    color: color-mix(in srgb, var(--tk-toggle-button--danger-foreground), black 20%);
+    transform: translateY(1px);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.2),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.25),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.75);
+  }
 
-    &:hover:not(:disabled) {
-      --tk-toggle-button--danger-background-start: #ff4b59;
-      --tk-toggle-button--danger-background-end: #d10014;
-    }
-    &:active:not(:disabled) {
-      --tk-toggle-button--danger-background-start: color-mix(in srgb, #ff4b59, black 20%);
-      --tk-toggle-button--danger-background-end: color-mix(in srgb, #d10014, black 20%);
-      color: #fff1f0b2;
-      box-shadow:
-        inset 0px 3px 6px rgba(0, 0, 0, 0.5),
-        inset 0px 1px 2px rgba(0, 0, 0, 0.7);
-    }
-    &:focus-visible:not(:disabled) {
-      outline: 2px dashed var(--tk-toggle-button--danger-background-start);
-      outline-offset: 2px;
-    }
+  &:focus-visible:not(:disabled) {
+    outline: 2px dashed var(--tk-toggle-button-background-linear-gradient-start);
+    outline-offset: 2px;
   }
 }
 </style>
