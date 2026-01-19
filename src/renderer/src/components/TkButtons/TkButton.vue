@@ -4,6 +4,7 @@
     class="tk-button"
     :class="[`tk-button--${props.theme}`, { deboss: props.deboss }]"
     :disabled="props.disabled"
+    :aria-disabled="props.disabled"
     @click="onClick"
   >
     <span class="tk-button-content">
