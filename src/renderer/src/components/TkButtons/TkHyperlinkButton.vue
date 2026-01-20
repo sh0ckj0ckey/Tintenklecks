@@ -47,7 +47,7 @@ const onClick = (event: MouseEvent): void => {
   border: 1px solid transparent;
   border-radius: 4px;
   font-size: 14px;
-  font-weight: normal;
+  font-weight: bold;
   cursor: pointer;
   transition:
     transform 0.1s,
@@ -94,12 +94,12 @@ const onClick = (event: MouseEvent): void => {
   color: var(--tk-hyperlink-button--primary-foreground);
 
   &.emboss .tk-hyperlink-button-content {
-    filter: drop-shadow(-0.02em -0.02em 0 rgba(255, 255, 255, 0.06)) drop-shadow(0.04em 0.04em 0 rgba(0, 0, 0, 0.8));
+    filter: drop-shadow(-0.02em -0.02em 0 rgba(255, 255, 255, 0.06)) drop-shadow(0.04em 0.04em 0 rgba(0, 0, 0, 0.4));
   }
 
   &:hover:not(:disabled) {
     &.emboss .tk-hyperlink-button-content {
-      filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.15)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.3));
+      filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.04)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.2));
     }
   }
 }
@@ -113,7 +113,7 @@ const onClick = (event: MouseEvent): void => {
 
   &:hover:not(:disabled) {
     &.emboss .tk-hyperlink-button-content {
-      filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.15)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
+      filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.12)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
     }
   }
 }
@@ -122,12 +122,12 @@ const onClick = (event: MouseEvent): void => {
   color: var(--tk-hyperlink-button--success-foreground);
 
   &.emboss .tk-hyperlink-button-content {
-    filter: drop-shadow(-0.02em -0.02em 0 rgba(255, 255, 255, 0.04)) drop-shadow(0.04em 0.04em 0 rgba(0, 0, 0, 0.8));
+    filter: drop-shadow(-0.02em 0em 0 rgba(255, 255, 255, 0.08)) drop-shadow(0.04em 0.04em 0 rgba(0, 0, 0, 0.8));
   }
 
   &:hover:not(:disabled) {
     &.emboss .tk-hyperlink-button-content {
-      filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.08)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.08));
+      filter: drop-shadow(0.04em 0.04em 0 rgba(255, 255, 255, 0.08)) drop-shadow(0em -0.02em 0 rgba(0, 0, 0, 0.08));
     }
   }
 }
@@ -136,7 +136,7 @@ const onClick = (event: MouseEvent): void => {
   color: var(--tk-hyperlink-button--warning-foreground);
 
   &.emboss .tk-hyperlink-button-content {
-    filter: drop-shadow(-0.02em -0.02em 0 rgba(255, 255, 255, 0.08)) drop-shadow(0.04em 0.04em 0 rgba(0, 0, 0, 0.8));
+    filter: drop-shadow(-0.02em -0.02em 0 rgba(255, 255, 255, 0.08)) drop-shadow(0.04em 0.08em 0 rgba(0, 0, 0, 0.8));
   }
 
   &:hover:not(:disabled) {
@@ -155,7 +155,7 @@ const onClick = (event: MouseEvent): void => {
 
   &:hover:not(:disabled) {
     &.emboss .tk-hyperlink-button-content {
-      filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.15)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
+      filter: drop-shadow(0.02em 0.04em 0 rgba(255, 255, 255, 0.08)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
     }
   }
 }
