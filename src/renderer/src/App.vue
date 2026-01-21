@@ -20,6 +20,7 @@ onMounted(async () => {
   await router.replace({ name: RouteName.Home })
   await router.push({ name: RouteName.Toast })
   await router.push({ name: RouteName.Buttons })
+  await router.push({ name: RouteName.Popup })
 })
 </script>
 
