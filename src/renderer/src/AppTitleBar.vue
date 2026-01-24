@@ -1,7 +1,7 @@
 <template>
   <header :class="['app-title-bar', { 'app-title-bar-blurred': !isAppWindowFocused }]">
     <div class="app-title-bar-navigation-buttons">
-      <TkHyperlinkButton v-if="canGoBack" :emboss="false" class="app-title-bar-navigation-button" @click="tryGoBack">
+      <TkHyperlinkButton v-if="canGoBack" theme="secondary" :emboss="false" class="app-title-bar-navigation-button" @click="tryGoBack">
         <IconWindowBack class="app-title-bar-navigation-button-icon" />
       </TkHyperlinkButton>
     </div>
@@ -98,27 +98,11 @@ const closeAppWindow = (): void => {
       height: calc(100% - 10px);
       aspect-ratio: 1 / 1;
       margin-left: 5px;
-      border: none;
-      border-radius: 4px;
-      background-color: transparent;
       color: var(--tk-color-foreground);
       display: flex;
       justify-content: center;
       align-items: center;
       cursor: default;
-      transition:
-        background-color 0.2s,
-        color 0.2s;
-
-      &:hover {
-        background-color: var(--tk-color-background-deep);
-        color: var(--tk-color-foreground);
-      }
-
-      &:active {
-        background-color: #ffffff06;
-        color: var(--tk-color-foreground);
-      }
 
       .app-title-bar-navigation-button-icon {
         width: 11px;
