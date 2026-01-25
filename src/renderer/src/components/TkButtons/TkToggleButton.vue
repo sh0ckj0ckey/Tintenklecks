@@ -78,7 +78,11 @@ const onClick = (event: MouseEvent): void => {
   align-items: center;
   justify-content: center;
   padding: 8px 16px;
-  background: transparent;
+  background: linear-gradient(
+    to bottom,
+    var(--tk-toggle-button-background-linear-gradient-start),
+    var(--tk-toggle-button-background-linear-gradient-end)
+  );
   border: 1px solid transparent;
   border-radius: 4px;
   font-size: 14px;
@@ -102,205 +106,284 @@ const onClick = (event: MouseEvent): void => {
   &:disabled {
     opacity: 0.6;
   }
-}
-
-.tk-toggle-button--primary {
-  --tk-toggle-button-background-linear-gradient-start: var(--tk-toggle-button--primary-background-start);
-  --tk-toggle-button-background-linear-gradient-end: var(--tk-toggle-button--primary-background-end);
-  border: 1px solid var(--tk-toggle-button--primary-border);
-  color: var(--tk-toggle-button--primary-foreground);
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0),
-    inset 0px 1px 0px rgba(255, 255, 255, 0.3),
-    inset 0px 0px 3px rgba(255, 255, 255, 0.5);
-
-  &.deboss .tk-toggle-button-content {
-    filter: drop-shadow(0 -0.06em 0 rgba(0, 0, 0, 0.35)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
-  }
-
-  &:hover:not(:disabled) {
-    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--primary-background-start), white 10%);
-    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--primary-background-end), white 10%);
-    box-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.2),
-      inset 0px 1px 0px rgba(255, 255, 255, 0.3),
-      inset 0px 0px 3px rgba(255, 255, 255, 0.5);
-  }
-
-  &:active:not(:disabled) {
-    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--primary-background-start), black 10%);
-    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--primary-background-end), black 10%);
-    color: color-mix(in srgb, var(--tk-toggle-button--primary-foreground), black 20%);
-    transform: translateY(1px);
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.2),
-      inset 0px 1px 0px rgba(255, 255, 255, 0.3),
-      inset 0px 0px 3px rgba(255, 255, 255, 0.5);
-  }
 
   &:focus-visible:not(:disabled) {
     outline: 2px dashed var(--tk-toggle-button-background-linear-gradient-start);
     outline-offset: 2px;
+  }
+
+  &.off {
+    --tk-toggle-button-background-linear-gradient-start: rgba(255, 255, 255, 0.02);
+    --tk-toggle-button-background-linear-gradient-end: rgba(255, 255, 255, 0.02);
+    border: 1px solid #202020;
+    color: #f8f8f8;
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.1),
+      inset 0px 0px 2px rgba(255, 255, 255, 0.05);
+
+    &.deboss .tk-toggle-button-content {
+      filter: drop-shadow(0 -0.08em 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
+    }
+
+    &:hover:not(:disabled) {
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, rgba(255, 255, 255, 0.05), #fff 4%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, rgba(255, 255, 255, 0.05), #fff 4%);
+      box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.2),
+        inset 0px 1px 0px rgba(255, 255, 255, 0.1),
+        inset 0px 0px 3px rgba(255, 255, 255, 0.05);
+    }
+  }
+}
+
+.tk-toggle-button--primary {
+  &.off {
+    &:active:not(:disabled) {
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--primary-background-start), #000 8%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--primary-background-end), #000 8%);
+      color: color-mix(in srgb, var(--tk-toggle-button--primary-foreground), #000 16%);
+      transform: translateY(1px);
+      box-shadow:
+        0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0px 3px 8px rgba(0, 0, 0, 0.5),
+        inset 0px 2px 4px rgba(0, 0, 0, 0.7);
+    }
+  }
+
+  &.on {
+    --tk-toggle-button-background-linear-gradient-start: var(--tk-toggle-button--primary-background-start);
+    --tk-toggle-button-background-linear-gradient-end: var(--tk-toggle-button--primary-background-end);
+    border: 1px solid var(--tk-toggle-button--primary-border);
+    color: var(--tk-toggle-button--primary-foreground);
+    box-shadow:
+      0 1px 1px rgba(255, 255, 255, 0.05),
+      inset 0px 2px 5px rgba(0, 0, 0, 0.35),
+      inset 0px 1px 2px rgba(0, 0, 0, 0.5);
+
+    &.deboss .tk-toggle-button-content {
+      filter: drop-shadow(0 -0.06em 0 rgba(0, 0, 0, 0.35)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
+    }
+
+    &:hover:not(:disabled) {
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--primary-background-start), #fff 8%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--primary-background-end), #fff 8%);
+      box-shadow:
+        0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0px 1px 3px rgba(0, 0, 0, 0.25),
+        inset 0px 1px 1px rgba(0, 0, 0, 0.4);
+    }
+
+    &:active:not(:disabled) {
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--primary-background-start), #000 8%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--primary-background-end), #000 8%);
+      color: color-mix(in srgb, var(--tk-toggle-button--primary-foreground), #000 16%);
+      transform: translateY(1px);
+      box-shadow:
+        0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0px 3px 8px rgba(0, 0, 0, 0.5),
+        inset 0px 2px 4px rgba(0, 0, 0, 0.7);
+    }
   }
 }
 
 .tk-toggle-button--secondary {
-  --tk-toggle-button-background-linear-gradient-start: var(--tk-toggle-button--secondary-background-start);
-  --tk-toggle-button-background-linear-gradient-end: var(--tk-toggle-button--secondary-background-end);
-  border: 1px solid var(--tk-toggle-button--secondary-border);
-  color: var(--tk-toggle-button--secondary-foreground);
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0),
-    inset 0px 1px 0px rgba(255, 255, 255, 0.1),
-    inset 0px 0px 3px rgba(255, 255, 255, 0.05);
-
-  &.deboss .tk-toggle-button-content {
-    filter: drop-shadow(0 -0.08em 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
+  &.off {
+    &:active:not(:disabled) {
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--secondary-background-start), #000 8%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--secondary-background-end), #000 8%);
+      color: color-mix(in srgb, var(--tk-toggle-button--secondary-foreground), #000 16%);
+      transform: translateY(1px);
+      box-shadow:
+        0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0px 3px 8px rgba(0, 0, 0, 0.3),
+        inset 0px 2px 4px rgba(0, 0, 0, 0.5);
+    }
   }
 
-  &:hover:not(:disabled) {
-    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--secondary-background-start), white 4%);
-    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--secondary-background-end), white 4%);
+  &.on {
+    --tk-toggle-button-background-linear-gradient-start: var(--tk-toggle-button--secondary-background-start);
+    --tk-toggle-button-background-linear-gradient-end: var(--tk-toggle-button--secondary-background-end);
+    border: 1px solid var(--tk-toggle-button--secondary-border);
+    color: var(--tk-toggle-button--secondary-foreground);
     box-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.2),
-      inset 0px 1px 0px rgba(255, 255, 255, 0.1),
-      inset 0px 0px 3px rgba(255, 255, 255, 0.05);
-  }
+      0 1px 1px rgba(255, 255, 255, 0.05),
+      inset 0px 2px 5px rgba(0, 0, 0, 0.35),
+      inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 
-  &:active:not(:disabled) {
-    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--secondary-background-start), black 10%);
-    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--secondary-background-end), black 10%);
-    color: color-mix(in srgb, var(--tk-toggle-button--secondary-foreground), black 20%);
-    transform: translateY(1px);
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.2),
-      inset 0px 1px 0px rgba(255, 255, 255, 0.1),
-      inset 0px 0px 3px rgba(255, 255, 255, 0.05);
-  }
+    &.deboss .tk-toggle-button-content {
+      filter: drop-shadow(0 -0.06em 0 rgba(0, 0, 0, 0.35)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
+    }
 
-  &:focus-visible:not(:disabled) {
-    outline: 2px dashed var(--tk-toggle-button-background-linear-gradient-start);
-    outline-offset: 2px;
+    &:hover:not(:disabled) {
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--secondary-background-start), #fff 4%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--secondary-background-end), #fff 4%);
+      box-shadow:
+        0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0px 1px 3px rgba(0, 0, 0, 0.25),
+        inset 0px 1px 1px rgba(0, 0, 0, 0.4);
+    }
+
+    &:active:not(:disabled) {
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--secondary-background-start), #000 8%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--secondary-background-end), #000 8%);
+      color: color-mix(in srgb, var(--tk-toggle-button--secondary-foreground), #000 16%);
+      transform: translateY(1px);
+      box-shadow:
+        0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0px 3px 8px rgba(0, 0, 0, 0.3),
+        inset 0px 2px 4px rgba(0, 0, 0, 0.5);
+    }
   }
 }
 
 .tk-toggle-button--success {
-  --tk-toggle-button-background-linear-gradient-start: var(--tk-toggle-button--success-background-start);
-  --tk-toggle-button-background-linear-gradient-end: var(--tk-toggle-button--success-background-end);
-  border: 1px solid var(--tk-toggle-button--success-border);
-  color: var(--tk-toggle-button--success-foreground);
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0),
-    inset 0px 1px 0px rgba(255, 255, 255, 0.25),
-    inset 0px 0px 3px rgba(255, 255, 255, 0.4);
-
-  &.deboss .tk-toggle-button-content {
-    filter: drop-shadow(0 -0.04em 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0.06em 0 rgba(255, 255, 255, 0.15));
+  &.off {
+    &:active:not(:disabled) {
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--success-background-start), #000 8%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--success-background-end), #000 8%);
+      color: color-mix(in srgb, var(--tk-toggle-button--success-foreground), #000 16%);
+      transform: translateY(1px);
+      box-shadow:
+        0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0px 3px 8px rgba(0, 0, 0, 0.5),
+        inset 0px 2px 4px rgba(0, 0, 0, 0.7);
+    }
   }
 
-  &:hover:not(:disabled) {
-    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--success-background-start), white 10%);
-    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--success-background-end), white 10%);
+  &.on {
+    --tk-toggle-button-background-linear-gradient-start: var(--tk-toggle-button--success-background-start);
+    --tk-toggle-button-background-linear-gradient-end: var(--tk-toggle-button--success-background-end);
+    border: 1px solid var(--tk-toggle-button--success-border);
+    color: var(--tk-toggle-button--success-foreground);
     box-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.2),
-      inset 0px 1px 0px rgba(255, 255, 255, 0.25),
-      inset 0px 0px 3px rgba(255, 255, 255, 0.4);
-  }
+      0 1px 1px rgba(255, 255, 255, 0.05),
+      inset 0px 2px 5px rgba(0, 0, 0, 0.35),
+      inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 
-  &:active:not(:disabled) {
-    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--success-background-start), black 10%);
-    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--success-background-end), black 10%);
-    color: color-mix(in srgb, var(--tk-toggle-button--success-foreground), black 20%);
-    transform: translateY(1px);
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.2),
-      inset 0px 1px 0px rgba(255, 255, 255, 0.25),
-      inset 0px 0px 3px rgba(255, 255, 255, 0.4);
-  }
+    &.deboss .tk-toggle-button-content {
+      filter: drop-shadow(0 -0.06em 0 rgba(0, 0, 0, 0.35)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
+    }
 
-  &:focus-visible:not(:disabled) {
-    outline: 2px dashed var(--tk-toggle-button-background-linear-gradient-start);
-    outline-offset: 2px;
+    &:hover:not(:disabled) {
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--success-background-start), #fff 8%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--success-background-end), #fff 8%);
+      box-shadow:
+        0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0px 1px 3px rgba(0, 0, 0, 0.25),
+        inset 0px 1px 1px rgba(0, 0, 0, 0.4);
+    }
+
+    &:active:not(:disabled) {
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--success-background-start), #000 8%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--success-background-end), #000 8%);
+      color: color-mix(in srgb, var(--tk-toggle-button--success-foreground), #000 16%);
+      transform: translateY(1px);
+      box-shadow:
+        0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0px 3px 8px rgba(0, 0, 0, 0.5),
+        inset 0px 2px 4px rgba(0, 0, 0, 0.7);
+    }
   }
 }
 
 .tk-toggle-button--warning {
-  --tk-toggle-button-background-linear-gradient-start: var(--tk-toggle-button--warning-background-start);
-  --tk-toggle-button-background-linear-gradient-end: var(--tk-toggle-button--warning-background-end);
-  border: 1px solid var(--tk-toggle-button--warning-border);
-  color: var(--tk-toggle-button--warning-foreground);
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0),
-    inset 0px 1px 0px rgba(255, 255, 255, 0.65),
-    inset 0px 0px 3px rgba(255, 255, 255, 0.95);
-
-  &.deboss .tk-toggle-button-content {
-    filter: drop-shadow(0 -0.04em 0 rgba(0, 0, 0, 0.15)) drop-shadow(0 0.08em 0 rgba(255, 255, 255, 0.6));
+  &.off {
+    &:active:not(:disabled) {
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--warning-background-start), #000 8%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--warning-background-end), #000 8%);
+      color: color-mix(in srgb, var(--tk-toggle-button--warning-foreground), #000 16%);
+      transform: translateY(1px);
+      box-shadow:
+        0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0px 3px 8px rgba(0, 0, 0, 0.5),
+        inset 0px 2px 4px rgba(0, 0, 0, 0.7);
+    }
   }
 
-  &:hover:not(:disabled) {
-    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--warning-background-start), white 20%);
-    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--warning-background-end), white 20%);
+  &.on {
+    --tk-toggle-button-background-linear-gradient-start: var(--tk-toggle-button--warning-background-start);
+    --tk-toggle-button-background-linear-gradient-end: var(--tk-toggle-button--warning-background-end);
+    border: 1px solid var(--tk-toggle-button--warning-border);
+    color: var(--tk-toggle-button--warning-foreground);
     box-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.2),
-      inset 0px 1px 0px rgba(255, 255, 255, 0.65),
-      inset 0px 0px 3px rgba(255, 255, 255, 0.95);
-  }
+      0 1px 1px rgba(255, 255, 255, 0.05),
+      inset 0px 2px 5px rgba(0, 0, 0, 0.35),
+      inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 
-  &:active:not(:disabled) {
-    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--warning-background-start), black 10%);
-    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--warning-background-end), black 10%);
-    color: color-mix(in srgb, var(--tk-toggle-button--warning-foreground), black 20%);
-    transform: translateY(1px);
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.2),
-      inset 0px 1px 0px rgba(255, 255, 255, 0.65),
-      inset 0px 0px 3px rgba(255, 255, 255, 0.95);
-  }
+    &.deboss .tk-toggle-button-content {
+      filter: drop-shadow(0 -0.06em 0 rgba(0, 0, 0, 0.35)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
+    }
 
-  &:focus-visible:not(:disabled) {
-    outline: 2px dashed var(--tk-toggle-button-background-linear-gradient-start);
-    outline-offset: 2px;
+    &:hover:not(:disabled) {
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--warning-background-start), #fff 8%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--warning-background-end), #fff 8%);
+      box-shadow:
+        0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0px 1px 3px rgba(0, 0, 0, 0.25),
+        inset 0px 1px 1px rgba(0, 0, 0, 0.4);
+    }
+
+    &:active:not(:disabled) {
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--warning-background-start), #000 8%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--warning-background-end), #000 8%);
+      color: color-mix(in srgb, var(--tk-toggle-button--warning-foreground), #000 16%);
+      transform: translateY(1px);
+      box-shadow:
+        0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0px 3px 8px rgba(0, 0, 0, 0.5),
+        inset 0px 2px 4px rgba(0, 0, 0, 0.7);
+    }
   }
 }
 
 .tk-toggle-button--danger {
-  --tk-toggle-button-background-linear-gradient-start: var(--tk-toggle-button--danger-background-start);
-  --tk-toggle-button-background-linear-gradient-end: var(--tk-toggle-button--danger-background-end);
-  border: 1px solid var(--tk-toggle-button--danger-border);
-  color: var(--tk-toggle-button--danger-foreground);
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0),
-    inset 0px 1px 0px rgba(255, 255, 255, 0.25),
-    inset 0px 0px 3px rgba(255, 255, 255, 0.75);
-
-  &.deboss .tk-toggle-button-content {
-    filter: drop-shadow(0 -0.04em 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0.05em 0 rgba(255, 255, 255, 0.15));
+  &.off {
+    &:active:not(:disabled) {
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--danger-background-start), #000 8%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--danger-background-end), #000 8%);
+      color: color-mix(in srgb, var(--tk-toggle-button--danger-foreground), #000 16%);
+      transform: translateY(1px);
+      box-shadow:
+        0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0px 3px 8px rgba(0, 0, 0, 0.5),
+        inset 0px 2px 4px rgba(0, 0, 0, 0.7);
+    }
   }
 
-  &:hover:not(:disabled) {
-    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--danger-background-start), white 16%);
-    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--danger-background-end), white 16%);
+  &.on {
+    --tk-toggle-button-background-linear-gradient-start: var(--tk-toggle-button--danger-background-start);
+    --tk-toggle-button-background-linear-gradient-end: var(--tk-toggle-button--danger-background-end);
+    border: 1px solid var(--tk-toggle-button--danger-border);
+    color: var(--tk-toggle-button--danger-foreground);
     box-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.2),
-      inset 0px 1px 0px rgba(255, 255, 255, 0.25),
-      inset 0px 0px 3px rgba(255, 255, 255, 0.75);
-  }
+      0 1px 1px rgba(255, 255, 255, 0.05),
+      inset 0px 2px 5px rgba(0, 0, 0, 0.35),
+      inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 
-  &:active:not(:disabled) {
-    --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--danger-background-start), black 10%);
-    --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--danger-background-end), black 10%);
-    color: color-mix(in srgb, var(--tk-toggle-button--danger-foreground), black 20%);
-    transform: translateY(1px);
-    box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.2),
-      inset 0px 1px 0px rgba(255, 255, 255, 0.25),
-      inset 0px 0px 3px rgba(255, 255, 255, 0.75);
-  }
+    &.deboss .tk-toggle-button-content {
+      filter: drop-shadow(0 -0.06em 0 rgba(0, 0, 0, 0.35)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
+    }
 
-  &:focus-visible:not(:disabled) {
-    outline: 2px dashed var(--tk-toggle-button-background-linear-gradient-start);
-    outline-offset: 2px;
+    &:hover:not(:disabled) {
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--danger-background-start), #fff 8%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--danger-background-end), #fff 8%);
+      box-shadow:
+        0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0px 1px 3px rgba(0, 0, 0, 0.25),
+        inset 0px 1px 1px rgba(0, 0, 0, 0.4);
+    }
+
+    &:active:not(:disabled) {
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--danger-background-start), #000 8%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--danger-background-end), #000 8%);
+      color: color-mix(in srgb, var(--tk-toggle-button--danger-foreground), #000 16%);
+      transform: translateY(1px);
+      box-shadow:
+        0 1px 1px rgba(255, 255, 255, 0.05),
+        inset 0px 3px 8px rgba(0, 0, 0, 0.5),
+        inset 0px 2px 4px rgba(0, 0, 0, 0.7);
+    }
   }
 }
 </style>
