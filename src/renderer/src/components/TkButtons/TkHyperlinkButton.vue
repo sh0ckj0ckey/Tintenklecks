@@ -50,9 +50,10 @@ const onClick = (event: MouseEvent): void => {
   font-weight: bold;
   cursor: pointer;
   transition:
-    transform 0.1s,
+    transform 0.2s,
     background-color 0.2s,
-    color 0.2s;
+    color 0.2s,
+    box-shadow 0.2s;
 
   .tk-hyperlink-button-content {
     display: flex;
@@ -68,15 +69,15 @@ const onClick = (event: MouseEvent): void => {
   }
 
   &:hover:not(:disabled) {
-    background-color: rgba(255, 255, 255, 0.08);
+    background-color: rgba(255, 255, 255, 0.04);
     box-shadow:
       0 2px 4px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.01);
   }
 
   &:active:not(:disabled) {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.02);
     transform: translateY(1px);
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.2),
@@ -102,6 +103,14 @@ const onClick = (event: MouseEvent): void => {
       filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.04)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.2));
     }
   }
+
+  &:active:not(:disabled) {
+    &.emboss .tk-hyperlink-button-content {
+      filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.04)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.2));
+    }
+
+    color: color-mix(in srgb, var(--tk-hyperlink-button--primary-foreground), black 20%);
+  }
 }
 
 .tk-hyperlink-button--secondary {
@@ -113,8 +122,16 @@ const onClick = (event: MouseEvent): void => {
 
   &:hover:not(:disabled) {
     &.emboss .tk-hyperlink-button-content {
-      filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.12)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
+      filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.08)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
     }
+  }
+
+  &:active:not(:disabled) {
+    &.emboss .tk-hyperlink-button-content {
+      filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.08)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
+    }
+
+    color: color-mix(in srgb, var(--tk-hyperlink-button--secondary-foreground), black 20%);
   }
 }
 
@@ -130,6 +147,14 @@ const onClick = (event: MouseEvent): void => {
       filter: drop-shadow(0.04em 0.04em 0 rgba(255, 255, 255, 0.08)) drop-shadow(0em -0.02em 0 rgba(0, 0, 0, 0.08));
     }
   }
+
+  &:active:not(:disabled) {
+    &.emboss .tk-hyperlink-button-content {
+      filter: drop-shadow(0.04em 0.04em 0 rgba(255, 255, 255, 0.08)) drop-shadow(0em -0.02em 0 rgba(0, 0, 0, 0.08));
+    }
+
+    color: color-mix(in srgb, var(--tk-hyperlink-button--success-foreground), black 20%);
+  }
 }
 
 .tk-hyperlink-button--warning {
@@ -144,6 +169,14 @@ const onClick = (event: MouseEvent): void => {
       filter: drop-shadow(0.04em 0.04em 0 rgba(255, 255, 255, 0.2)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
     }
   }
+
+  &:active:not(:disabled) {
+    &.emboss .tk-hyperlink-button-content {
+      filter: drop-shadow(0.04em 0.04em 0 rgba(255, 255, 255, 0.2)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
+    }
+
+    color: color-mix(in srgb, var(--tk-hyperlink-button--warning-foreground), black 20%);
+  }
 }
 
 .tk-hyperlink-button--danger {
@@ -157,6 +190,14 @@ const onClick = (event: MouseEvent): void => {
     &.emboss .tk-hyperlink-button-content {
       filter: drop-shadow(0.02em 0.04em 0 rgba(255, 255, 255, 0.08)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
     }
+  }
+
+  &:active:not(:disabled) {
+    &.emboss .tk-hyperlink-button-content {
+      filter: drop-shadow(0.02em 0.04em 0 rgba(255, 255, 255, 0.08)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
+    }
+
+    color: color-mix(in srgb, var(--tk-hyperlink-button--danger-foreground), black 20%);
   }
 }
 </style>
