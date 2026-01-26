@@ -119,8 +119,8 @@ const onClick = (event: MouseEvent): void => {
   }
 
   &:hover:not(:disabled) {
-    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--primary-background-start), white 10%);
-    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--primary-background-end), white 10%);
+    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--primary-background-start), #fff 8%);
+    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--primary-background-end), #fff 8%);
     box-shadow:
       0 2px 4px rgba(0, 0, 0, 0.2),
       inset 0px 1px 0px rgba(255, 255, 255, 0.3),
@@ -128,9 +128,9 @@ const onClick = (event: MouseEvent): void => {
   }
 
   &:active:not(:disabled) {
-    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--primary-background-start), black 10%);
-    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--primary-background-end), black 10%);
-    color: color-mix(in srgb, var(--tk-button--primary-foreground), black 20%);
+    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--primary-background-start), #000 8%);
+    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--primary-background-end), #000 8%);
+    color: color-mix(in srgb, var(--tk-button--primary-foreground), #000 16%);
     transform: translateY(1px);
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.2),
@@ -159,8 +159,8 @@ const onClick = (event: MouseEvent): void => {
   }
 
   &:hover:not(:disabled) {
-    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--secondary-background-start), white 4%);
-    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--secondary-background-end), white 4%);
+    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--secondary-background-start), #fff 4%);
+    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--secondary-background-end), #fff 4%);
     box-shadow:
       0 2px 4px rgba(0, 0, 0, 0.2),
       inset 0px 1px 0px rgba(255, 255, 255, 0.1),
@@ -168,9 +168,9 @@ const onClick = (event: MouseEvent): void => {
   }
 
   &:active:not(:disabled) {
-    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--secondary-background-start), black 10%);
-    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--secondary-background-end), black 10%);
-    color: color-mix(in srgb, var(--tk-button--secondary-foreground), black 20%);
+    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--secondary-background-start), #000 8%);
+    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--secondary-background-end), #000 8%);
+    color: color-mix(in srgb, var(--tk-button--secondary-foreground), #000 16%);
     transform: translateY(1px);
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.2),
@@ -199,8 +199,8 @@ const onClick = (event: MouseEvent): void => {
   }
 
   &:hover:not(:disabled) {
-    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--success-background-start), white 10%);
-    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--success-background-end), white 10%);
+    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--success-background-start), #fff 8%);
+    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--success-background-end), #fff 8%);
     box-shadow:
       0 2px 4px rgba(0, 0, 0, 0.2),
       inset 0px 1px 0px rgba(255, 255, 255, 0.25),
@@ -208,9 +208,9 @@ const onClick = (event: MouseEvent): void => {
   }
 
   &:active:not(:disabled) {
-    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--success-background-start), black 10%);
-    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--success-background-end), black 10%);
-    color: color-mix(in srgb, var(--tk-button--success-foreground), black 20%);
+    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--success-background-start), #000 8%);
+    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--success-background-end), #000 8%);
+    color: color-mix(in srgb, var(--tk-button--success-foreground), #000 16%);
     transform: translateY(1px);
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.2),
@@ -239,8 +239,8 @@ const onClick = (event: MouseEvent): void => {
   }
 
   &:hover:not(:disabled) {
-    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--warning-background-start), white 20%);
-    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--warning-background-end), white 20%);
+    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--warning-background-start), #fff 16%);
+    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--warning-background-end), #fff 16%);
     box-shadow:
       0 2px 4px rgba(0, 0, 0, 0.2),
       inset 0px 1px 0px rgba(255, 255, 255, 0.65),
@@ -248,9 +248,9 @@ const onClick = (event: MouseEvent): void => {
   }
 
   &:active:not(:disabled) {
-    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--warning-background-start), black 10%);
-    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--warning-background-end), black 10%);
-    color: color-mix(in srgb, var(--tk-button--warning-foreground), black 20%);
+    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--warning-background-start), #000 8%);
+    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--warning-background-end), #000 8%);
+    color: color-mix(in srgb, var(--tk-button--warning-foreground), #000 16%);
     transform: translateY(1px);
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.2),
@@ -279,8 +279,8 @@ const onClick = (event: MouseEvent): void => {
   }
 
   &:hover:not(:disabled) {
-    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--danger-background-start), white 16%);
-    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--danger-background-end), white 16%);
+    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--danger-background-start), #fff 8%);
+    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--danger-background-end), #fff 8%);
     box-shadow:
       0 2px 4px rgba(0, 0, 0, 0.2),
       inset 0px 1px 0px rgba(255, 255, 255, 0.25),
@@ -288,9 +288,9 @@ const onClick = (event: MouseEvent): void => {
   }
 
   &:active:not(:disabled) {
-    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--danger-background-start), black 10%);
-    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--danger-background-end), black 10%);
-    color: color-mix(in srgb, var(--tk-button--danger-foreground), black 20%);
+    --tk-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-button--danger-background-start), #000 8%);
+    --tk-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-button--danger-background-end), #000 8%);
+    color: color-mix(in srgb, var(--tk-button--danger-foreground), #000 16%);
     transform: translateY(1px);
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.2),

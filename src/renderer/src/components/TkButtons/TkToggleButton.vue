@@ -148,6 +148,10 @@ const onClick = (event: MouseEvent): void => {
         0 1px 0 rgba(255, 255, 255, 0.02),
         inset 0px 3px 8px rgba(0, 0, 0, 0.5),
         inset 0px 2px 4px rgba(0, 0, 0, 0.7);
+
+      &.deboss .tk-toggle-button-content {
+        filter: drop-shadow(0 -0.06em 0 rgba(0, 0, 0, 0.35)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
+      }
     }
   }
 
@@ -198,6 +202,10 @@ const onClick = (event: MouseEvent): void => {
         0 1px 0 rgba(255, 255, 255, 0.02),
         inset 0px 3px 8px rgba(0, 0, 0, 0.3),
         inset 0px 2px 4px rgba(0, 0, 0, 0.5);
+
+      &.deboss .tk-toggle-button-content {
+        filter: drop-shadow(0 -0.08em 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
+      }
     }
   }
 
@@ -212,7 +220,7 @@ const onClick = (event: MouseEvent): void => {
       inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 
     &.deboss .tk-toggle-button-content {
-      filter: drop-shadow(0 -0.06em 0 rgba(0, 0, 0, 0.35)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
+      filter: drop-shadow(0 -0.08em 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
     }
 
     &:hover:not(:disabled) {
@@ -248,6 +256,10 @@ const onClick = (event: MouseEvent): void => {
         0 1px 0 rgba(255, 255, 255, 0.02),
         inset 0px 3px 8px rgba(0, 0, 0, 0.5),
         inset 0px 2px 4px rgba(0, 0, 0, 0.7);
+
+      &.deboss .tk-toggle-button-content {
+        filter: drop-shadow(0 -0.04em 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0.06em 0 rgba(255, 255, 255, 0.15));
+      }
     }
   }
 
@@ -262,7 +274,7 @@ const onClick = (event: MouseEvent): void => {
       inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 
     &.deboss .tk-toggle-button-content {
-      filter: drop-shadow(0 -0.06em 0 rgba(0, 0, 0, 0.35)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
+      filter: drop-shadow(0 -0.04em 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0.06em 0 rgba(255, 255, 255, 0.15));
     }
 
     &:hover:not(:disabled) {
@@ -298,6 +310,10 @@ const onClick = (event: MouseEvent): void => {
         0 1px 0 rgba(255, 255, 255, 0.02),
         inset 0px 3px 8px rgba(0, 0, 0, 0.5),
         inset 0px 2px 4px rgba(0, 0, 0, 0.7);
+
+      &.deboss .tk-toggle-button-content {
+        filter: drop-shadow(0 -0.04em 0 rgba(0, 0, 0, 0.15)) drop-shadow(0 0.08em 0 rgba(255, 255, 255, 0.6));
+      }
     }
   }
 
@@ -312,12 +328,12 @@ const onClick = (event: MouseEvent): void => {
       inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 
     &.deboss .tk-toggle-button-content {
-      filter: drop-shadow(0 -0.06em 0 rgba(0, 0, 0, 0.35)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
+      filter: drop-shadow(0 -0.04em 0 rgba(0, 0, 0, 0.15)) drop-shadow(0 0.08em 0 rgba(255, 255, 255, 0.6));
     }
 
     &:hover:not(:disabled) {
-      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--warning-background-start), #fff 8%);
-      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--warning-background-end), #fff 8%);
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--warning-background-start), #fff 16%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--warning-background-end), #fff 16%);
       box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.04),
         inset 0px 1px 3px rgba(0, 0, 0, 0.25),
@@ -348,6 +364,10 @@ const onClick = (event: MouseEvent): void => {
         0 1px 0 rgba(255, 255, 255, 0.02),
         inset 0px 3px 8px rgba(0, 0, 0, 0.5),
         inset 0px 2px 4px rgba(0, 0, 0, 0.7);
+
+      &.deboss .tk-toggle-button-content {
+        filter: drop-shadow(0 -0.04em 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0.05em 0 rgba(255, 255, 255, 0.15));
+      }
     }
   }
 
@@ -362,7 +382,7 @@ const onClick = (event: MouseEvent): void => {
       inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 
     &.deboss .tk-toggle-button-content {
-      filter: drop-shadow(0 -0.06em 0 rgba(0, 0, 0, 0.35)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
+      filter: drop-shadow(0 -0.04em 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0.05em 0 rgba(255, 255, 255, 0.15));
     }
 
     &:hover:not(:disabled) {
