@@ -157,7 +157,7 @@ const onClick = (event: MouseEvent): void => {
     border: 1px solid var(--tk-toggle-button--primary-border);
     color: var(--tk-toggle-button--primary-foreground);
     box-shadow:
-      0 1px 1px rgba(255, 255, 255, 0.05),
+      0 1px 0 rgba(255, 255, 255, 0.04),
       inset 0px 2px 5px rgba(0, 0, 0, 0.35),
       inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 
@@ -169,7 +169,7 @@ const onClick = (event: MouseEvent): void => {
       --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--primary-background-start), #fff 8%);
       --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--primary-background-end), #fff 8%);
       box-shadow:
-        0 1px 1px rgba(255, 255, 255, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.04),
         inset 0px 1px 3px rgba(0, 0, 0, 0.25),
         inset 0px 1px 1px rgba(0, 0, 0, 0.4);
     }
@@ -207,7 +207,7 @@ const onClick = (event: MouseEvent): void => {
     border: 1px solid var(--tk-toggle-button--secondary-border);
     color: var(--tk-toggle-button--secondary-foreground);
     box-shadow:
-      0 1px 1px rgba(255, 255, 255, 0.05),
+      0 1px 0 rgba(255, 255, 255, 0.04),
       inset 0px 2px 5px rgba(0, 0, 0, 0.35),
       inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 
@@ -219,7 +219,7 @@ const onClick = (event: MouseEvent): void => {
       --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--secondary-background-start), #fff 4%);
       --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--secondary-background-end), #fff 4%);
       box-shadow:
-        0 1px 1px rgba(255, 255, 255, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.04),
         inset 0px 1px 3px rgba(0, 0, 0, 0.25),
         inset 0px 1px 1px rgba(0, 0, 0, 0.4);
     }
@@ -257,7 +257,7 @@ const onClick = (event: MouseEvent): void => {
     border: 1px solid var(--tk-toggle-button--success-border);
     color: var(--tk-toggle-button--success-foreground);
     box-shadow:
-      0 1px 1px rgba(255, 255, 255, 0.05),
+      0 1px 0 rgba(255, 255, 255, 0.04),
       inset 0px 2px 5px rgba(0, 0, 0, 0.35),
       inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 
@@ -269,7 +269,7 @@ const onClick = (event: MouseEvent): void => {
       --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--success-background-start), #fff 8%);
       --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--success-background-end), #fff 8%);
       box-shadow:
-        0 1px 1px rgba(255, 255, 255, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.04),
         inset 0px 1px 3px rgba(0, 0, 0, 0.25),
         inset 0px 1px 1px rgba(0, 0, 0, 0.4);
     }
@@ -307,7 +307,7 @@ const onClick = (event: MouseEvent): void => {
     border: 1px solid var(--tk-toggle-button--warning-border);
     color: var(--tk-toggle-button--warning-foreground);
     box-shadow:
-      0 1px 1px rgba(255, 255, 255, 0.05),
+      0 1px 0 rgba(255, 255, 255, 0.04),
       inset 0px 2px 5px rgba(0, 0, 0, 0.35),
       inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 
@@ -319,7 +319,7 @@ const onClick = (event: MouseEvent): void => {
       --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--warning-background-start), #fff 8%);
       --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--warning-background-end), #fff 8%);
       box-shadow:
-        0 1px 1px rgba(255, 255, 255, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.04),
         inset 0px 1px 3px rgba(0, 0, 0, 0.25),
         inset 0px 1px 1px rgba(0, 0, 0, 0.4);
     }
@@ -357,7 +357,7 @@ const onClick = (event: MouseEvent): void => {
     border: 1px solid var(--tk-toggle-button--danger-border);
     color: var(--tk-toggle-button--danger-foreground);
     box-shadow:
-      0 1px 1px rgba(255, 255, 255, 0.05),
+      0 1px 0 rgba(255, 255, 255, 0.04),
       inset 0px 2px 5px rgba(0, 0, 0, 0.35),
       inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 
@@ -369,7 +369,7 @@ const onClick = (event: MouseEvent): void => {
       --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--danger-background-start), #fff 8%);
       --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--danger-background-end), #fff 8%);
       box-shadow:
-        0 1px 1px rgba(255, 255, 255, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.04),
         inset 0px 1px 3px rgba(0, 0, 0, 0.25),
         inset 0px 1px 1px rgba(0, 0, 0, 0.4);
     }
