@@ -145,7 +145,7 @@ const onClick = (event: MouseEvent): void => {
       color: color-mix(in srgb, var(--tk-toggle-button--primary-foreground), #000 16%);
       transform: translateY(1px);
       box-shadow:
-        0 1px 1px rgba(255, 255, 255, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.02),
         inset 0px 3px 8px rgba(0, 0, 0, 0.5),
         inset 0px 2px 4px rgba(0, 0, 0, 0.7);
     }
@@ -180,7 +180,7 @@ const onClick = (event: MouseEvent): void => {
       color: color-mix(in srgb, var(--tk-toggle-button--primary-foreground), #000 16%);
       transform: translateY(1px);
       box-shadow:
-        0 1px 1px rgba(255, 255, 255, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.02),
         inset 0px 3px 8px rgba(0, 0, 0, 0.5),
         inset 0px 2px 4px rgba(0, 0, 0, 0.7);
     }
@@ -195,7 +195,7 @@ const onClick = (event: MouseEvent): void => {
       color: color-mix(in srgb, var(--tk-toggle-button--secondary-foreground), #000 16%);
       transform: translateY(1px);
       box-shadow:
-        0 1px 1px rgba(255, 255, 255, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.02),
         inset 0px 3px 8px rgba(0, 0, 0, 0.3),
         inset 0px 2px 4px rgba(0, 0, 0, 0.5);
     }
@@ -230,7 +230,7 @@ const onClick = (event: MouseEvent): void => {
       color: color-mix(in srgb, var(--tk-toggle-button--secondary-foreground), #000 16%);
       transform: translateY(1px);
       box-shadow:
-        0 1px 1px rgba(255, 255, 255, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.02),
         inset 0px 3px 8px rgba(0, 0, 0, 0.3),
         inset 0px 2px 4px rgba(0, 0, 0, 0.5);
     }
@@ -245,7 +245,7 @@ const onClick = (event: MouseEvent): void => {
       color: color-mix(in srgb, var(--tk-toggle-button--success-foreground), #000 16%);
       transform: translateY(1px);
       box-shadow:
-        0 1px 1px rgba(255, 255, 255, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.02),
         inset 0px 3px 8px rgba(0, 0, 0, 0.5),
         inset 0px 2px 4px rgba(0, 0, 0, 0.7);
     }
@@ -280,7 +280,7 @@ const onClick = (event: MouseEvent): void => {
       color: color-mix(in srgb, var(--tk-toggle-button--success-foreground), #000 16%);
       transform: translateY(1px);
       box-shadow:
-        0 1px 1px rgba(255, 255, 255, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.02),
         inset 0px 3px 8px rgba(0, 0, 0, 0.5),
         inset 0px 2px 4px rgba(0, 0, 0, 0.7);
     }
@@ -295,7 +295,7 @@ const onClick = (event: MouseEvent): void => {
       color: color-mix(in srgb, var(--tk-toggle-button--warning-foreground), #000 16%);
       transform: translateY(1px);
       box-shadow:
-        0 1px 1px rgba(255, 255, 255, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.02),
         inset 0px 3px 8px rgba(0, 0, 0, 0.5),
         inset 0px 2px 4px rgba(0, 0, 0, 0.7);
     }
@@ -330,7 +330,7 @@ const onClick = (event: MouseEvent): void => {
       color: color-mix(in srgb, var(--tk-toggle-button--warning-foreground), #000 16%);
       transform: translateY(1px);
       box-shadow:
-        0 1px 1px rgba(255, 255, 255, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.02),
         inset 0px 3px 8px rgba(0, 0, 0, 0.5),
         inset 0px 2px 4px rgba(0, 0, 0, 0.7);
     }
@@ -345,7 +345,7 @@ const onClick = (event: MouseEvent): void => {
       color: color-mix(in srgb, var(--tk-toggle-button--danger-foreground), #000 16%);
       transform: translateY(1px);
       box-shadow:
-        0 1px 1px rgba(255, 255, 255, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.02),
         inset 0px 3px 8px rgba(0, 0, 0, 0.5),
         inset 0px 2px 4px rgba(0, 0, 0, 0.7);
     }
@@ -380,7 +380,7 @@ const onClick = (event: MouseEvent): void => {
       color: color-mix(in srgb, var(--tk-toggle-button--danger-foreground), #000 16%);
       transform: translateY(1px);
       box-shadow:
-        0 1px 1px rgba(255, 255, 255, 0.05),
+        0 1px 0 rgba(255, 255, 255, 0.02),
         inset 0px 3px 8px rgba(0, 0, 0, 0.5),
         inset 0px 2px 4px rgba(0, 0, 0, 0.7);
     }
