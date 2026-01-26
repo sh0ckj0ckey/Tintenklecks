@@ -117,18 +117,18 @@ const onClick = (event: MouseEvent): void => {
   color: var(--tk-hyperlink-button--secondary-foreground);
 
   &.emboss .tk-hyperlink-button-content {
-    filter: drop-shadow(-0.02em -0.02em 0 rgba(255, 255, 255, 0.08)) drop-shadow(0.04em 0.04em 0 rgba(0, 0, 0, 0.8));
+    filter: drop-shadow(-0.02em -0.02em 0 rgba(255, 255, 255, 0.08)) drop-shadow(0.04em 0.08em 0 rgba(0, 0, 0, 0.8));
   }
 
   &:hover:not(:disabled) {
     &.emboss .tk-hyperlink-button-content {
-      filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.08)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
+      filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.04)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
     }
   }
 
   &:active:not(:disabled) {
     &.emboss .tk-hyperlink-button-content {
-      filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.08)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
+      filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.04)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
     }
 
     color: color-mix(in srgb, var(--tk-hyperlink-button--secondary-foreground), black 20%);
