@@ -7,34 +7,11 @@
       <TkButton theme="warning" :deboss="true">Warning</TkButton>
       <TkButton theme="danger" :deboss="true">Danger</TkButton>
     </div>
-    <div style="display: flex; gap: 8px">
-      <TkToggleButton v-model="isPrimaryOn" theme="primary" :deboss="true">Primary</TkToggleButton>
-      <TkToggleButton v-model="isSecondaryOn" theme="secondary" :deboss="true">Secondary</TkToggleButton>
-      <TkToggleButton v-model="isSuccessOn" theme="success" :deboss="true">Success</TkToggleButton>
-      <TkToggleButton v-model="isWarningOn" theme="warning" :deboss="true">Warning</TkToggleButton>
-      <TkToggleButton v-model="isDangerOn" theme="danger" :deboss="true">Danger</TkToggleButton>
-    </div>
-    <div style="display: flex; gap: 8px">
-      <TkHyperlinkButton theme="primary" :emboss="true">Primary</TkHyperlinkButton>
-      <TkHyperlinkButton theme="secondary" :emboss="true">Secondary</TkHyperlinkButton>
-      <TkHyperlinkButton theme="success" :emboss="true">Success</TkHyperlinkButton>
-      <TkHyperlinkButton theme="warning" :emboss="true">Warning</TkHyperlinkButton>
-      <TkHyperlinkButton theme="danger" :emboss="true">Danger</TkHyperlinkButton>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import TkButton from '../components/TkButtons/TkButton.vue'
-import TkHyperlinkButton from '../components/TkButtons/TkHyperlinkButton.vue'
-import TkToggleButton from '../components/TkButtons/TkToggleButton.vue'
-
-const isPrimaryOn = ref(false)
-const isSecondaryOn = ref(false)
-const isSuccessOn = ref(false)
-const isWarningOn = ref(false)
-const isDangerOn = ref(false)
 </script>
 
 <style scoped>

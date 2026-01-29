@@ -1,6 +1,8 @@
 <template>
   <div class="tintenklecks-app">
-    <div class="tintenklecks-app-navigation"></div>
+    <div class="tintenklecks-app-navigation">
+      <AppNavigation />
+    </div>
     <div class="tintenklecks-app-frame">
       <router-view />
     </div>
@@ -10,17 +12,15 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { RouterView, useRouter } from 'vue-router'
 import { RouteName } from '@renderer/router'
 import AppTitleBar from './AppTitleBar.vue'
+import AppNavigation from './AppNavigation.vue'
 
 const router = useRouter()
 
 onMounted(async () => {
   await router.replace({ name: RouteName.Home })
-  await router.push({ name: RouteName.Toast })
-  await router.push({ name: RouteName.Buttons })
-  await router.push({ name: RouteName.Popup })
 })
 </script>
 
@@ -34,6 +34,9 @@ onMounted(async () => {
   overflow: hidden;
 
   .tintenklecks-app-navigation {
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
     flex: none;
     overflow: hidden;
     width: 232px;
