@@ -3,7 +3,7 @@
     <div class="tintenklecks-app-navigation">
       <AppNavigation />
     </div>
-    <div class="tintenklecks-app-frame" :style="{ backgroundImage: texture.paperTexture.value }">
+    <div class="tintenklecks-app-frame">
       <router-view />
     </div>
     <AppTitleBar class="tintenklecks-app-title-bar" />
@@ -14,15 +14,8 @@
 import { onMounted } from 'vue'
 import { RouterView, useRouter } from 'vue-router'
 import { RouteName } from '@renderer/router'
-import { useTexture } from '@renderer/composables/useTexture'
 import AppTitleBar from './AppTitleBar.vue'
 import AppNavigation from './AppNavigation.vue'
-
-const texture = useTexture({
-  opacity: 0.15,
-  scale: 1.2,
-  seed: null
-})
 
 const router = useRouter()
 

@@ -22,7 +22,6 @@ const createSvgUrl = (svgContent: string): string => {
  * @param options 配置项，支持响应式引用
  */
 export function useTexture(options: MaybeRefOrGetter<TextureOptions> = {}) {
-  // 基础的 SVG 模板生成函数
   const generateSvg = (type: 'noise' | 'canvas' | 'paper', opacity: number, scale: number, seed: number) => {
     // 基础频率，根据 scale 调整
     // scale 越大，baseFrequency 越小，颗粒越大
@@ -32,7 +31,6 @@ export function useTexture(options: MaybeRefOrGetter<TextureOptions> = {}) {
 
     switch (type) {
       case 'noise':
-        // 经典的沙沙噪点
         filterContent = `
           <filter id='noise'>
             <feTurbulence type='fractalNoise' baseFrequency='${freq(0.65)}' numOctaves='3' stitchTiles='stitch' seed='${seed}'/>
@@ -71,12 +69,15 @@ export function useTexture(options: MaybeRefOrGetter<TextureOptions> = {}) {
   }
 
   // 统一处理参数
-  const getParams = () => {
+  const getParams = (): {
+    opacity: number
+    scale: number
+    seed: number
+  } => {
     const opts = toValue(options)
     return {
-      opacity: opts.opacity ?? 0.1, // 默认透明度
-      scale: opts.scale ?? 1, // 默认缩放 1
-      // 如果没有提供 seed，生成一个 0-1000 的随机整数
+      opacity: opts.opacity ?? 0.1,
+      scale: opts.scale ?? 1,
       seed: opts.seed ?? Math.floor(Math.random() * 1000)
     }
   }
