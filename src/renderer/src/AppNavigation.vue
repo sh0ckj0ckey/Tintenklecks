@@ -11,6 +11,9 @@
         </div>
       </template>
     </div>
+
+    <div class="app-navigation-section-separator"></div>
+
     <div class="app-navigation-section-body">
       <template v-for="(group, index) in menuGroups" :key="index">
         <div class="app-navigation-group">
@@ -22,6 +25,9 @@
         </div>
       </template>
     </div>
+
+    <div class="app-navigation-section-separator"></div>
+
     <div class="app-navigation-section-footer">
       <template v-for="(group, index) in footerGroups" :key="index">
         <div class="app-navigation-group">
@@ -78,42 +84,52 @@ const footerGroups = [
 .app-navigation {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
 
   .app-navigation-section-header {
     flex: none;
     display: flex;
     flex-direction: column;
-    padding: 16px;
-    gap: 24px;
   }
 
   .app-navigation-section-body {
     flex: auto;
     display: flex;
     flex-direction: column;
-    padding: 16px;
-    gap: 24px;
+    overflow-y: scroll;
   }
 
   .app-navigation-section-footer {
     flex: none;
     display: flex;
     flex-direction: column;
-    padding: 16px;
-    gap: 24px;
+  }
+
+  .app-navigation-section-separator {
+    flex: none;
+    border: 0;
+    height: 2px;
+    background-image:
+      linear-gradient(to right, transparent, rgba(0, 0, 0, 1) 50%, transparent),
+      linear-gradient(to right, transparent, rgba(255, 255, 255, 0.15) 50%, transparent);
+    background-position: top, bottom;
+    background-size: 100% 1px;
+    background-repeat: no-repeat;
   }
 
   .app-navigation-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    margin: 0 8px 0 16px;
 
     .app-navigation-group-title {
       font-size: 12px;
-      color: #888;
       font-weight: bold;
-      padding-left: 12px;
-      margin-bottom: 4px;
+      color: var(--tk-color-foreground);
+      margin: 12px 12px 4px 12px;
+      opacity: 0.5;
     }
 
     .app-navigation-item {
