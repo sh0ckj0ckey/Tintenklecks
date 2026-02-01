@@ -1,0 +1,73 @@
+<template>
+  <div class="logo-card-stack">
+    <div class="logo-card back">
+      <div class="logo-card-pattern"></div>
+    </div>
+    <div class="logo-card front">
+      <img class="logo-card-blot" src="../assets/images/tintenklecks_blot.svg" />
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.logo-card-stack {
+  position: relative;
+  width: 252px;
+  height: 352px;
+
+  &:hover {
+    .logo-card {
+      &.back {
+        transform: rotate(-16deg) translateX(-48px) translateY(0px);
+      }
+    }
+  }
+
+  .logo-card {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 16px;
+    background: #fdfbf7;
+    border-radius: 24px;
+    box-sizing: border-box;
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.08),
+      0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: transform 0.8s cubic-bezier(0.5, -0.8, 0.2, 1);
+    -electron-corner-smoothing: 100%;
+
+    &.front {
+      z-index: 2;
+    }
+
+    &.back {
+      z-index: 1;
+      transform-origin: bottom center;
+      transform: rotate(-12deg) translateX(-36px) translateY(0px);
+    }
+
+    .logo-card-pattern {
+      width: 100%;
+      height: 100%;
+      background-image: url('../assets/images/tintenklecks_pattern.png');
+      background-repeat: repeat;
+      background-size: 40px auto;
+      border-radius: 12px;
+      opacity: 0.85;
+      -electron-corner-smoothing: 100%;
+    }
+
+    .logo-card-blot {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+}
+</style>
