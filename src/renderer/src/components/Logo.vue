@@ -18,6 +18,11 @@
 
   &:hover {
     .logo-card {
+      &.front {
+        transform: rotate(0.01deg);
+        transition: transform 0.75s cubic-bezier(0.32, 280, 0.4, 1);
+      }
+
       &.back {
         opacity: 0;
         transform: rotate(0) translateX(0) translateY(0);
@@ -48,6 +53,9 @@
 
     &.front {
       z-index: 2;
+      transform-origin: bottom center;
+      transform: rotate(0) translateX(0) translateY(0);
+      transition: transform 0.75s cubic-bezier(0.32, -280, 0.4, 1);
     }
 
     &.back {
