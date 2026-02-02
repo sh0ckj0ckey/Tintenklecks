@@ -8,8 +8,8 @@
     <filter id="inner-shadow" x="-50%" y="-50%" width="200%" height="200%">
       <feFlood flood-color="#000000" flood-opacity="0.8" result="flood" />
       <feComposite operator="out" in="flood" in2="SourceGraphic" result="cutout" />
-      <feGaussianBlur in="cutout" stdDeviation="3" result="blur" />
-      <feOffset dx="2" dy="2" in="blur" result="offsetBlur" />
+      <feGaussianBlur in="cutout" stdDeviation="8" result="blur" />
+      <feOffset dx="4" dy="4" in="blur" result="offsetBlur" />
       <feComposite operator="atop" in="offsetBlur" in2="SourceGraphic" />
     </filter>
   </defs>

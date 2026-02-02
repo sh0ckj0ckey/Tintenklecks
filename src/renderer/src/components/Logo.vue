@@ -19,8 +19,11 @@
   &:hover {
     .logo-card {
       &.back {
+        opacity: 0;
         transform: rotate(0) translateX(0) translateY(0);
-        transition: transform 0.75s cubic-bezier(0.77, -0.35, 0.25, 1);
+        transition:
+          opacity 0.75s cubic-bezier(0.77, -0.35, 0.25, 1),
+          transform 0.75s cubic-bezier(0.77, -0.35, 0.25, 1);
       }
     }
   }
@@ -49,9 +52,12 @@
 
     &.back {
       z-index: 1;
+      opacity: 1;
       transform-origin: bottom center;
-      transform: rotate(-9deg) translateX(-36px) translateY(8px);
-      transition: transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform: rotate(-9deg) translateX(-36px) translateY(12px);
+      transition:
+        opacity 0.75s cubic-bezier(0.34, 1.56, 0.64, 1),
+        transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .logo-card-pattern {
