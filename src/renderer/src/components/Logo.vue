@@ -18,7 +18,8 @@
   &:hover {
     .logo-card {
       &.back {
-        transform: rotate(-16deg) translateX(-48px) translateY(0px);
+        transform: rotate(0) translateX(0) translateY(0);
+        transition: transform 0.75s cubic-bezier(0.77, -0.35, 0.25, 1);
       }
     }
   }
@@ -39,7 +40,6 @@
     box-shadow:
       0 4px 12px rgba(0, 0, 0, 0.08),
       0 1px 3px rgba(0, 0, 0, 0.05);
-    transition: transform 0.8s cubic-bezier(0.5, -0.8, 0.2, 1);
     -electron-corner-smoothing: 100%;
 
     &.front {
@@ -49,7 +49,8 @@
     &.back {
       z-index: 1;
       transform-origin: bottom center;
-      transform: rotate(-12deg) translateX(-36px) translateY(0px);
+      transform: rotate(-9deg) translateX(-36px) translateY(8px);
+      transition: transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .logo-card-pattern {

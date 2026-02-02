@@ -9,7 +9,7 @@
       <feFlood flood-color="#000000" flood-opacity="0.8" result="flood" />
       <feComposite operator="out" in="flood" in2="SourceGraphic" result="cutout" />
       <feGaussianBlur in="cutout" stdDeviation="3" result="blur" />
-      <feOffset dx="1" dy="2" in="blur" result="offsetBlur" />
+      <feOffset dx="2" dy="2" in="blur" result="offsetBlur" />
       <feComposite operator="atop" in="offsetBlur" in2="SourceGraphic" />
     </filter>
   </defs>
