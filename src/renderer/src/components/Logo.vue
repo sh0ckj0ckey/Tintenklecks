@@ -151,12 +151,12 @@ const onMouseLeave = (): void => {
         opacity: 0;
         transition:
           transform 0.5s cubic-bezier(0.32, 1, 0.36, 1) 0s,
-          opacity 0.4s ease 0.1s;
+          opacity 0.2s linear 0.4s;
       }
 
       &.front {
         transform: rotate(0) translateX(0) translateY(0);
-        transition: transform 0.5s cubic-bezier(0.32, 1, 0.36, 1);
+        transition: transform 0.6s cubic-bezier(0.4, 2.4, 0.4, 1);
       }
     }
   }
