@@ -174,24 +174,47 @@ const footerGroups = [
 
     .app-navigation-item {
       display: block;
-      padding: 8px 12px;
-      text-decoration: none;
-      color: var(--tk-color-foreground);
       border-radius: 4px;
-      transition: background-color 0.2s;
+      padding: 8px 12px;
+      color: var(--tk-color-foreground);
       font-size: 14px;
+      text-decoration: none;
       -webkit-user-drag: none;
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0),
+        inset 0 1px 0 rgba(255, 255, 255, 0),
+        inset 0 -1px 0 rgba(255, 255, 255, 0);
+      transition:
+        background-color 0.2s,
+        color 0.2s,
+        box-shadow 0.2s;
 
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.05);
+      &:hover:not(.tk-navigation-item-exact-active) {
+        background-color: rgba(255, 255, 255, 0.04);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0),
+          inset 0 1px 0 rgba(255, 255, 255, 0.02),
+          inset 0 -1px 0 rgba(255, 255, 255, 0.01);
+      }
+
+      &:active:not(.tk-navigation-item-exact-active) {
+        color: color-mix(in srgb, var(--tk-color-foreground), #000 32%);
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.04),
+          inset 0px 2px 5px rgba(0, 0, 0, 0.35),
+          inset 0px 1px 2px rgba(0, 0, 0, 0.5);
+      }
+
+      &:focus-visible {
+        outline: 2px dashed currentColor;
+        outline-offset: 2px;
       }
 
       &.tk-navigation-item-exact-active {
-        background-color: var(--tk-color-background-deep);
-
-        &:hover {
-          background-color: var(--tk-color-background-deep);
-        }
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.04),
+          inset 0px 2px 5px rgba(0, 0, 0, 0.35),
+          inset 0px 1px 2px rgba(0, 0, 0, 0.5);
       }
     }
   }
