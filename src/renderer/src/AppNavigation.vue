@@ -183,7 +183,7 @@ const footerGroups = [
 
       &:hover:not(.tk-navigation-item-exact-active) {
         color: var(--tk-color-foreground);
-        background-color: color-mix(in srgb, var(--tk-color-background-deep), transparent 50%);
+        background-color: color-mix(in srgb, var(--tk-color-background-deep), transparent 30%);
         filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.04)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
         transform: translateY(-1px);
         box-shadow:
@@ -194,7 +194,7 @@ const footerGroups = [
 
       &:active:not(.tk-navigation-item-exact-active) {
         color: color-mix(in srgb, var(--tk-color-foreground), #000 20%);
-        background-color: color-mix(in srgb, var(--tk-color-background-deep), transparent 30%);
+        background-color: var(--tk-color-background-deep);
         filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.04)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
         transform: translateY(1px);
         box-shadow:
