@@ -13,6 +13,7 @@ defineProps<{
   flex: none;
   border: 0;
   margin: 0;
+  padding: 0;
 }
 
 .tk-separator--horizontal {

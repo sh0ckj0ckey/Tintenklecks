@@ -12,7 +12,7 @@
       </template>
     </div>
 
-    <TkSeparator orientation="vertical" />
+    <TkSeparator orientation="horizontal"/>
 
     <div class="app-navigation-section-body">
       <template v-for="(group, index) in menuGroups" :key="index">
