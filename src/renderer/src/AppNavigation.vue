@@ -12,7 +12,7 @@
       </template>
     </div>
 
-    <TkSeparator orientation="horizontal"/>
+    <TkSeparator orientation="horizontal" />
 
     <div class="app-navigation-section-body">
       <template v-for="(group, index) in menuGroups" :key="index">
@@ -169,29 +169,38 @@ const footerGroups = [
       font-size: 14px;
       text-decoration: none;
       -webkit-user-drag: none;
+      background-color: transparent;
+      filter: drop-shadow(-0.02em -0.02em 0 rgba(255, 255, 255, 0.08)) drop-shadow(0.04em 0.08em 0 rgba(0, 0, 0, 0.8));
       box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0),
+        0 1px 2px rgba(0, 0, 0, 0),
         inset 0 1px 0 rgba(255, 255, 255, 0),
         inset 0 -1px 0 rgba(255, 255, 255, 0);
       transition:
+        transform 0.2s,
         background-color 0.2s,
         color 0.2s,
         box-shadow 0.2s;
 
       &:hover:not(.tk-navigation-item-exact-active) {
-        background-color: rgba(255, 255, 255, 0.04);
+        color: var(--tk-color-foreground);
+        background-color: color-mix(in srgb, var(--tk-color-background-deep), transparent 50%);
+        filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.04)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
+        transform: translateY(-1px);
         box-shadow:
-          0 1px 0 rgba(255, 255, 255, 0),
-          inset 0 1px 0 rgba(255, 255, 255, 0.02),
+          0 2px 4px rgba(0, 0, 0, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06),
           inset 0 -1px 0 rgba(255, 255, 255, 0.01);
       }
 
       &:active:not(.tk-navigation-item-exact-active) {
-        color: color-mix(in srgb, var(--tk-color-foreground), #000 32%);
+        color: color-mix(in srgb, var(--tk-color-foreground), #000 20%);
+        background-color: color-mix(in srgb, var(--tk-color-background-deep), transparent 30%);
+        filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.04)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
+        transform: translateY(1px);
         box-shadow:
-          0 1px 0 rgba(255, 255, 255, 0.04),
-          inset 0px 2px 5px rgba(0, 0, 0, 0.35),
-          inset 0px 1px 2px rgba(0, 0, 0, 0.5);
+          0 1px 2px rgba(0, 0, 0, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04),
+          inset 0 -1px 0 rgba(255, 255, 255, 0.01);
       }
 
       &:focus-visible {
@@ -200,10 +209,14 @@ const footerGroups = [
       }
 
       &.tk-navigation-item-exact-active {
+        color: var(--tk-color-foreground);
+        background-color: var(--tk-color-background-deep);
+        filter: drop-shadow(0.04em 0.08em 0 rgba(255, 255, 255, 0.04)) drop-shadow(-0.02em -0.02em 0 rgba(0, 0, 0, 0.6));
+        transform: translateY(0);
         box-shadow:
-          0 1px 0 rgba(255, 255, 255, 0.04),
-          inset 0px 2px 5px rgba(0, 0, 0, 0.35),
-          inset 0px 1px 2px rgba(0, 0, 0, 0.5);
+          0 1px 2px rgba(0, 0, 0, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04),
+          inset 0 -1px 0 rgba(255, 255, 255, 0.01);
       }
     }
   }
