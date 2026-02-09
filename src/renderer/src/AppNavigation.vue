@@ -12,7 +12,7 @@
       </template>
     </div>
 
-    <div class="app-navigation-section-separator"></div>
+    <TkSeparator orientation="vertical" />
 
     <div class="app-navigation-section-body">
       <template v-for="(group, index) in menuGroups" :key="index">
@@ -26,7 +26,7 @@
       </template>
     </div>
 
-    <div class="app-navigation-section-separator"></div>
+    <TkSeparator orientation="horizontal" />
 
     <div class="app-navigation-section-footer">
       <template v-for="(group, index) in footerGroups" :key="index">
@@ -45,6 +45,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import { RouteName } from '@renderer/router'
+import TkSeparator from '@renderer/components/TkSeparator/TkSeparator.vue'
 
 const headerGroups = [
   {
@@ -146,18 +147,6 @@ const footerGroups = [
         box-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
       }
     }
-  }
-
-  .app-navigation-section-separator {
-    flex: none;
-    border: 0;
-    height: 2px;
-    background-image:
-      linear-gradient(to right, transparent, rgba(0, 0, 0, 1) 50%, transparent),
-      linear-gradient(to right, transparent, rgba(255, 255, 255, 0.15) 50%, transparent);
-    background-position: top, bottom;
-    background-size: 100% 1px;
-    background-repeat: no-repeat;
   }
 
   .app-navigation-group {

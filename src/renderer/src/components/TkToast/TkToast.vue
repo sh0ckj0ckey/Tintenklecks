@@ -1,5 +1,5 @@
 <template>
-  <div :class="['tk-toast', placementClass]">
+  <div :class="['tk-toast', placementClass]" role="alert">
     <div class="toast-content">
       <svg
         v-if="icon !== 'none' && iconPaths[icon]"
