@@ -52,7 +52,7 @@ const onClick = (event: MouseEvent): void => {
 <style scoped>
 .tk-toggle-button {
   --tk-toggle-button--primary-foreground: #f8f8f8;
-  --tk-toggle-button--secondary-foreground: #f8f8f8;
+  --tk-toggle-button--secondary-foreground: #1f1f1f;
   --tk-toggle-button--success-foreground: #f0fdf4;
   --tk-toggle-button--warning-foreground: #1f1f1f;
   --tk-toggle-button--danger-foreground: #fff1f0;
@@ -65,8 +65,8 @@ const onClick = (event: MouseEvent): void => {
 
   --tk-toggle-button--primary-background-start: #619bcb;
   --tk-toggle-button--primary-background-end: #4984b4;
-  --tk-toggle-button--secondary-background-start: #3a3a3c;
-  --tk-toggle-button--secondary-background-end: #2c2c2e;
+  --tk-toggle-button--secondary-background-start: #f7f7f6;
+  --tk-toggle-button--secondary-background-end: #f3f4f2;
   --tk-toggle-button--success-background-start: #1db054;
   --tk-toggle-button--success-background-end: #0b6b30;
   --tk-toggle-button--warning-background-start: #ffdb70;
@@ -142,7 +142,7 @@ const onClick = (event: MouseEvent): void => {
     &:active:not(:disabled) {
       --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--primary-background-start), #000 8%);
       --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--primary-background-end), #000 8%);
-      color: color-mix(in srgb, var(--tk-toggle-button--primary-foreground), #000 16%);
+      color: color-mix(in srgb, var(--tk-toggle-button--primary-foreground), var(--tk-toggle-button--primary-background-start) 16%);
       transform: translateY(1px);
       box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.02),
@@ -181,7 +181,7 @@ const onClick = (event: MouseEvent): void => {
     &:active:not(:disabled) {
       --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--primary-background-start), #000 8%);
       --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--primary-background-end), #000 8%);
-      color: color-mix(in srgb, var(--tk-toggle-button--primary-foreground), #000 16%);
+      color: color-mix(in srgb, var(--tk-toggle-button--primary-foreground), var(--tk-toggle-button--primary-background-start) 16%);
       transform: translateY(1px);
       box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.02),
@@ -196,15 +196,15 @@ const onClick = (event: MouseEvent): void => {
     &:active:not(:disabled) {
       --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--secondary-background-start), #000 8%);
       --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--secondary-background-end), #000 8%);
-      color: color-mix(in srgb, var(--tk-toggle-button--secondary-foreground), #000 16%);
+      color: color-mix(in srgb, var(--tk-toggle-button--secondary-foreground), var(--tk-toggle-button--secondary-background-start) 16%);
       transform: translateY(1px);
       box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.02),
-        inset 0px 3px 8px rgba(0, 0, 0, 0.3),
-        inset 0px 2px 4px rgba(0, 0, 0, 0.5);
+        inset 0px 3px 8px rgba(0, 0, 0, 0.5),
+        inset 0px 2px 4px rgba(0, 0, 0, 0.7);
 
       &.deboss .tk-toggle-button-content {
-        filter: drop-shadow(0 -0.08em 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
+        filter: drop-shadow(0 -0.04em 0 rgba(0, 0, 0, 0.15)) drop-shadow(0 0.08em 0 rgba(255, 255, 255, 0.6));
       }
     }
   }
@@ -220,12 +220,12 @@ const onClick = (event: MouseEvent): void => {
       inset 0px 1px 2px rgba(0, 0, 0, 0.5);
 
     &.deboss .tk-toggle-button-content {
-      filter: drop-shadow(0 -0.08em 0 rgba(0, 0, 0, 0.5)) drop-shadow(0 0.04em 0 rgba(255, 255, 255, 0.15));
+      filter: drop-shadow(0 -0.04em 0 rgba(0, 0, 0, 0.15)) drop-shadow(0 0.08em 0 rgba(255, 255, 255, 0.6));
     }
 
     &:hover:not(:disabled) {
-      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--secondary-background-start), #fff 4%);
-      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--secondary-background-end), #fff 4%);
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--secondary-background-start), #fff 8%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--secondary-background-end), #fff 8%);
       box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.04),
         inset 0px 1px 3px rgba(0, 0, 0, 0.25),
@@ -235,12 +235,12 @@ const onClick = (event: MouseEvent): void => {
     &:active:not(:disabled) {
       --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--secondary-background-start), #000 8%);
       --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--secondary-background-end), #000 8%);
-      color: color-mix(in srgb, var(--tk-toggle-button--secondary-foreground), #000 16%);
+      color: color-mix(in srgb, var(--tk-toggle-button--secondary-foreground), var(--tk-toggle-button--secondary-background-start) 16%);
       transform: translateY(1px);
       box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.02),
-        inset 0px 3px 8px rgba(0, 0, 0, 0.3),
-        inset 0px 2px 4px rgba(0, 0, 0, 0.5);
+        inset 0px 3px 8px rgba(0, 0, 0, 0.5),
+        inset 0px 2px 4px rgba(0, 0, 0, 0.7);
     }
   }
 }
@@ -250,7 +250,7 @@ const onClick = (event: MouseEvent): void => {
     &:active:not(:disabled) {
       --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--success-background-start), #000 8%);
       --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--success-background-end), #000 8%);
-      color: color-mix(in srgb, var(--tk-toggle-button--success-foreground), #000 16%);
+      color: color-mix(in srgb, var(--tk-toggle-button--success-foreground), var(--tk-toggle-button--success-background-start) 16%);
       transform: translateY(1px);
       box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.02),
@@ -289,7 +289,7 @@ const onClick = (event: MouseEvent): void => {
     &:active:not(:disabled) {
       --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--success-background-start), #000 8%);
       --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--success-background-end), #000 8%);
-      color: color-mix(in srgb, var(--tk-toggle-button--success-foreground), #000 16%);
+      color: color-mix(in srgb, var(--tk-toggle-button--success-foreground), var(--tk-toggle-button--success-background-start) 16%);
       transform: translateY(1px);
       box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.02),
@@ -304,7 +304,7 @@ const onClick = (event: MouseEvent): void => {
     &:active:not(:disabled) {
       --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--warning-background-start), #000 8%);
       --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--warning-background-end), #000 8%);
-      color: color-mix(in srgb, var(--tk-toggle-button--warning-foreground), #000 16%);
+      color: color-mix(in srgb, var(--tk-toggle-button--warning-foreground), var(--tk-toggle-button--warning-background-start) 16%);
       transform: translateY(1px);
       box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.02),
@@ -332,8 +332,8 @@ const onClick = (event: MouseEvent): void => {
     }
 
     &:hover:not(:disabled) {
-      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--warning-background-start), #fff 16%);
-      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--warning-background-end), #fff 16%);
+      --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--warning-background-start), #fff 8%);
+      --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--warning-background-end), #fff 8%);
       box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.04),
         inset 0px 1px 3px rgba(0, 0, 0, 0.25),
@@ -343,7 +343,7 @@ const onClick = (event: MouseEvent): void => {
     &:active:not(:disabled) {
       --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--warning-background-start), #000 8%);
       --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--warning-background-end), #000 8%);
-      color: color-mix(in srgb, var(--tk-toggle-button--warning-foreground), #000 16%);
+      color: color-mix(in srgb, var(--tk-toggle-button--warning-foreground), var(--tk-toggle-button--warning-background-start) 16%);
       transform: translateY(1px);
       box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.02),
@@ -358,7 +358,7 @@ const onClick = (event: MouseEvent): void => {
     &:active:not(:disabled) {
       --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--danger-background-start), #000 8%);
       --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--danger-background-end), #000 8%);
-      color: color-mix(in srgb, var(--tk-toggle-button--danger-foreground), #000 16%);
+      color: color-mix(in srgb, var(--tk-toggle-button--danger-foreground), var(--tk-toggle-button--danger-background-start) 16%);
       transform: translateY(1px);
       box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.02),
@@ -397,7 +397,7 @@ const onClick = (event: MouseEvent): void => {
     &:active:not(:disabled) {
       --tk-toggle-button-background-linear-gradient-start: color-mix(in srgb, var(--tk-toggle-button--danger-background-start), #000 8%);
       --tk-toggle-button-background-linear-gradient-end: color-mix(in srgb, var(--tk-toggle-button--danger-background-end), #000 8%);
-      color: color-mix(in srgb, var(--tk-toggle-button--danger-foreground), #000 16%);
+      color: color-mix(in srgb, var(--tk-toggle-button--danger-foreground), var(--tk-toggle-button--danger-background-start) 16%);
       transform: translateY(1px);
       box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.02),
