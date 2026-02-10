@@ -92,14 +92,16 @@ const footerGroups = [
     flex: none;
     display: flex;
     flex-direction: column;
-    margin: 0 20px 8px 8px;
+    padding: 0 20px 8px 8px;
+    gap: 12px;
   }
 
   .app-navigation-section-footer {
     flex: none;
     display: flex;
     flex-direction: column;
-    margin: 8px 20px 10px 8px;
+    padding: 8px 20px 8px 8px;
+    gap: 12px;
   }
 
   .app-navigation-section-body {
@@ -107,7 +109,8 @@ const footerGroups = [
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    margin: 0 4px 0 8px;
+    padding: 12px 20px 8px 8px;
+    gap: 12px;
 
     &::-webkit-scrollbar {
       width: 8px;
@@ -157,19 +160,20 @@ const footerGroups = [
     .app-navigation-group-title {
       font-size: 12px;
       color: var(--tk-color-foreground);
-      margin: 12px 12px 2px 12px;
+      margin: 0 12px 2px 12px;
       opacity: 0.5;
     }
 
     .app-navigation-item {
       display: block;
-      border-radius: 4px;
       padding: 8px 12px;
+      border-radius: 4px;
+      background-color: transparent;
       color: var(--tk-color-foreground);
       font-size: 14px;
       text-decoration: none;
       -webkit-user-drag: none;
-      background-color: transparent;
+      cursor: default;
       box-shadow:
         0 1px 2px rgba(0, 0, 0, 0),
         inset 1px 1px 0 rgba(255, 255, 255, 0),
