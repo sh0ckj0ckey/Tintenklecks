@@ -122,36 +122,37 @@ const footerGroups = [
     }
 
     &::-webkit-scrollbar-track {
-      border-radius: 4px;
-      box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
-      background-color: #ffffff03;
       margin: 8px 0;
+      background-color: transparent;
+      border-radius: 4px;
+      box-shadow: none;
     }
 
     &::-webkit-scrollbar-thumb {
-      border-radius: 2px;
-      background-color: #ffffff03;
+      background-color: #ffffff20;
       border: 2px solid transparent;
+      border-radius: 4px;
       background-clip: content-box;
-      box-shadow: none;
-      transition:
-        background-color 0.3s,
-        box-shadow 0.3s;
     }
 
     &:hover {
+      &::-webkit-scrollbar-track {
+        margin: 8px 0;
+        background-color: #ffffff08;
+        border-radius: 4px;
+        box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+      }
+
       &::-webkit-scrollbar-thumb {
-        background-color: #dcdcd9;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        background-color: #ffffff18;
       }
 
       &::-webkit-scrollbar-thumb:hover {
-        background-color: #e8e8e5;
+        background-color: #ffffff26;
       }
 
       &::-webkit-scrollbar-thumb:active {
-        background-color: #c8c8c5;
-        box-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
+        background-color: #ffffff20;
       }
     }
   }
