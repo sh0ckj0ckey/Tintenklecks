@@ -68,6 +68,10 @@ const menuGroups = [
     items: [{ label: 'Popup', routeName: RouteName.Popup }]
   },
   {
+    title: 'Layout',
+    items: [{ label: 'Separator', routeName: RouteName.Separator }]
+  },
+  {
     title: 'Status and Info',
     items: [{ label: 'Toast', routeName: RouteName.Toast }]
   }

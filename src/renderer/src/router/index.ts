@@ -6,6 +6,7 @@ import TkButtonsPage from '@renderer/pages/TkButtonsPage.vue'
 import TkHyperlinkButtonsPage from '@renderer/pages/TkHyperlinkButtonsPage.vue'
 import TkToggleButtonsPage from '@renderer/pages/TkToggleButtonsPage.vue'
 import TkPopupPage from '@renderer/pages/TkPopupPage.vue'
+import TkSeparatorPage from '@renderer/pages/TkSeparatorPage.vue'
 import TkToastPage from '@renderer/pages/TkToastPage.vue'
 
 export const RouteName = {
@@ -15,6 +16,7 @@ export const RouteName = {
   HyperlinkButtons: 'HyperlinkButtons',
   ToggleButtons: 'ToggleButtons',
   Popup: 'Popup',
+  Separator: 'Separator',
   Toast: 'Toast'
 } as const
 
@@ -52,6 +54,11 @@ const routes = [
     path: '/popup',
     name: RouteName.Popup,
     component: TkPopupPage
+  },
+  {
+    path: '/separator',
+    name: RouteName.Separator,
+    component: TkSeparatorPage
   },
   {
     path: '/toast',
