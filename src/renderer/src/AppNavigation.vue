@@ -92,7 +92,8 @@ const footerGroups = [
     flex: none;
     display: flex;
     flex-direction: column;
-    padding: 0 20px 8px 8px;
+    padding: 0px 12px 8px 8px;
+    margin-right: 4px;
     gap: 12px;
   }
 
@@ -100,7 +101,8 @@ const footerGroups = [
     flex: none;
     display: flex;
     flex-direction: column;
-    padding: 8px 20px 8px 8px;
+    padding: 8px 12px 8px 8px;
+    margin-right: 4px;
     gap: 12px;
   }
 
@@ -109,7 +111,9 @@ const footerGroups = [
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    padding: 12px 20px 8px 8px;
+    scrollbar-gutter: stable;
+    padding: 12px 4px 8px 8px;
+    margin-right: 4px;
     gap: 12px;
 
     &::-webkit-scrollbar {
