@@ -1,9 +1,9 @@
 <template>
   <div :class="['tk-toast', placementClass]" role="alert">
-    <div class="toast-content">
+    <div class="tk-toast-content">
       <svg
         v-if="icon !== 'none' && iconPaths[icon]"
-        class="toast-icon"
+        class="tk-toast-icon"
         :class="`icon-${icon}`"
         fill="currentColor"
         viewBox="0 0 16 16"
@@ -13,7 +13,7 @@
         <path clip-rule="evenodd" fill-rule="evenodd" :d="iconPaths[icon]"></path>
       </svg>
 
-      <span class="toast-text">{{ text }}</span>
+      <span class="tk-toast-text">{{ text }}</span>
     </div>
   </div>
 </template>
@@ -92,7 +92,7 @@ onBeforeUnmount(() => {
     margin-bottom: v-bind(offsetValue);
   }
 
-  .toast-content {
+  .tk-toast-content {
     width: auto;
     height: auto;
     max-width: 80%;
@@ -127,7 +127,7 @@ onBeforeUnmount(() => {
       0 8px 20px rgba(0, 0, 0, 0.3),
       0 2px 8px rgba(0, 0, 0, 0.2);
 
-    .toast-icon {
+    .tk-toast-icon {
       flex: none;
       width: 18px;
       height: 18px;
@@ -150,7 +150,7 @@ onBeforeUnmount(() => {
       }
     }
 
-    .toast-text {
+    .tk-toast-text {
       display: block;
       overflow: hidden;
       font-size: 14px;

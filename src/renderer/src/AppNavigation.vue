@@ -74,6 +74,10 @@ const menuGroups = [
   {
     title: 'Status and Info',
     items: [{ label: 'Toast', routeName: RouteName.Toast }]
+  },
+  {
+    title: 'Motion',
+    items: [{ label: 'Marquee', routeName: RouteName.Marquee }]
   }
 ]
 

@@ -8,6 +8,7 @@ import TkToggleButtonsPage from '@renderer/pages/TkToggleButtonsPage.vue'
 import TkPopupPage from '@renderer/pages/TkPopupPage.vue'
 import TkSeparatorPage from '@renderer/pages/TkSeparatorPage.vue'
 import TkToastPage from '@renderer/pages/TkToastPage.vue'
+import TkMarqueePage from '@renderer/pages/TkMarqueePage.vue'
 
 export const RouteName = {
   Home: 'Home',
@@ -17,7 +18,8 @@ export const RouteName = {
   ToggleButtons: 'ToggleButtons',
   Popup: 'Popup',
   Separator: 'Separator',
-  Toast: 'Toast'
+  Toast: 'Toast',
+  Marquee: 'Marquee'
 } as const
 
 const routes = [
@@ -64,6 +66,11 @@ const routes = [
     path: '/toast',
     name: RouteName.Toast,
     component: TkToastPage
+  },
+  {
+    path: '/marquee',
+    name: RouteName.Marquee,
+    component: TkMarqueePage
   }
 ]
 
