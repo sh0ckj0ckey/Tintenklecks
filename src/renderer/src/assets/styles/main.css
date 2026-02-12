@@ -2,19 +2,19 @@
 
 :root {
   /* 应用程序标题栏层级 */
-  --tk-z-app-title-bar: 5000;
+  --tk-z-app-title-bar: 1000;
 
   /* 全局 ContentDialog 层级 */
-  --tk-z-content-dialog: 7000;
-
-  /* 全局 Popup 层级 */
-  --tk-z-popup: 8000;
-
-  /* 全局 MessageBox 通知层级 */
-  --tk-z-message-box: 9000;
+  --tk-z-content-dialog: 9000;
 
   /* 全局 Toast 通知层级 */
   --tk-z-toast: 10000;
+
+  /* 全局 MessageBox 通知层级 */
+  --tk-z-message-box: 11000;
+
+  /* 全局 Popup 层级 */
+  --tk-z-popup: 20000;
 
   /* 应用程序标题栏高度 */
   --tk-title-bar-height: 48px;
