@@ -95,12 +95,12 @@ const animate = (timestamp: number): void => {
     if (props.direction === 'right' || props.direction === 'down') {
       currentOffset.value -= moveStep
       if (currentOffset.value <= 0) {
-        currentOffset.value += contentSize.value
+        currentOffset.value = (currentOffset.value % contentSize.value) + contentSize.value
       }
     } else {
       currentOffset.value += moveStep
       if (currentOffset.value >= contentSize.value) {
-        currentOffset.value -= contentSize.value
+        currentOffset.value = currentOffset.value % contentSize.value
       }
     }
   }
