@@ -58,9 +58,9 @@ const menuGroups = [
   {
     title: 'Basic Input',
     items: [
-      { label: 'Button', routeName: RouteName.Buttons },
-      { label: 'HyperlinkButton', routeName: RouteName.HyperlinkButtons },
-      { label: 'ToggleButton', routeName: RouteName.ToggleButtons }
+      { label: 'Button', routeName: RouteName.Button },
+      { label: 'HyperlinkButton', routeName: RouteName.HyperlinkButton },
+      { label: 'ToggleButton', routeName: RouteName.ToggleButton }
     ]
   },
   {

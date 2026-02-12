@@ -2,9 +2,9 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 
 import HomePage from '@renderer/pages/HomePage.vue'
 import SettingsPage from '@renderer/pages/SettingsPage.vue'
-import TkButtonsPage from '@renderer/pages/TkButtonsPage.vue'
-import TkHyperlinkButtonsPage from '@renderer/pages/TkHyperlinkButtonsPage.vue'
-import TkToggleButtonsPage from '@renderer/pages/TkToggleButtonsPage.vue'
+import TkButtonPage from '@renderer/pages/TkButtonPage.vue'
+import TkHyperlinkButtonPage from '@renderer/pages/TkHyperlinkButtonPage.vue'
+import TkToggleButtonPage from '@renderer/pages/TkToggleButtonPage.vue'
 import TkPopupPage from '@renderer/pages/TkPopupPage.vue'
 import TkSeparatorPage from '@renderer/pages/TkSeparatorPage.vue'
 import TkToastPage from '@renderer/pages/TkToastPage.vue'
@@ -13,9 +13,9 @@ import TkMarqueePage from '@renderer/pages/TkMarqueePage.vue'
 export const RouteName = {
   Home: 'Home',
   Settings: 'Settings',
-  Buttons: 'Buttons',
-  HyperlinkButtons: 'HyperlinkButtons',
-  ToggleButtons: 'ToggleButtons',
+  Button: 'Button',
+  HyperlinkButton: 'HyperlinkButton',
+  ToggleButton: 'ToggleButton',
   Popup: 'Popup',
   Separator: 'Separator',
   Toast: 'Toast',
@@ -38,19 +38,19 @@ const routes = [
     component: SettingsPage
   },
   {
-    path: '/buttons',
-    name: RouteName.Buttons,
-    component: TkButtonsPage
+    path: '/button',
+    name: RouteName.Button,
+    component: TkButtonPage
   },
   {
-    path: '/hyperlink-buttons',
-    name: RouteName.HyperlinkButtons,
-    component: TkHyperlinkButtonsPage
+    path: '/hyperlink-button',
+    name: RouteName.HyperlinkButton,
+    component: TkHyperlinkButtonPage
   },
   {
-    path: '/toggle-buttons',
-    name: RouteName.ToggleButtons,
-    component: TkToggleButtonsPage
+    path: '/toggle-button',
+    name: RouteName.ToggleButton,
+    component: TkToggleButtonPage
   },
   {
     path: '/popup',

@@ -1,5 +1,5 @@
 <template>
-  <div class="tk-hyperlink-buttons-page">
+  <div class="tk-hyperlink-button-page">
     <div style="display: flex; gap: 8px">
       <TkHyperlinkButton theme="primary" :emboss="true">Primary</TkHyperlinkButton>
       <TkHyperlinkButton theme="secondary" :emboss="true">Secondary</TkHyperlinkButton>
@@ -15,7 +15,7 @@ import TkHyperlinkButton from '../components/TkButtons/TkHyperlinkButton.vue'
 </script>
 
 <style scoped>
-.tk-hyperlink-buttons-page {
+.tk-hyperlink-button-page {
   width: 100%;
   height: 100%;
   display: flex;

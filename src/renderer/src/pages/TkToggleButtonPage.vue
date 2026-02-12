@@ -1,5 +1,5 @@
 <template>
-  <div class="tk-toggle-buttons-page">
+  <div class="tk-toggle-button-page">
     <div style="display: flex; gap: 8px">
       <TkToggleButton v-model="isPrimaryOn" theme="primary" :deboss="true">Primary</TkToggleButton>
       <TkToggleButton v-model="isSecondaryOn" theme="secondary" :deboss="true">Secondary</TkToggleButton>
@@ -22,7 +22,7 @@ const isDangerOn = ref(false)
 </script>
 
 <style scoped>
-.tk-toggle-buttons-page {
+.tk-toggle-button-page {
   width: 100%;
   height: 100%;
   display: flex;

@@ -1,5 +1,5 @@
 <template>
-  <div class="tk-buttons-page">
+  <div class="tk-button-page">
     <div style="display: flex; gap: 8px">
       <TkButton theme="primary" :deboss="true">Primary</TkButton>
       <TkButton theme="secondary" :deboss="true">Secondary</TkButton>
@@ -15,7 +15,7 @@ import TkButton from '../components/TkButtons/TkButton.vue'
 </script>
 
 <style scoped>
-.tk-buttons-page {
+.tk-button-page {
   width: 100%;
   height: 100%;
   display: flex;
