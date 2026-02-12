@@ -16,10 +16,10 @@ type AnimationState = 'fanned' | 'charging' | 'stacked' | 'release'
 
 const animationState = ref<AnimationState>('fanned')
 
-let timer: number | null = null
-
 const DURATION_CHARGING = 300
 const DURATION_RELEASE = 200
+
+let timer: number | null = null
 
 const onMouseEnter = (): void => {
   if (timer) {

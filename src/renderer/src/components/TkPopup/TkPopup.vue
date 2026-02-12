@@ -100,87 +100,6 @@ const popupStyle = computed<CSSProperties>(() => ({
   ...popupStateStyle.value
 }))
 
-onBeforeUnmount(() => {
-  unbindGlobalEvents()
-  unbindClickToCloseEvents()
-  unbindLeaveToCloseEvents(targetElement.value, popupElementRef.value)
-
-  if (requestAnimationFrameId) {
-    window.cancelAnimationFrame(requestAnimationFrameId)
-    requestAnimationFrameId = null
-  }
-})
-
-watch(
-  [() => props.isOpen, () => props.closeMode, () => props.target],
-  async ([isOpen, closeMode], _, onCleanUp) => {
-    let targetEl: ResolvedElement | null = null
-    let popupEl: HTMLElement | null = null
-
-    let currentZIndex: number | null = null
-
-    let isCancelled = false
-    onCleanUp(() => {
-      isCancelled = true
-      unbindGlobalEvents()
-      unbindClickToCloseEvents()
-      unbindLeaveToCloseEvents(targetEl, popupEl)
-
-      if (currentZIndex !== null) {
-        releaseZIndex(currentZIndex)
-        currentZIndex = null
-      }
-    })
-
-    if (isOpen) {
-      currentZIndex = nextZIndex()
-
-      await nextTick()
-
-      if (isCancelled || !props.isOpen) {
-        return
-      }
-
-      targetEl = targetElement.value
-      popupEl = popupElementRef.value
-
-      popupStateStyle.value = {
-        visibility: 'hidden',
-        zIndex: currentZIndex
-      }
-
-      await updatePosition()
-
-      if (isCancelled || !props.isOpen) {
-        return
-      }
-
-      popupStateStyle.value = {
-        visibility: 'visible',
-        zIndex: currentZIndex
-      }
-
-      bindGlobalEvents()
-      bindClickToCloseEvents()
-      if (closeMode === 'leave') {
-        bindLeaveToCloseEvents(targetEl, popupEl)
-      }
-    }
-  },
-  { immediate: true }
-)
-
-watch(
-  [() => props.width, () => props.height, () => props.placement, () => props.horizontalOffset, () => props.verticalOffset],
-  async () => {
-    if (!props.isOpen) {
-      return
-    }
-
-    await updatePosition()
-  }
-)
-
 const calculatePosition = (
   targetRect: DOMRect,
   popupRect: DOMRect,
@@ -412,6 +331,87 @@ const unbindLeaveToCloseEvents = (target: ResolvedElement | null | undefined, po
 }
 
 // #endregion
+
+onBeforeUnmount(() => {
+  unbindGlobalEvents()
+  unbindClickToCloseEvents()
+  unbindLeaveToCloseEvents(targetElement.value, popupElementRef.value)
+
+  if (requestAnimationFrameId) {
+    window.cancelAnimationFrame(requestAnimationFrameId)
+    requestAnimationFrameId = null
+  }
+})
+
+watch(
+  [() => props.isOpen, () => props.closeMode, () => props.target],
+  async ([isOpen, closeMode], _, onCleanUp) => {
+    let targetEl: ResolvedElement | null = null
+    let popupEl: HTMLElement | null = null
+
+    let currentZIndex: number | null = null
+
+    let isCancelled = false
+    onCleanUp(() => {
+      isCancelled = true
+      unbindGlobalEvents()
+      unbindClickToCloseEvents()
+      unbindLeaveToCloseEvents(targetEl, popupEl)
+
+      if (currentZIndex !== null) {
+        releaseZIndex(currentZIndex)
+        currentZIndex = null
+      }
+    })
+
+    if (isOpen) {
+      currentZIndex = nextZIndex()
+
+      await nextTick()
+
+      if (isCancelled || !props.isOpen) {
+        return
+      }
+
+      targetEl = targetElement.value
+      popupEl = popupElementRef.value
+
+      popupStateStyle.value = {
+        visibility: 'hidden',
+        zIndex: currentZIndex
+      }
+
+      await updatePosition()
+
+      if (isCancelled || !props.isOpen) {
+        return
+      }
+
+      popupStateStyle.value = {
+        visibility: 'visible',
+        zIndex: currentZIndex
+      }
+
+      bindGlobalEvents()
+      bindClickToCloseEvents()
+      if (closeMode === 'leave') {
+        bindLeaveToCloseEvents(targetEl, popupEl)
+      }
+    }
+  },
+  { immediate: true }
+)
+
+watch(
+  [() => props.width, () => props.height, () => props.placement, () => props.horizontalOffset, () => props.verticalOffset],
+  async () => {
+    if (!props.isOpen) {
+      return
+    }
+
+    await updatePosition()
+  }
+)
 </script>
 
 <style scoped></style>
