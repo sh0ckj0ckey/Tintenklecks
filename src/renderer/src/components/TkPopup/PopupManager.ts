@@ -54,6 +54,10 @@ const onAnyPopupMouseLeave = (relatedTarget: Node | null): void => {
       return
     }
 
+    if (popup.closeMode !== 'leave') {
+      return
+    }
+
     if (popup.closeMode === 'leave') {
       popup.close()
     }
