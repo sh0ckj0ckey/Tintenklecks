@@ -1,17 +1,17 @@
 <template>
   <Teleport to="body">
-    <div v-if="isOpen" ref="popupElementRef" :style="popupStyle" @mousedown.stop>
+    <div v-if="isOpen" ref="popupElementRef" :style="popupStyle" class="tk-popup">
       <slot></slot>
     </div>
   </Teleport>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, computed, onBeforeUnmount, nextTick, useTemplateRef, type CSSProperties } from 'vue'
+import { ref, watch, computed, nextTick, useTemplateRef, type CSSProperties } from 'vue'
 import { resolveElement, type ResolvedElement, type MaybeElement } from '@renderer/utils/dom'
-import { nextZIndex, releaseZIndex } from './PopupZIndexManager'
+import { PopupManager, type PopupCloseMode } from './PopupManager'
 
-type CloseMode = 'click' | 'leave' | 'manual'
+type CloseMode = PopupCloseMode
 
 type Placement =
   | 'top'
@@ -88,6 +88,10 @@ const props = withDefaults(
 )
 
 const emit = defineEmits(['update:isOpen'])
+
+const popupId = Symbol('tk-popup')
+
+const currentZIndex = ref<number>(0)
 
 const popupElementRef = useTemplateRef('popupElementRef')
 const targetElement = computed<ResolvedElement | null>(() => resolveElement(props.target))
@@ -181,6 +185,10 @@ const calculatePosition = (
 }
 
 const updatePosition = async (): Promise<void> => {
+  if (!props.isOpen) {
+    return
+  }
+
   const width = typeof props.width === 'number' ? props.width + 'px' : props.width
   const height = typeof props.height === 'number' ? props.height + 'px' : props.height
 
@@ -215,72 +223,6 @@ const updatePosition = async (): Promise<void> => {
   }
 }
 
-// #region 窗口尺寸变化或者页面滚动更新位置
-
-let requestAnimationFrameId: number | null = null
-
-const onGlobalReposition = (): void => {
-  if (!props.isOpen) {
-    return
-  }
-
-  if (requestAnimationFrameId) {
-    return
-  }
-
-  requestAnimationFrameId = window.requestAnimationFrame(async () => {
-    await updatePosition()
-    requestAnimationFrameId = null
-  })
-}
-
-const bindGlobalEvents = (): void => {
-  window.addEventListener('resize', onGlobalReposition)
-  window.addEventListener('scroll', onGlobalReposition, true)
-}
-
-const unbindGlobalEvents = (): void => {
-  window.removeEventListener('resize', onGlobalReposition)
-  window.removeEventListener('scroll', onGlobalReposition, true)
-}
-
-// #endregion
-
-// #region 点击其他区域以关闭浮窗
-
-const onMouseDown = (e: MouseEvent): void => {
-  if (props.closeMode === 'leave') {
-    // 移走关闭模式下，鼠标点击的位置不属于目标元素或者浮窗时，关闭浮窗
-    if (popupElementRef.value && popupElementRef.value.contains(e.target as Node)) {
-      return
-    } else if (targetElement.value && targetElement.value.contains(e.target as Node)) {
-      return
-    }
-  } else if (props.closeMode === 'click') {
-    // 点击关闭模式下，鼠标点击的位置不属于浮窗时，关闭浮窗
-    if (popupElementRef.value && popupElementRef.value.contains(e.target as Node)) {
-      return
-    }
-  } else if (props.closeMode === 'manual') {
-    // 手动关闭模式下，无需处理
-    return
-  }
-
-  emit('update:isOpen', false)
-}
-
-const bindClickToCloseEvents = (): void => {
-  document.addEventListener('mousedown', onMouseDown)
-}
-
-const unbindClickToCloseEvents = (): void => {
-  document.removeEventListener('mousedown', onMouseDown)
-}
-
-// #endregion
-
-// #region 鼠标离开浮窗区域以关闭浮窗
-
 let closeTimeout: number | null = null
 
 const clearCloseTimeout = (): void => {
@@ -290,21 +232,14 @@ const clearCloseTimeout = (): void => {
   }
 }
 
-const startCloseTimeout = (): void => {
-  clearCloseTimeout()
-  closeTimeout = window.setTimeout(() => {
-    emit('update:isOpen', false)
-  }, 250)
-}
-
 const onMouseEnter = (): void => {
   clearCloseTimeout()
 }
 
 const onMouseLeave = (e: Event): void => {
   const mouseEvent = e as MouseEvent
-
   const related = mouseEvent.relatedTarget as Node | null
+
   if (
     (targetElement.value && targetElement.value.contains(related)) ||
     (popupElementRef.value && popupElementRef.value.contains(related))
@@ -312,7 +247,11 @@ const onMouseLeave = (e: Event): void => {
     return
   }
 
-  startCloseTimeout()
+  clearCloseTimeout()
+  closeTimeout = window.setTimeout(() => {
+    PopupManager.checkCloseOnLeave(related)
+    closeTimeout = null
+  }, 250)
 }
 
 const bindLeaveToCloseEvents = (target: ResolvedElement | null | undefined, popup: HTMLElement | null | undefined): void => {
@@ -330,42 +269,32 @@ const unbindLeaveToCloseEvents = (target: ResolvedElement | null | undefined, po
   clearCloseTimeout()
 }
 
-// #endregion
-
-onBeforeUnmount(() => {
-  unbindGlobalEvents()
-  unbindClickToCloseEvents()
-  unbindLeaveToCloseEvents(targetElement.value, popupElementRef.value)
-
-  if (requestAnimationFrameId) {
-    window.cancelAnimationFrame(requestAnimationFrameId)
-    requestAnimationFrameId = null
-  }
-})
-
 watch(
-  [() => props.isOpen, () => props.closeMode, () => props.target],
+  [() => props.isOpen, () => props.closeMode, targetElement],
   async ([isOpen, closeMode], _, onCleanUp) => {
     let targetEl: ResolvedElement | null = null
     let popupEl: HTMLElement | null = null
 
-    let currentZIndex: number | null = null
-
     let isCancelled = false
     onCleanUp(() => {
       isCancelled = true
-      unbindGlobalEvents()
-      unbindClickToCloseEvents()
+      PopupManager.unregister(popupId)
       unbindLeaveToCloseEvents(targetEl, popupEl)
-
-      if (currentZIndex !== null) {
-        releaseZIndex(currentZIndex)
-        currentZIndex = null
-      }
     })
 
     if (isOpen) {
-      currentZIndex = nextZIndex()
+      currentZIndex.value = PopupManager.register(popupId, {
+        closeMode: props.closeMode,
+        close: () => {
+          emit('update:isOpen', false)
+        },
+        reposition: () => {
+          updatePosition()
+        },
+        contains: (el: Node): boolean => {
+          return (targetElement.value?.contains(el) ?? false) || (popupElementRef.value?.contains(el) ?? false)
+        }
+      })
 
       await nextTick()
 
@@ -378,7 +307,7 @@ watch(
 
       popupStateStyle.value = {
         visibility: 'hidden',
-        zIndex: currentZIndex
+        zIndex: currentZIndex.value
       }
 
       await updatePosition()
@@ -389,11 +318,9 @@ watch(
 
       popupStateStyle.value = {
         visibility: 'visible',
-        zIndex: currentZIndex
+        zIndex: currentZIndex.value
       }
 
-      bindGlobalEvents()
-      bindClickToCloseEvents()
       if (closeMode === 'leave') {
         bindLeaveToCloseEvents(targetEl, popupEl)
       }
@@ -414,4 +341,8 @@ watch(
 )
 </script>
 
-<style scoped></style>
+<style scoped>
+.tk-popup {
+  box-sizing: border-box;
+}
+</style>
