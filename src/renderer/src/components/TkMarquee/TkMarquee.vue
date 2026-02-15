@@ -60,7 +60,9 @@ const marqueeTrackStyle = computed<CSSProperties>(() => {
 const measure = async (): Promise<void> => {
   await nextTick()
 
-  if (!marqueeElementRef.value || !marqueeContentElementRef.value) return
+  if (!marqueeElementRef.value || !marqueeContentElementRef.value) {
+    return
+  }
 
   const isVertical = props.direction === 'up' || props.direction === 'down'
   containerSize.value = isVertical ? marqueeElementRef.value.offsetHeight : marqueeElementRef.value.offsetWidth
@@ -73,24 +75,43 @@ const measure = async (): Promise<void> => {
     repeatCount.value = 2
   }
 
-  if (contentSize.value > 0 && currentOffset.value >= contentSize.value) {
-    currentOffset.value = currentOffset.value % contentSize.value
+  if (contentSize.value > 0) {
+    if (currentOffset.value <= 0) {
+      currentOffset.value = (currentOffset.value % contentSize.value) + contentSize.value
+    }
+    if (currentOffset.value >= contentSize.value) {
+      currentOffset.value = currentOffset.value % contentSize.value
+    }
   }
 }
 
 let animationFrameId: number | null = null
 let lastTimestamp: number | null = null
 
+let speedFactor = 1
+
 const animate = (timestamp: number): void => {
   if (!lastTimestamp) {
     lastTimestamp = timestamp
+    animationFrameId = requestAnimationFrame(animate)
+    return
   }
 
   const deltaTime = timestamp - lastTimestamp
   lastTimestamp = timestamp
 
-  if (!props.pauseOnHover || !isHovering.value) {
-    const moveStep = (props.speed * deltaTime) / 1000
+  const target = props.pauseOnHover && isHovering.value ? 0 : 1
+  speedFactor += (target - speedFactor) * 0.05
+
+  if (Math.abs(speedFactor) < 0.001) {
+    speedFactor = 0
+  }
+  if (Math.abs(1 - speedFactor) < 0.001) {
+    speedFactor = 1
+  }
+
+  if (speedFactor > 0 && contentSize.value > 0) {
+    const moveStep = (props.speed * deltaTime * speedFactor) / 1000
 
     if (props.direction === 'right' || props.direction === 'down') {
       currentOffset.value -= moveStep
