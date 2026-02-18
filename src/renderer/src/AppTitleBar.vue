@@ -172,6 +172,7 @@ const closeAppWindow = (): void => {
         width: 10px;
         height: 10px;
         object-fit: contain;
+        shape-rendering: crispEdges;
       }
     }
   }
