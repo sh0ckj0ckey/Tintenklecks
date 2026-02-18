@@ -8,28 +8,29 @@
     <input type="checkbox" :checked="props.modelValue" .indeterminate="props.indeterminate" :disabled="props.disabled" @change="onChange" />
     <span class="tk-checkbox-box">
       <svg
-        v-if="!props.indeterminate && props.modelValue"
-        class="tk-checkbox-box-icon"
+        class="tk-checkbox-box-icon icon-checkmark"
+        :class="{ active: !props.indeterminate && props.modelValue }"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 16 16"
-        fill="currentColor"
         aria-hidden="true"
       >
         <path
-          d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
-          fill-rule="evenodd"
-          clip-rule="evenodd"
+          d="M3.5 8.5 L6.5 11.5 L12.5 5.5"
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          pathLength="1"
         />
       </svg>
       <svg
-        v-if="props.indeterminate"
-        class="tk-checkbox-box-icon"
+        class="tk-checkbox-box-icon icon-minus"
+        :class="{ active: props.indeterminate }"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 16 16"
-        fill="currentColor"
         aria-hidden="true"
       >
-        <path d="M3.75 7.25a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5Z" />
+        <path d="M4 8 L12 8" fill="none" stroke="currentColor" stroke-linecap="round" pathLength="1" />
       </svg>
     </span>
     <span class="tk-checkbox-content">
@@ -107,9 +108,9 @@ const onChange = (event: Event): void => {
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
-    border: 1px solid var(--tk-checkbox-border);
     border-radius: 4px;
     background-color: transparent;
+    position: relative;
     transition:
       background-color 0.2s,
       border-color 0.2s,
@@ -117,8 +118,38 @@ const onChange = (event: Event): void => {
       transform 0.1s;
 
     .tk-checkbox-box-icon {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s linear;
+
+      path {
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+        stroke-width: 1px;
+        transition: stroke-dashoffset 0.2s ease-in;
+      }
+
+      &.icon-checkmark.active {
+        opacity: 1;
+
+        path {
+          stroke-dashoffset: 0;
+          transition: stroke-dashoffset 0.2s ease-in-out;
+        }
+      }
+
+      &.icon-minus.active {
+        opacity: 1;
+
+        path {
+          stroke-dashoffset: 0;
+          transition: stroke-dashoffset 0.2s ease-out;
+        }
+      }
     }
   }
 
@@ -136,7 +167,14 @@ const onChange = (event: Event): void => {
     .tk-checkbox-box {
       width: 14px;
       height: 14px;
+      border: 1px solid var(--tk-checkbox-border);
       border-radius: 2px;
+
+      .tk-checkbox-box-icon {
+        path {
+          stroke-width: 1.4px;
+        }
+      }
     }
   }
 
@@ -145,20 +183,34 @@ const onChange = (event: Event): void => {
     gap: 8px;
 
     .tk-checkbox-box {
-      width: 18px;
-      height: 18px;
-      border-radius: 3px;
+      width: 20px;
+      height: 20px;
+      border: 1px solid var(--tk-checkbox-border);
+      border-radius: 4px;
+
+      .tk-checkbox-box-icon {
+        path {
+          stroke-width: 1.4px;
+        }
+      }
     }
   }
 
   &.tk-checkbox--large {
-    font-size: 16px;
+    font-size: 17px;
     gap: 10px;
 
     .tk-checkbox-box {
-      width: 24px;
-      height: 24px;
-      border-radius: 4px;
+      width: 28px;
+      height: 28px;
+      border: 1.6px solid var(--tk-checkbox-border);
+      border-radius: 6px;
+
+      .tk-checkbox-box-icon {
+        path {
+          stroke-width: 1.6px;
+        }
+      }
     }
   }
 
