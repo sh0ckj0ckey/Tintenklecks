@@ -212,8 +212,9 @@ const updatePosition = async (): Promise<void> => {
 
   let [left, top] = calculatePosition(targetRect, popupRect, props.placement, props.horizontalOffset, props.verticalOffset)
 
-  left = Math.max(0, Math.min(left, window.innerWidth - popupRect.width))
-  top = Math.max(0, Math.min(top, window.innerHeight - popupRect.height))
+  const padding = 8
+  left = Math.max(padding, Math.min(left, window.innerWidth - popupRect.width - padding))
+  top = Math.max(padding, Math.min(top, window.innerHeight - popupRect.height - padding))
 
   popupLayoutStyle.value = {
     width,
