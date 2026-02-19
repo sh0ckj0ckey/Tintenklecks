@@ -69,20 +69,22 @@ const onClick = (event: MouseEvent): void => {
   }
 
   &:hover:not(:disabled) {
-    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid #202020;
+    background-color: color-mix(in srgb, rgba(255, 255, 255, 0.05), #fff 4%);
     box-shadow:
       0 2px 4px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.06),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.01);
+      inset 0px 1px 0px rgba(255, 255, 255, 0.1),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.05);
   }
 
   &:active:not(:disabled) {
+    border: 1px solid #202020;
     background-color: rgba(255, 255, 255, 0.02);
     transform: translateY(1px);
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.04),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.01);
+      inset 0px 1px 0px rgba(255, 255, 255, 0.1),
+      inset 0px 0px 3px rgba(255, 255, 255, 0.01);
   }
 
   &:focus-visible:not(:disabled) {
