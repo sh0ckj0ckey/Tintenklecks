@@ -105,8 +105,8 @@ const closeAppWindow = (): void => {
       cursor: default;
 
       .app-title-bar-navigation-button-icon {
-        width: 11px;
-        height: 11px;
+        width: 12px;
+        height: 12px;
         object-fit: contain;
       }
     }
@@ -169,10 +169,9 @@ const closeAppWindow = (): void => {
       }
 
       .app-title-bar-caption-button-icon {
-        width: 10px;
-        height: 10px;
+        width: 11px;
+        height: 11px;
         object-fit: contain;
-        shape-rendering: crispEdges;
       }
     }
   }
