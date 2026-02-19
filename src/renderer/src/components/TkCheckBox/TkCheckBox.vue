@@ -124,7 +124,9 @@ const onChange = (event: Event): void => {
       width: 100%;
       height: 100%;
       opacity: 0;
+      overflow: visible;
       pointer-events: none;
+      filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.6)) drop-shadow(0 -1px 0 rgba(0, 0, 0, 0.6));
       transition: opacity 0.2s linear;
 
       path {
