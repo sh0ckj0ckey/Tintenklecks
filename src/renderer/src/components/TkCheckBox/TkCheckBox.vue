@@ -111,7 +111,7 @@ const onChange = (event: Event): void => {
     box-shadow:
       0 2px 4px rgba(0, 0, 0, 0),
       inset 0px 1px 0px rgba(255, 255, 255, 0.15),
-      inset 0px 0px 2px rgba(255, 255, 255, 0.1);
+      inset 0px 0px 3px rgba(255, 255, 255, 0.1);
     transition:
       background-color 0.2s,
       border-color 0.2s,
@@ -225,6 +225,27 @@ const onChange = (event: Event): void => {
 
   &.disabled {
     opacity: 0.6;
+  }
+
+  &:hover {
+    .tk-checkbox-box {
+      background-color: color-mix(in srgb, rgba(255, 255, 255, 0.05), #fff 4%);
+      box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.2),
+        inset 0px 1px 0px rgba(255, 255, 255, 0.1),
+        inset 0px 0px 3px rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  &:active {
+    .tk-checkbox-box {
+      background-color: color-mix(in srgb, rgba(255, 255, 255, 0.05), #000 8%);
+      transform: translateY(1px);
+      box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.2),
+        inset 0px 1px 0px rgba(255, 255, 255, 0.1),
+        inset 0px 0px 3px rgba(255, 255, 255, 0.01);
+    }
   }
 
   &:has(input:focus-visible:not(:disabled)) {

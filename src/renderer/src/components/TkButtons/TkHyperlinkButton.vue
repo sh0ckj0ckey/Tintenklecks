@@ -79,7 +79,7 @@ const onClick = (event: MouseEvent): void => {
 
   &:active:not(:disabled) {
     border: 1px solid #202020;
-    background-color: rgba(255, 255, 255, 0.02);
+    background-color: color-mix(in srgb, rgba(255, 255, 255, 0.05), #000 8%);
     transform: translateY(1px);
     box-shadow:
       0 1px 2px rgba(0, 0, 0, 0.2),
