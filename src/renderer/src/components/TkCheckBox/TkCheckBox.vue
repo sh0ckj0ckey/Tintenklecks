@@ -74,9 +74,6 @@ const onChange = (event: Event): void => {
 
 <style scoped>
 .tk-checkbox {
-  --tk-checkbox-foreground: currentColor;
-  --tk-checkbox-border: currentColor;
-
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -85,7 +82,7 @@ const onChange = (event: Event): void => {
   background: transparent;
   border: none;
   border-radius: 4px;
-  color: var(--tk-checkbox-foreground);
+  color: var(--tk-color-foreground);
   font-size: 14px;
   font-weight: normal;
   cursor: default;
@@ -108,9 +105,13 @@ const onChange = (event: Event): void => {
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
+    position: relative;
     border-radius: 4px;
     background-color: transparent;
-    position: relative;
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0),
+      inset 0px 1px 0px rgba(255, 255, 255, 0.15),
+      inset 0px 0px 2px rgba(255, 255, 255, 0.1);
     transition:
       background-color 0.2s,
       border-color 0.2s,
@@ -165,9 +166,9 @@ const onChange = (event: Event): void => {
     gap: 6px;
 
     .tk-checkbox-box {
-      width: 14px;
-      height: 14px;
-      border: 1px solid var(--tk-checkbox-border);
+      width: 16px;
+      height: 16px;
+      border: 1px solid color-mix(in srgb, var(--tk-color-foreground), #000 90%);
       border-radius: 2px;
 
       .tk-checkbox-box-icon {
@@ -183,9 +184,9 @@ const onChange = (event: Event): void => {
     gap: 8px;
 
     .tk-checkbox-box {
-      width: 20px;
-      height: 20px;
-      border: 1px solid var(--tk-checkbox-border);
+      width: 22px;
+      height: 22px;
+      border: 1px solid color-mix(in srgb, var(--tk-color-foreground), #000 90%);
       border-radius: 4px;
 
       .tk-checkbox-box-icon {
@@ -203,12 +204,12 @@ const onChange = (event: Event): void => {
     .tk-checkbox-box {
       width: 28px;
       height: 28px;
-      border: 1.6px solid var(--tk-checkbox-border);
+      border: 1px solid color-mix(in srgb, var(--tk-color-foreground), #000 90%);
       border-radius: 6px;
 
       .tk-checkbox-box-icon {
         path {
-          stroke-width: 1.6px;
+          stroke-width: 1.4px;
         }
       }
     }
