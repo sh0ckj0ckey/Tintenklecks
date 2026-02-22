@@ -12,7 +12,7 @@
           gap: 16px;
           padding: 8px;
           border-radius: 8px;
-          background-color: var(--tk-color-background-deep);
+          border: 2px solid var(--tk-color-background-deep);
         "
       >
         <TkCheckBox v-model="isLargeChecked" size="large">Large</TkCheckBox>
