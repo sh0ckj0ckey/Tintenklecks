@@ -14,11 +14,11 @@
 import { ref } from 'vue'
 import TkToggleButton from '../components/TkButtons/TkToggleButton.vue'
 
-const isPrimaryOn = ref(false)
-const isSecondaryOn = ref(false)
-const isSuccessOn = ref(false)
-const isWarningOn = ref(false)
-const isDangerOn = ref(false)
+const isPrimaryOn = ref(true)
+const isSecondaryOn = ref(true)
+const isSuccessOn = ref(true)
+const isWarningOn = ref(true)
+const isDangerOn = ref(true)
 </script>
 
 <style scoped>

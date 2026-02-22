@@ -6,6 +6,7 @@ import TkButtonPage from '@renderer/pages/TkButtonPage.vue'
 import TkHyperlinkButtonPage from '@renderer/pages/TkHyperlinkButtonPage.vue'
 import TkToggleButtonPage from '@renderer/pages/TkToggleButtonPage.vue'
 import TkCheckBoxPage from '@renderer/pages/TkCheckBoxPage.vue'
+import TkToggleSwitchPage from '@renderer/pages/TkToggleSwitchPage.vue'
 import TkPopupPage from '@renderer/pages/TkPopupPage.vue'
 import TkSeparatorPage from '@renderer/pages/TkSeparatorPage.vue'
 import TkToastPage from '@renderer/pages/TkToastPage.vue'
@@ -18,6 +19,7 @@ export const RouteName = {
   HyperlinkButton: 'HyperlinkButton',
   ToggleButton: 'ToggleButton',
   CheckBox: 'CheckBox',
+  ToggleSwitch: 'ToggleSwitch',
   Popup: 'Popup',
   Separator: 'Separator',
   Toast: 'Toast',
@@ -58,6 +60,11 @@ const routes = [
     path: '/checkbox',
     name: RouteName.CheckBox,
     component: TkCheckBoxPage
+  },
+  {
+    path: '/toggle-switch',
+    name: RouteName.ToggleSwitch,
+    component: TkToggleSwitchPage
   },
   {
     path: '/popup',

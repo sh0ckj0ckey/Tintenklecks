@@ -32,7 +32,7 @@ import { ref, computed } from 'vue'
 import TkCheckBox from '../components/TkCheckBox/TkCheckBox.vue'
 
 const isLargeChecked = ref(false)
-const isMediumChecked = ref(false)
+const isMediumChecked = ref(true)
 const isSmallChecked = ref(false)
 const isLargeImgChecked = ref(false)
 

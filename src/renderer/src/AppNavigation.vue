@@ -61,7 +61,8 @@ const menuGroups = [
       { label: 'Button', routeName: RouteName.Button },
       { label: 'HyperlinkButton', routeName: RouteName.HyperlinkButton },
       { label: 'ToggleButton', routeName: RouteName.ToggleButton },
-      { label: 'CheckBox', routeName: RouteName.CheckBox }
+      { label: 'CheckBox', routeName: RouteName.CheckBox },
+      { label: 'ToggleSwitch', routeName: RouteName.ToggleSwitch }
     ]
   },
   {
