@@ -6,6 +6,7 @@
           <div v-if="group.title" class="app-navigation-group-title">{{ group.title }}</div>
 
           <router-link v-for="item in group.items" :key="item.routeName" :to="{ name: item.routeName }" class="app-navigation-item">
+            <component :is="item.icon" v-if="item.icon" class="app-navigation-item-icon fluent-icon" />
             <span>{{ item.label }}</span>
           </router-link>
         </div>
@@ -20,6 +21,7 @@
           <div v-if="group.title" class="app-navigation-group-title">{{ group.title }}</div>
 
           <router-link v-for="item in group.items" :key="item.routeName" :to="{ name: item.routeName }" class="app-navigation-item">
+            <component :is="item.icon" v-if="item.icon" class="app-navigation-item-icon" />
             <span>{{ item.label }}</span>
           </router-link>
         </div>
@@ -34,6 +36,7 @@
           <div v-if="group.title" class="app-navigation-group-title">{{ group.title }}</div>
 
           <router-link v-for="item in group.items" :key="item.routeName" :to="{ name: item.routeName }" class="app-navigation-item">
+            <component :is="item.icon" v-if="item.icon" class="app-navigation-item-icon fluent-icon" />
             <span>{{ item.label }}</span>
           </router-link>
         </div>
@@ -43,50 +46,73 @@
 </template>
 
 <script setup lang="ts">
+import type { Component } from 'vue'
 import { RouterLink } from 'vue-router'
 import { RouteName } from '@renderer/router'
 import TkSeparator from '@renderer/components/TkSeparator/TkSeparator.vue'
+import IconNavigationHome from '@renderer/components/TkIcons/IconHome.vue'
+import IconNavigationSetting from '@renderer/components/TkIcons/IconSetting.vue'
+import IconNavigationButton from '@renderer/components/TkIcons/navigation/IconNavigationButton.vue'
+import IconNavigationHyperlinkButton from '@renderer/components/TkIcons/navigation/IconNavigationHyperlinkButton.vue'
+import IconNavigationToggleButton from '@renderer/components/TkIcons/navigation/IconNavigationToggleButton.vue'
+import IconNavigationCheckBox from '@renderer/components/TkIcons/navigation/IconNavigationCheckBox.vue'
+import IconNavigationToggleSwitch from '@renderer/components/TkIcons/navigation/IconNavigationToggleSwitch.vue'
+import IconNavigationPopup from '@renderer/components/TkIcons/navigation/IconNavigationPopup.vue'
+import IconNavigationSeparator from '@renderer/components/TkIcons/navigation/IconNavigationSeparator.vue'
+import IconNavigationToast from '@renderer/components/TkIcons/navigation/IconNavigationToast.vue'
+import IconNavigationMarquee from '@renderer/components/TkIcons/navigation/IconNavigationMarquee.vue'
 
-const headerGroups = [
+type NavigationGroup = {
+  title: string
+  items: NavigationItem[]
+}
+
+type NavigationItem = {
+  label: string
+  routeName: string
+  icon: Component
+}
+
+const headerGroups: NavigationGroup[] = [
   {
     title: '',
-    items: [{ label: 'Home', routeName: RouteName.Home }]
+    items: [{ label: 'Home', routeName: RouteName.Home, icon: IconNavigationHome }]
   }
 ]
 
-const menuGroups = [
+const menuGroups: NavigationGroup[] = [
   {
     title: 'Basic Input',
     items: [
-      { label: 'Button', routeName: RouteName.Button },
-      { label: 'HyperlinkButton', routeName: RouteName.HyperlinkButton },
-      { label: 'ToggleButton', routeName: RouteName.ToggleButton },
-      { label: 'CheckBox', routeName: RouteName.CheckBox },
-      { label: 'ToggleSwitch', routeName: RouteName.ToggleSwitch }
+      { label: 'Button', routeName: RouteName.Button, icon: IconNavigationButton },
+      { label: 'HyperlinkButton', routeName: RouteName.HyperlinkButton, icon: IconNavigationHyperlinkButton },
+      { label: 'ToggleButton', routeName: RouteName.ToggleButton, icon: IconNavigationToggleButton },
+      { label: 'CheckBox', routeName: RouteName.CheckBox, icon: IconNavigationCheckBox },
+      { label: 'ToggleSwitch', routeName: RouteName.ToggleSwitch, icon: IconNavigationToggleSwitch }
     ]
   },
   {
     title: 'Dialogs and Popups',
-    items: [{ label: 'Popup', routeName: RouteName.Popup }]
+    items: [{ label: 'Popup', routeName: RouteName.Popup, icon: IconNavigationPopup }]
   },
   {
     title: 'Layout',
-    items: [{ label: 'Separator', routeName: RouteName.Separator }]
+    items: [{ label: 'Separator', routeName: RouteName.Separator, icon: IconNavigationSeparator }]
   },
   {
     title: 'Status and Info',
-    items: [{ label: 'Toast', routeName: RouteName.Toast }]
+    items: [{ label: 'Toast', routeName: RouteName.Toast, icon: IconNavigationToast }]
   },
   {
     title: 'Motion',
-    items: [{ label: 'Marquee', routeName: RouteName.Marquee }]
+    items: [{ label: 'Marquee', routeName: RouteName.Marquee, icon: IconNavigationMarquee }]
   }
 ]
 
-const footerGroups = [
+const footerGroups: NavigationGroup[] = [
   {
     title: '',
-    items: [{ label: 'Settings', routeName: RouteName.Settings }]
+    items: [{ label: 'Settings', routeName: RouteName.Settings, icon: IconNavigationSetting }]
   }
 ]
 </script>
@@ -102,7 +128,7 @@ const footerGroups = [
     flex: none;
     display: flex;
     flex-direction: column;
-    padding: 0px 12px 8px 8px;
+    padding: 8px 12px 8px 8px;
     margin-right: 4px;
     gap: 12px;
   }
@@ -180,7 +206,11 @@ const footerGroups = [
     }
 
     .app-navigation-item {
-      display: block;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
       padding: 8px 12px;
       border-radius: 4px;
       background-color: transparent;
@@ -198,6 +228,21 @@ const footerGroups = [
         background-color 0.2s,
         color 0.2s,
         box-shadow 0.2s;
+
+      .app-navigation-item-icon {
+        flex: none;
+        width: 24px;
+        height: 24px;
+        opacity: 0.75;
+
+        &.fluent-icon {
+          flex: none;
+          width: 16px;
+          height: 16px;
+          opacity: 0.75;
+          margin: 0 4px;
+        }
+      }
 
       &:hover:not(.tk-navigation-item-exact-active) {
         color: var(--tk-color-foreground);
