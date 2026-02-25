@@ -156,14 +156,19 @@ const footerGroups: NavigationGroup[] = [
 
     &::-webkit-scrollbar {
       width: 8px;
+      height: 8px;
       background-color: transparent;
     }
 
     &::-webkit-scrollbar-track {
-      margin: 8px 0;
+      margin: 8px;
       background-color: transparent;
       border-radius: 4px;
       box-shadow: none;
+    }
+
+    &::-webkit-scrollbar-corner {
+      background-color: transparent;
     }
 
     &::-webkit-scrollbar-thumb {
@@ -175,7 +180,7 @@ const footerGroups: NavigationGroup[] = [
 
     &:hover {
       &::-webkit-scrollbar-track {
-        margin: 8px 0;
+        margin: 8px;
         background-color: #ffffff08;
         border-radius: 4px;
         box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
