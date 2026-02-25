@@ -56,6 +56,7 @@ import IconNavigationButton from '@renderer/components/TkIcons/navigation/IconNa
 import IconNavigationHyperlinkButton from '@renderer/components/TkIcons/navigation/IconNavigationHyperlinkButton.vue'
 import IconNavigationToggleButton from '@renderer/components/TkIcons/navigation/IconNavigationToggleButton.vue'
 import IconNavigationCheckBox from '@renderer/components/TkIcons/navigation/IconNavigationCheckBox.vue'
+import IconNavigationRadioButton from '@renderer/components/TkIcons/navigation/IconNavigationRadioButton.vue'
 import IconNavigationToggleSwitch from '@renderer/components/TkIcons/navigation/IconNavigationToggleSwitch.vue'
 import IconNavigationPopup from '@renderer/components/TkIcons/navigation/IconNavigationPopup.vue'
 import IconNavigationSeparator from '@renderer/components/TkIcons/navigation/IconNavigationSeparator.vue'
@@ -88,6 +89,7 @@ const menuGroups: NavigationGroup[] = [
       { label: 'HyperlinkButton', routeName: RouteName.HyperlinkButton, icon: IconNavigationHyperlinkButton },
       { label: 'ToggleButton', routeName: RouteName.ToggleButton, icon: IconNavigationToggleButton },
       { label: 'CheckBox', routeName: RouteName.CheckBox, icon: IconNavigationCheckBox },
+      { label: 'RadioButton', routeName: RouteName.RadioButton, icon: IconNavigationRadioButton },
       { label: 'ToggleSwitch', routeName: RouteName.ToggleSwitch, icon: IconNavigationToggleSwitch }
     ]
   },
