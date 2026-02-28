@@ -1,12 +1,12 @@
 <template>
   <label
     class="tk-radio-button"
-    :class="[`tk-radio-button--${props.size}`, `tk-radio-button--${props.orientation}`, { disabled: props.disabled }]"
-    :aria-disabled="props.disabled"
+    :class="[`tk-radio-button--${props.orientation}`, `tk-radio-button--${props.size}`, { disabled: isDisabled }]"
+    :aria-disabled="isDisabled"
   >
-    <input type="radio" :name="props.name" :checked="props.modelValue === props.value" :disabled="props.disabled" @change="onChange" />
+    <input type="radio" :checked="isChecked" :name="radioName" :disabled="isDisabled" @change="onChange" />
     <span class="tk-radio-button-circle">
-      <span class="tk-radio-button-circle-dot" :class="{ active: props.modelValue === props.value }"></span>
+      <span class="tk-radio-button-circle-dot" :class="{ active: isChecked }"></span>
     </span>
     <span class="tk-radio-button-content">
       <slot></slot>
@@ -14,14 +14,15 @@
   </label>
 </template>
 
-<script lang="ts" setup>
-import { nextTick } from 'vue'
+<script lang="ts" setup generic="T">
+import { computed, inject } from 'vue'
+import { radioGroupKey } from './tokens'
 
 const props = withDefaults(
   defineProps<{
-    modelValue: string | number | boolean
-    value: string | number | boolean
-    name: string
+    value: T
+    modelValue?: T
+    name?: string
     orientation?: 'horizontal' | 'horizontal-reverse' | 'vertical' | 'vertical-reverse'
     size?: 'small' | 'medium' | 'large'
     disabled?: boolean
@@ -34,21 +35,38 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string | number | boolean): void
-  (e: 'change', value: string | number | boolean): void
+  (e: 'update:modelValue', value: T): void
+  (e: 'change', value: T): void
 }>()
 
+const radioGroup = inject(radioGroupKey, undefined)
+
+const isChecked = computed(() => {
+  const model = radioGroup ? radioGroup.modelValue.value : props.modelValue
+  return model === props.value
+})
+
+const radioName = computed(() => {
+  return radioGroup ? radioGroup.name.value : props.name
+})
+
+const isDisabled = computed(() => {
+  return (radioGroup && radioGroup.disabled.value) || props.disabled
+})
+
 const onChange = (event: Event): void => {
-  if (!props.disabled) {
+  if (!isDisabled.value) {
     const target = event.target as HTMLInputElement
     if (!target.checked) {
       return
     }
 
-    nextTick(() => {
+    if (radioGroup) {
+      radioGroup.updateValue(props.value)
+    } else {
       emit('update:modelValue', props.value)
       emit('change', props.value)
-    })
+    }
   }
 }
 </script>
@@ -105,6 +123,7 @@ const onChange = (event: Event): void => {
       background-color: currentColor;
       opacity: 0;
       transform: scale(0);
+      transform-origin: center center;
       box-shadow:
         inset 0px 2px 3px rgba(0, 0, 0, 0.5),
         inset 0px -1px 1px rgba(255, 255, 255, 0.2);
@@ -192,7 +211,7 @@ const onChange = (event: Event): void => {
     opacity: 0.6;
   }
 
-  &:hover {
+  &:hover:not(.disabled) {
     .tk-radio-button-circle {
       background-color: color-mix(in srgb, rgba(255, 255, 255, 0.05), #fff 4%);
       box-shadow:
@@ -202,7 +221,7 @@ const onChange = (event: Event): void => {
     }
   }
 
-  &:active {
+  &:active:not(.disabled) {
     .tk-radio-button-circle {
       background-color: color-mix(in srgb, rgba(255, 255, 255, 0.05), #000 8%);
       transform: translateY(1px);

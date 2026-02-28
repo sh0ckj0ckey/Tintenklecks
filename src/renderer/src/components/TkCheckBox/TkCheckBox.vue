@@ -234,7 +234,7 @@ const onChange = (event: Event): void => {
     opacity: 0.6;
   }
 
-  &:hover {
+  &:hover:not(.disabled) {
     .tk-checkbox-box {
       background-color: color-mix(in srgb, rgba(255, 255, 255, 0.05), #fff 4%);
       box-shadow:
@@ -244,7 +244,7 @@ const onChange = (event: Event): void => {
     }
   }
 
-  &:active {
+  &:active:not(.disabled) {
     .tk-checkbox-box {
       background-color: color-mix(in srgb, rgba(255, 255, 255, 0.05), #000 8%);
       transform: translateY(1px);

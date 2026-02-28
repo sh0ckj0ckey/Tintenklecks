@@ -5,12 +5,19 @@
       <TkRadioButton v-model="selectedIndex" :value="1" name="demo" size="medium">Medium</TkRadioButton>
       <TkRadioButton v-model="selectedIndex" :value="2" name="demo" size="small">Small</TkRadioButton>
     </div>
+    <TkRadioButtons v-model="selectedIndex" direction="row">
+      <TkRadioButton :value="0" size="large">Large</TkRadioButton>
+      <TkRadioButton :value="1" size="medium">Medium</TkRadioButton>
+      <TkRadioButton :value="2" size="small">Small</TkRadioButton>
+    </TkRadioButtons>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import TkRadioButton from '../components/TkRadio/TkRadioButton.vue'
+import { TkRadioButton, TkRadioButtons } from '@renderer/components/TkRadio'
+// import TkRadioButtons from '../components/TkRadio/TkRadioButtons.vue'
+// import TkRadioButton from '../components/TkRadio/TkRadioButton.vue'
 
 const selectedIndex = ref(0)
 </script>
