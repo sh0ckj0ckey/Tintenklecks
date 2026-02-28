@@ -1,17 +1,10 @@
-# Tintenklecks Gallery
+<p align="center">
+    <img src="./resources/brand.png" alt="logo" height="150" width="350"/>
+</p>
 
-Some components and helpers inside an Electron application with Vue and TypeScript.
+<h3 align="center">Tintenklecks Gallery</h3>
 
-- Marquee，横向或者纵向无限滚动轮播内部元素
-- Popup，支持移出关闭或者点击关闭的浮窗
-- ContentDialog，全局模态弹窗
-- Toast，全局通知条
-- Carousel，左右滑动的单卡或者三卡轮播
-- MessageBox，全局模态确认框
-- CheckBox，勾选框
-- ToggleSwitch，选项开关
-- Slider，数值滑动条
-- RadioButton，单选按钮
+<h5 align="center">Some components and helpers inside an Electron application with Vue 3 and TypeScript.</h5>
 
 ## Project Setup
 
