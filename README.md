@@ -45,7 +45,7 @@ An optional subtle deboss effect can be enabled via props, intended to give the 
 
 #### Usage
 
-``` vue
+``` html
 <TkButton theme="primary" deboss>
   Primary
 </TkButton>
