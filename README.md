@@ -6,4 +6,5 @@
 
 <h5 align="center">Some components and helpers inside an Electron application with Vue 3 and TypeScript.</h5>
 
-![Button Icon](./resources/icon-button.svg)
+![Button Icon](./resources/icon-button-light.svg#gh-light-mode-only)
+![Button Icon](./resources/icon-button-dark.svg#gh-dark-mode-only)
