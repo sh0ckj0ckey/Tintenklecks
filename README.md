@@ -6,7 +6,7 @@
 
 <p align="center">Some components and helpers inside an Electron application with Vue 3 and TypeScript.</p>
 
-## Components
+## Overview
 
 #### Basic Input
 
@@ -32,6 +32,8 @@
 #### Motion
 
 - [TkMarquee](#tkmarquee)
+
+## Components
 
 <a id="tkbutton"></a>
 ### <img src="./resources/icon-button-light.svg#gh-light-mode-only" width="24" height="16" /><img src="./resources/icon-button-dark.svg#gh-dark-mode-only" width="24" height="16" /> TkButton
