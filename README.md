@@ -8,6 +8,14 @@
 
 ## Overview
 
+This project is a personal exploration of building desktop UI components with Electron and Vue 3. It started as a way to learn and better understand Electron and Vue 3 in practice, and is built on top of the [electron-vite](https://electron-vite.org/) setup.
+
+The components are designed specifically for desktop applications, following common desktop UI conventions, with naming and behavior informed by [WinUI 3](https://learn.microsoft.com/windows/apps/winui/winui3/), and the set continues to grow over time.
+
+At this stage, the project is not yet a standalone npm component library. Instead, components are developed and iterated within this gallery application, focusing on experimentation and pattern refinement before moving toward a more formal setup.
+
+Visually, the design leans toward a retro, skeuomorphic style, using subtle depth and engraved details to create a classic desktop look and feel.
+
 #### Basic Input
 
 - [TkButton](#tkbutton)
