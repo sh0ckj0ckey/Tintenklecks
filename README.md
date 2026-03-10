@@ -66,3 +66,23 @@ An optional subtle `emboss` effect can be enabled via props, intended to give th
   Primary
 </TkHyperlinkButton>
 ```
+
+<a id="tktogglebutton"></a>
+### <img src="./resources/icon-togglebutton-light.svg#gh-light-mode-only" width="24" height="16" /><img src="./resources/icon-togglebutton-dark.svg#gh-dark-mode-only" width="24" height="16" /> TkToggleButton
+
+TkToggleButton is a button component that represents a toggleable on/off state.
+
+It shares the same visual themes and optional `deboss` effect as TkButton.
+
+When turned off, the button uses a neutral background regardless of theme.
+When turned on, it adopts the selected theme color, with an inner shadow, similar to a physical switch that latches into the on position.
+
+#### Usage
+
+TkToggleButton represents a boolean on/off state and is controlled via `v-model`.
+
+``` html
+<TkToggleButton v-model="isOn" theme="primary" deboss>
+  Primary
+</TkToggleButton>
+```
