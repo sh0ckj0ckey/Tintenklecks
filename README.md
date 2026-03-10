@@ -41,7 +41,7 @@
 TkButton is a basic button component for common user actions.
 
 It provides five visual themes: `primary`, `secondary`, `success`, `warning`, and `danger`.
-An optional subtle deboss effect can be enabled via props, intended to give the content a lightly pressed feel, like text written into paper.
+An optional subtle `deboss` effect can be enabled via props, intended to give the content a lightly pressed feel, like text written into paper.
 
 #### Usage
 
@@ -49,4 +49,20 @@ An optional subtle deboss effect can be enabled via props, intended to give the 
 <TkButton theme="primary" deboss>
   Primary
 </TkButton>
+```
+
+<a id="tkhyperlinkbutton"></a>
+### <img src="./resources/icon-hyperlinkbutton-light.svg#gh-light-mode-only" width="24" height="16" /><img src="./resources/icon-hyperlinkbutton-dark.svg#gh-dark-mode-only" width="24" height="16" /> TkHyperlinkButton
+
+TkHyperlinkButton is a text-based button component for lightweight, inline user actions.
+
+It provides five visual themes: `primary`, `secondary`, `success`, `warning`, and `danger`.
+An optional subtle `emboss` effect can be enabled via props, intended to give the text a slightly raised feel and suggest its clickability. A background color appears on hover to indicate interactivity.
+
+#### Usage
+
+``` html
+<TkHyperlinkButton theme="primary" emboss>
+  Primary
+</TkHyperlinkButton>
 ```
