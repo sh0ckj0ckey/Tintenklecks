@@ -4,7 +4,7 @@
 
 <h3 align="center">Tintenklecks Gallery</h3>
 
-<p align="center">Some components and helpers inside an Electron application with Vue 3 and TypeScript.</p>
+<p align="center">A desktop demonstration app for UI components built with Electron and Vue 3.</p>
 
 ## Overview
 
