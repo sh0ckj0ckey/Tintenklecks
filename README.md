@@ -4,8 +4,6 @@
 
 <h3 align="center">Tintenklecks Gallery</h3>
 
-<p align="center">A desktop demonstration app for UI components built with Electron and Vue 3.</p>
-
 ## Overview
 
 This project is a personal exploration of building desktop UI components with Electron and Vue 3. It started as a way to learn and better understand Electron and Vue 3 in practice, and is built on top of the [electron-vite](https://electron-vite.org/) setup.
