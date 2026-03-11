@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./resources/brand.png" alt="logo" height="150" width="350"/>
+    <img src="./resources/brand.png" alt="logo" height="96" width="280"/>
 </p>
 
 <h3 align="center">Tintenklecks Gallery</h3>

@@ -1,11 +1,11 @@
 <template>
   <div>
-    <Icons />
+    <Brand />
   </div>
 </template>
 
 <script lang="ts" setup>
-import Icons from '@renderer/components/Icons.vue'
+import Brand from '@renderer/components/Brand.vue'
 </script>
 
 <style scoped>
