@@ -138,8 +138,8 @@ const onChange = (event: Event): void => {
 
     .tk-toggle-switch-thumb {
       position: absolute;
-      top: 4px;
-      bottom: 4px;
+      top: auto;
+      bottom: auto;
       left: 4px;
       border: 1px solid #202020;
       border-radius: 999px;
