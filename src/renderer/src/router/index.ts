@@ -8,6 +8,7 @@ import TkToggleButtonPage from '@renderer/pages/TkToggleButtonPage.vue'
 import TkCheckBoxPage from '@renderer/pages/TkCheckBoxPage.vue'
 import TkRadioButtonPage from '@renderer/pages/TkRadioButtonPage.vue'
 import TkToggleSwitchPage from '@renderer/pages/TkToggleSwitchPage.vue'
+import TkFlipViewPage from '@renderer/pages/TkFlipViewPage.vue'
 import TkPopupPage from '@renderer/pages/TkPopupPage.vue'
 import TkSeparatorPage from '@renderer/pages/TkSeparatorPage.vue'
 import TkToastPage from '@renderer/pages/TkToastPage.vue'
@@ -22,6 +23,7 @@ export const RouteName = {
   CheckBox: 'CheckBox',
   RadioButton: 'RadioButton',
   ToggleSwitch: 'ToggleSwitch',
+  FlipView: 'FlipView',
   Popup: 'Popup',
   Separator: 'Separator',
   Toast: 'Toast',
@@ -72,6 +74,11 @@ const routes = [
     path: '/toggle-switch',
     name: RouteName.ToggleSwitch,
     component: TkToggleSwitchPage
+  },
+  {
+    path: '/flipview',
+    name: RouteName.FlipView,
+    component: TkFlipViewPage
   },
   {
     path: '/popup',
