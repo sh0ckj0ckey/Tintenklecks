@@ -5,7 +5,7 @@
         ref="trackElementRef"
         class="tk-flipview-track"
         :class="{ 'tk-flipview-track--transitioning': isTransitioning }"
-        :style="trackStyle"
+        :style="flipTrackStyle"
         @transitionend="onTransitionEnd"
       >
         <div v-for="(item, index) in computedSlides" :key="index" class="tk-flipview-item">
@@ -26,8 +26,8 @@ const props = withDefaults(
     direction?: 'horizontal' | 'vertical'
   }>(),
   {
-    loop: true,
-    direction: 'horizontal'
+    direction: 'horizontal',
+    loop: false
   }
 )
 
@@ -61,7 +61,7 @@ watch(
   { deep: false }
 )
 
-const trackStyle = computed<CSSProperties>(() => {
+const flipTrackStyle = computed<CSSProperties>(() => {
   if (slideCount.value === 0) return {}
 
   const total = computedSlides.value.length
