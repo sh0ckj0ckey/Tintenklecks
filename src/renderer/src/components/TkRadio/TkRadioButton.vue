@@ -130,7 +130,8 @@ const onChange = (event: Event): void => {
       pointer-events: none;
       transition:
         opacity 0.2s linear,
-        transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.26);
+        transform 0.2s ease-out;
+      /* transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.26); */
 
       &.active {
         opacity: 1;
@@ -155,8 +156,8 @@ const onChange = (event: Event): void => {
       height: 20px;
 
       .tk-radio-button-circle-dot {
-        width: 8px;
-        height: 8px;
+        width: 10px;
+        height: 10px;
       }
     }
   }
@@ -166,12 +167,12 @@ const onChange = (event: Event): void => {
     gap: 8px;
 
     .tk-radio-button-circle {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
 
       .tk-radio-button-circle-dot {
-        width: 10px;
-        height: 10px;
+        width: 12px;
+        height: 12px;
       }
     }
   }
@@ -185,8 +186,8 @@ const onChange = (event: Event): void => {
       height: 30px;
 
       .tk-radio-button-circle-dot {
-        width: 12px;
-        height: 12px;
+        width: 16px;
+        height: 16px;
       }
     }
   }
