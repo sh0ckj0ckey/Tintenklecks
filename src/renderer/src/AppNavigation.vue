@@ -58,6 +58,7 @@ import IconNavigationToggleButton from '@renderer/components/TkIcons/navigation/
 import IconNavigationCheckBox from '@renderer/components/TkIcons/navigation/IconNavigationCheckBox.vue'
 import IconNavigationRadioButton from '@renderer/components/TkIcons/navigation/IconNavigationRadioButton.vue'
 import IconNavigationToggleSwitch from '@renderer/components/TkIcons/navigation/IconNavigationToggleSwitch.vue'
+import IconNavigationFlipView from './components/TkIcons/navigation/IconNavigationFlipView.vue'
 import IconNavigationPopup from '@renderer/components/TkIcons/navigation/IconNavigationPopup.vue'
 import IconNavigationSeparator from '@renderer/components/TkIcons/navigation/IconNavigationSeparator.vue'
 import IconNavigationToast from '@renderer/components/TkIcons/navigation/IconNavigationToast.vue'
@@ -92,6 +93,10 @@ const menuGroups: NavigationGroup[] = [
       { label: 'RadioButton', routeName: RouteName.RadioButton, icon: IconNavigationRadioButton },
       { label: 'ToggleSwitch', routeName: RouteName.ToggleSwitch, icon: IconNavigationToggleSwitch }
     ]
+  },
+  {
+    title: 'Collections',
+    items: [{ label: 'FlipView', routeName: RouteName.FlipView, icon: IconNavigationFlipView }]
   },
   {
     title: 'Dialogs and Popups',
