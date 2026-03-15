@@ -107,7 +107,7 @@ const onChange = (event: Event): void => {
     box-sizing: border-box;
     border: 1px solid color-mix(in srgb, var(--tk-color-foreground), #000 90%);
     border-radius: 4px;
-    background-color: rgba(255, 255, 255, 0.02);
+    background: linear-gradient(to bottom, #3a3a3c 0%, #2c2c2e 100%);
     box-shadow:
       0 2px 4px rgba(0, 0, 0, 0),
       inset 0px 1px 0px rgba(255, 255, 255, 0.15),
@@ -204,7 +204,7 @@ const onChange = (event: Event): void => {
     .tk-checkbox-box {
       width: 28px;
       height: 28px;
-      border-radius: 6px;
+      border-radius: 5px;
 
       .tk-checkbox-box-icon {
         path {

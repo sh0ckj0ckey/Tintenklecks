@@ -99,14 +99,11 @@ const onChange = (event: Event): void => {
 
   .tk-radio-button-circle {
     flex: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     position: relative;
     box-sizing: border-box;
     border: 1px solid color-mix(in srgb, var(--tk-color-foreground), #000 90%);
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.02);
+    background: radial-gradient(circle at top left, #3a3a3c 0%, #2c2c2e 100%);
     box-shadow:
       0 2px 4px rgba(0, 0, 0, 0),
       inset 0px 1px 0px rgba(255, 255, 255, 0.15),
@@ -114,15 +111,14 @@ const onChange = (event: Event): void => {
     transition:
       background-color 0.2s,
       border-color 0.2s,
-      box-shadow 0.2s,
-      transform 0.1s;
+      box-shadow 0.2s;
 
     .tk-radio-button-circle-dot {
-      flex: none;
+      position: absolute;
       border-radius: 50%;
       background-color: currentColor;
       opacity: 0;
-      transform: scale(0);
+      transform: translateZ(0) scale(0);
       transform-origin: center center;
       box-shadow:
         inset 0px 2px 3px rgba(0, 0, 0, 0.5),
@@ -135,7 +131,7 @@ const onChange = (event: Event): void => {
 
       &.active {
         opacity: 1;
-        transform: scale(1);
+        transform: translateZ(0) scale(1);
       }
     }
   }
@@ -156,8 +152,7 @@ const onChange = (event: Event): void => {
       height: 20px;
 
       .tk-radio-button-circle-dot {
-        width: 10px;
-        height: 10px;
+        inset: 4px;
       }
     }
   }
@@ -171,8 +166,7 @@ const onChange = (event: Event): void => {
       height: 26px;
 
       .tk-radio-button-circle-dot {
-        width: 12px;
-        height: 12px;
+        inset: 5px;
       }
     }
   }
@@ -186,8 +180,7 @@ const onChange = (event: Event): void => {
       height: 30px;
 
       .tk-radio-button-circle-dot {
-        width: 16px;
-        height: 16px;
+        inset: 6px;
       }
     }
   }
