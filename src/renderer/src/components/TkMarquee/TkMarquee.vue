@@ -180,7 +180,6 @@ watch(
   overflow: hidden;
 
   .tk-marquee-viewport {
-    flex: auto;
     display: block;
     width: 100%;
     height: 100%;
@@ -190,7 +189,6 @@ watch(
     padding: 0;
 
     .tk-marquee-track {
-      flex: none;
       display: flex;
       will-change: transform;
 
