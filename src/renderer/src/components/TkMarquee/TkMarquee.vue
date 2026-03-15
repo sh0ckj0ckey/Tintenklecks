@@ -1,17 +1,13 @@
 <template>
-  <div
-    ref="marqueeElementRef"
-    class="tk-marquee"
-    :class="[`tk-marquee--${props.direction}`]"
-    @mouseenter="onMouseEnter"
-    @mouseleave="onMouseLeave"
-  >
-    <div class="tk-marquee-track" :style="marqueeTrackStyle">
-      <div ref="marqueeContentElementRef" class="tk-marquee-content">
-        <slot></slot>
-      </div>
-      <div v-for="n in Math.max(0, repeatCount - 1)" :key="n" class="tk-marquee-content" aria-hidden="true">
-        <slot></slot>
+  <div class="tk-marquee" :class="[`tk-marquee--${props.direction}`]" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
+    <div ref="marqueeViewportRef" class="tk-marquee-viewport">
+      <div class="tk-marquee-track" :style="marqueeTrackStyle">
+        <div ref="marqueeContentElementRef" class="tk-marquee-content">
+          <slot></slot>
+        </div>
+        <div v-for="n in Math.max(0, repeatCount - 1)" :key="n" class="tk-marquee-content" aria-hidden="true">
+          <slot></slot>
+        </div>
       </div>
     </div>
   </div>
@@ -24,13 +20,8 @@ type Direction = 'left' | 'right' | 'up' | 'down'
 
 const props = withDefaults(
   defineProps<{
-    /** 滚动速度 (像素/秒) */
     speed?: number
-
-    /** 滚动方向 */
     direction?: Direction
-
-    /** 是否在鼠标悬停时暂停滚动 */
     pauseOnHover?: boolean
   }>(),
   {
@@ -40,7 +31,7 @@ const props = withDefaults(
   }
 )
 
-const marqueeElementRef = useTemplateRef('marqueeElementRef')
+const marqueeViewportRef = useTemplateRef('marqueeViewportRef')
 const marqueeContentElementRef = useTemplateRef('marqueeContentElementRef')
 
 const containerSize = ref(0)
@@ -60,12 +51,12 @@ const marqueeTrackStyle = computed<CSSProperties>(() => {
 const measure = async (): Promise<void> => {
   await nextTick()
 
-  if (!marqueeElementRef.value || !marqueeContentElementRef.value) {
+  if (!marqueeViewportRef.value || !marqueeContentElementRef.value) {
     return
   }
 
   const isVertical = props.direction === 'up' || props.direction === 'down'
-  containerSize.value = isVertical ? marqueeElementRef.value.offsetHeight : marqueeElementRef.value.offsetWidth
+  containerSize.value = isVertical ? marqueeViewportRef.value.offsetHeight : marqueeViewportRef.value.offsetWidth
   contentSize.value = isVertical ? marqueeContentElementRef.value.scrollHeight : marqueeContentElementRef.value.scrollWidth
 
   if (containerSize.value > 0 && contentSize.value > 0) {
@@ -145,8 +136,8 @@ onMounted(() => {
   resizeObserver = new ResizeObserver(() => {
     measure()
   })
-  if (marqueeElementRef.value) {
-    resizeObserver.observe(marqueeElementRef.value)
+  if (marqueeViewportRef.value) {
+    resizeObserver.observe(marqueeViewportRef.value)
   }
   if (marqueeContentElementRef.value) {
     resizeObserver.observe(marqueeContentElementRef.value)
@@ -180,17 +171,46 @@ watch(
 
 <style scoped>
 .tk-marquee {
-  overflow: hidden;
-  display: flex;
+  position: relative;
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
-  box-sizing: border-box;
-  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+
+  .tk-marquee-viewport {
+    flex: auto;
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+
+    .tk-marquee-track {
+      flex: none;
+      display: flex;
+      will-change: transform;
+
+      .tk-marquee-content {
+        flex: none;
+        display: flex;
+        min-width: min-content;
+        min-height: min-content;
+      }
+    }
+  }
 
   &.tk-marquee--left,
   &.tk-marquee--right {
     .tk-marquee-track {
       flex-direction: row;
+
+      .tk-marquee-content {
+        flex-direction: row;
+      }
     }
   }
 
@@ -198,19 +218,10 @@ watch(
   &.tk-marquee--down {
     .tk-marquee-track {
       flex-direction: column;
-    }
-  }
 
-  .tk-marquee-track {
-    flex: none;
-    display: flex;
-    will-change: transform;
-
-    .tk-marquee-content {
-      flex: none;
-      display: flex;
-      min-width: min-content;
-      min-height: min-content;
+      .tk-marquee-content {
+        flex-direction: column;
+      }
     }
   }
 }

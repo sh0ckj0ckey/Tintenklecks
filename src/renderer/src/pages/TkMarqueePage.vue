@@ -1,5 +1,9 @@
 <template>
   <div class="tk-marquee-page">
+    <TkMarquee class="tk-marquee-page-marquee horizontal" direction="left" :pause-on-hover="true">
+      <span>This is a marquee</span>
+    </TkMarquee>
+
     <TkMarquee class="tk-marquee-page-marquee horizontal" direction="left">
       <div class="tk-marquee-page-marquee-content horizontal">
         <TkButton theme="primary" :deboss="true">Primary</TkButton>
@@ -68,6 +72,10 @@ import TkMarquee from '../components/TkMarquee/TkMarquee.vue'
       &.vertical {
         flex-direction: column;
       }
+    }
+
+    span {
+      margin: 4px;
     }
   }
 }
