@@ -1,14 +1,16 @@
 <template>
   <div class="tk-flipview" :class="[`tk-flipview--${props.direction}`]">
-    <div
-      ref="trackElementRef"
-      class="tk-flipview-track"
-      :class="{ 'tk-flipview-track--transitioning': isTransitioning }"
-      :style="trackStyle"
-      @transitionend="onTransitionEnd"
-    >
-      <div v-for="(item, index) in computedSlides" :key="index" class="tk-flipview-item">
-        <slot :item="item" :index="getOriginalIndex(index)"></slot>
+    <div class="tk-flipview-viewport">
+      <div
+        ref="trackElementRef"
+        class="tk-flipview-track"
+        :class="{ 'tk-flipview-track--transitioning': isTransitioning }"
+        :style="trackStyle"
+        @transitionend="onTransitionEnd"
+      >
+        <div v-for="(item, index) in computedSlides" :key="index" class="tk-flipview-item">
+          <slot :item="item" :index="getOriginalIndex(index)"></slot>
+        </div>
       </div>
     </div>
   </div>
@@ -145,10 +147,47 @@ defineExpose({
 <style scoped>
 .tk-flipview {
   position: relative;
-  overflow: hidden;
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
-  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+
+  .tk-flipview-viewport {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+
+    .tk-flipview-track {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      will-change: transform;
+      transition: none;
+
+      &.tk-flipview-track--transitioning {
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .tk-flipview-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+      }
+    }
+  }
 
   &.tk-flipview--horizontal {
     .tk-flipview-track {
@@ -159,27 +198,6 @@ defineExpose({
   &.tk-flipview--vertical {
     .tk-flipview-track {
       flex-direction: column;
-    }
-  }
-
-  .tk-flipview-track {
-    display: flex;
-    will-change: transform;
-    width: 100%;
-    height: 100%;
-    transition: none;
-
-    &.tk-flipview-track--transitioning {
-      transition: transform 0.3s ease-in-out;
-    }
-
-    .tk-flipview-item {
-      flex: 1;
-      display: flex;
-      width: 100%;
-      height: 100%;
-      min-width: 0;
-      min-height: 0;
     }
   }
 }
