@@ -195,8 +195,8 @@ watch(
       .tk-marquee-content {
         flex: none;
         display: flex;
-        min-width: min-content;
-        min-height: min-content;
+        min-width: max-content;
+        min-height: max-content;
       }
     }
   }
