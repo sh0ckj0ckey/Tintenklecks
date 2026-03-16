@@ -4,12 +4,12 @@
       <div
         ref="trackElementRef"
         class="tk-flipview-track"
-        :class="{ 'tk-flipview-track--transitioning': isTransitioning }"
-        :style="flipTrackStyle"
+        :class="{ 'tk-flipview-track--with-transition': isTransitionEnabled }"
+        :style="flipviewTrackStyle"
         @transitionend="onTransitionEnd"
       >
-        <div v-for="(item, index) in computedSlides" :key="index" class="tk-flipview-item">
-          <slot :item="item" :index="getOriginalIndex(index)"></slot>
+        <div v-for="(item, index) in slides" :key="index" class="tk-flipview-item">
+          <slot :item="item" :index="getActualIndex(index)"></slot>
         </div>
       </div>
     </div>
@@ -37,101 +37,143 @@ defineSlots<{
 
 const trackElementRef = useTemplateRef('trackElementRef')
 
-const slideCount = computed(() => props.items.length)
+const items = computed<T[]>(() => props.items || [])
 
-const computedSlides = computed<T[]>(() => {
-  if (slideCount.value === 0) return []
-  if (!props.loop || slideCount.value === 1) return props.items
-
-  return [props.items[slideCount.value - 1], ...props.items, props.items[0]]
+const slides = computed<T[]>(() => {
+  const length = items.value.length
+  return length > 0 && props.loop ? [items.value[length - 1], ...items.value, items.value[0]] : items.value
 })
 
-const currentIndex = ref(props.loop && slideCount.value > 1 ? 1 : 0)
+const index = ref(items.value.length > 0 && props.loop ? 1 : 0)
 
-const isTransitioning = ref(false)
-const isAnimating = ref(false)
+const isTransitionEnabled = ref(false)
 
-watch(
-  () => props.items,
-  () => {
-    isTransitioning.value = false
-    isAnimating.value = false
-    currentIndex.value = props.loop && slideCount.value > 1 ? 1 : 0
-  },
-  { deep: false }
-)
+let isFlipping = false
 
-const flipTrackStyle = computed<CSSProperties>(() => {
-  if (slideCount.value === 0) return {}
+watch([() => items.value, () => items.value.length], ([, newLength]) => {
+  isFlipping = false
+  isTransitionEnabled.value = false
+  index.value = newLength > 0 && props.loop ? 1 : 0
+})
 
-  const total = computedSlides.value.length
-  const percent = currentIndex.value * (100 / total)
+const flipviewTrackStyle = computed<CSSProperties>(() => {
+  if (items.value.length === 0) {
+    return {}
+  }
+
+  const slideCount = slides.value.length
+  const percent = index.value * (100 / slideCount)
   const isHorizontal = props.direction === 'horizontal'
-
   return {
-    width: isHorizontal ? `${total * 100}%` : '100%',
-    height: isHorizontal ? '100%' : `${total * 100}%`,
+    width: isHorizontal ? `${slideCount * 100}%` : '100%',
+    height: isHorizontal ? '100%' : `${slideCount * 100}%`,
     transform: isHorizontal ? `translateX(-${percent}%)` : `translateY(-${percent}%)`
   }
 })
 
-const getOriginalIndex = (index: number): number => {
-  if (!props.loop || slideCount.value <= 1) return index
-  if (index === 0) return slideCount.value - 1
-  if (index === computedSlides.value.length - 1) return 0
-  return index - 1
+const getActualIndex = (slideIndex: number): number => {
+  const length = items.value.length
+  if (length <= 0 || !props.loop) {
+    return slideIndex
+  }
+
+  if (slideIndex === 0) {
+    return length - 1
+  }
+  if (slideIndex === length + 1) {
+    return 0
+  }
+  return slideIndex - 1
 }
 
-const selectedIndex = computed(() => getOriginalIndex(currentIndex.value))
-const selectedItem = computed(() => props.items[selectedIndex.value])
+const selectedIndex = computed(() => getActualIndex(index.value))
+const selectedItem = computed(() => items.value[selectedIndex.value])
 
 const next = (): void => {
-  if (slideCount.value <= 1 || isAnimating.value) return
-  isAnimating.value = true
-  isTransitioning.value = true
-  currentIndex.value++
+  if (isFlipping) {
+    return
+  }
+
+  const length = items.value.length
+  if (length <= 0) {
+    return
+  }
+
+  if (!props.loop && index.value >= length - 1) {
+    return
+  }
+
+  isFlipping = true
+  isTransitionEnabled.value = true
+  index.value++
 }
 
 const prev = (): void => {
-  if (slideCount.value <= 1 || isAnimating.value) return
-  isAnimating.value = true
-  isTransitioning.value = true
-  currentIndex.value--
+  if (isFlipping) {
+    return
+  }
+
+  const length = items.value.length
+  if (length <= 0) {
+    return
+  }
+
+  if (!props.loop && index.value <= 0) {
+    return
+  }
+
+  isFlipping = true
+  isTransitionEnabled.value = true
+  index.value--
 }
 
-const goTo = (targetOriginalIndex: number): void => {
-  if (slideCount.value <= 1 || isAnimating.value) return
-  if (targetOriginalIndex < 0 || targetOriginalIndex >= slideCount.value) return
-  if (targetOriginalIndex === selectedIndex.value) return
+const goTo = (targetIndex: number): void => {
+  if (isFlipping) {
+    return
+  }
 
-  isAnimating.value = true
-  isTransitioning.value = true
-  currentIndex.value = props.loop ? targetOriginalIndex + 1 : targetOriginalIndex
+  const length = items.value.length
+  if (length <= 0) {
+    return
+  }
+
+  if (targetIndex === selectedIndex.value || targetIndex < 0 || targetIndex >= length) {
+    return
+  }
+
+  isFlipping = true
+  isTransitionEnabled.value = true
+  index.value = props.loop ? targetIndex + 1 : targetIndex
 }
 
 const onTransitionEnd = (event: TransitionEvent): void => {
-  if (event.target !== trackElementRef.value) return
-
-  isAnimating.value = false
-
-  if (!props.loop) return
-
-  const total = computedSlides.value.length
-  let needsJump = false
-
-  if (currentIndex.value <= 0) {
-    currentIndex.value = total - 2
-    needsJump = true
-  } else if (currentIndex.value >= total - 1) {
-    currentIndex.value = 1
-    needsJump = true
+  if (event.target !== trackElementRef.value) {
+    return
   }
 
-  if (needsJump) {
-    isTransitioning.value = false
-    if (trackElementRef.value) {
-      void trackElementRef.value.offsetHeight
-    }
+  isFlipping = false
+
+  if (!props.loop) {
+    return
+  }
+
+  const slideCount = slides.value.length
+
+  if (index.value > 0 && index.value < slideCount - 1) {
+    return
+  }
+
+  isTransitionEnabled.value = false
+
+  if (index.value <= 0) {
+    index.value = slideCount - 2
+  } else if (index.value >= slideCount - 1) {
+    index.value = 1
+  }
+
+  // Force browser reflow to apply 'transition: none' immediately without animation
+  if (trackElementRef.value) {
+    void trackElementRef.value.offsetHeight
   }
 }
 
@@ -162,26 +204,21 @@ defineExpose({
     min-height: 0;
     margin: 0;
     padding: 0;
-    border: none;
 
     .tk-flipview-track {
       display: flex;
-      width: 100%;
-      height: 100%;
       will-change: transform;
       transition: none;
 
-      &.tk-flipview-track--transitioning {
-        transition: transform 0.3s ease-in-out;
+      &.tk-flipview-track--with-transition {
+        transition: transform 0.3s ease-out;
       }
 
       .tk-flipview-item {
+        flex: 1;
         display: flex;
         align-items: center;
         justify-content: center;
-        flex: 1;
-        width: 100%;
-        height: 100%;
         min-width: 0;
         min-height: 0;
         overflow: hidden;
