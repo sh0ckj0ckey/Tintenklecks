@@ -5,7 +5,7 @@
         <path stroke-linecap="round" stroke-width="3" stroke="currentColor" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5"></path>
       </svg>
     </TkButton>
-    <TkFlipView ref="flipviewRef" :items="images" direction="horizontal" :loop="true" class="tk-flipview">
+    <TkFlipView ref="flipviewRef" :items="images" direction="horizontal" :loop="true" class="tk-flipview" @wheel.prevent="onWheel">
       <template #default="{ item, index }">
         <img :src="item" :alt="`demo-${index}`" draggable="false" />
       </template>
@@ -31,6 +31,14 @@ const images = [
 ]
 
 const flipviewRef = useTemplateRef('flipviewRef')
+
+const onWheel = (e: WheelEvent): void => {
+  if (e.deltaY > 0) {
+    flipviewRef.value?.next()
+  } else {
+    flipviewRef.value?.prev()
+  }
+}
 </script>
 
 <style scoped>
