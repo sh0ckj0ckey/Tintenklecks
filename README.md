@@ -51,7 +51,7 @@ An optional subtle `deboss` effect can be enabled via props, intended to give th
 
 #### Usage
 
-``` html
+```html
 <TkButton theme="primary" deboss>
   Primary
 </TkButton>
@@ -67,7 +67,7 @@ An optional subtle `emboss` effect can be enabled via props, intended to give th
 
 #### Usage
 
-``` html
+```html
 <TkHyperlinkButton theme="primary" emboss>
   Primary
 </TkHyperlinkButton>
@@ -87,8 +87,56 @@ When turned on, it adopts the selected theme color, with an inner shadow, simila
 
 TkToggleButton represents a boolean on/off state and is controlled via `v-model`.
 
-``` html
+```html
 <TkToggleButton v-model="isOn" theme="primary" deboss>
   Primary
 </TkToggleButton>
+```
+
+<a id="tkcheckbox"></a>
+### <img src="./resources/icon-checkbox-light.svg#gh-light-mode-only" width="24" height="16" /><img src="./resources/icon-checkbox-dark.svg#gh-dark-mode-only" width="24" height="16" /> TkCheckBox
+
+TkCheckBox is a checkbox component that represents a checked or unchecked state.
+
+It supports `small`, `medium`, and `large` sizes.
+The layout between the checkbox box and its content can be adjusted via the `orientation` prop.
+
+It can also display an `indeterminate` state, typically used for a parent checkbox that controls multiple child options when only some are selected.
+
+#### Usage
+
+TkCheckBox represents a boolean checked state and is controlled via `v-model`.
+
+```html
+<TkCheckBox v-model="isChecked">
+  Option
+</TkCheckBox>
+```
+
+A common pattern is to use a parent checkbox to control a group of child options.
+
+```html
+<TkCheckBox v-model="allChecked" :indeterminate="isIndeterminate">Total</TkCheckBox>
+
+<TkCheckBox v-model="isLargeChecked" size="large">Large</TkCheckBox>
+<TkCheckBox v-model="isMediumChecked" size="medium">Medium</TkCheckBox>
+<TkCheckBox v-model="isSmallChecked" size="small">Small</TkCheckBox>
+```
+
+```ts
+const isLargeChecked = ref(false)
+const isMediumChecked = ref(true)
+const isSmallChecked = ref(false)
+
+const items = [isLargeChecked, isMediumChecked, isSmallChecked]
+
+const allChecked = computed({
+  get: () => items.every((item) => item.value),
+  set: (value: boolean) => items.forEach((item) => (item.value = value))
+})
+
+const isIndeterminate = computed(() => {
+  const checked = items.filter((item) => item.value).length
+  return checked > 0 && checked < items.length
+})
 ```
