@@ -8,8 +8,8 @@
         :style="flipviewTrackStyle"
         @transitionend="onTransitionEnd"
       >
-        <div v-for="(item, index) in slides" :key="index" class="tk-flipview-item">
-          <slot :item="item" :index="getActualIndex(index)"></slot>
+        <div v-for="(item, i) in slides" :key="i" class="tk-flipview-item">
+          <slot :item="item" :index="getActualIndex(i)"></slot>
         </div>
       </div>
     </div>
