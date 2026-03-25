@@ -156,9 +156,9 @@ TkRadioButton can be used independently, or placed inside `TkRadioButtons` for g
 TkRadioButton can be used on its own by sharing the same `v-model` and `name` across multiple options.
 
 ```html
-<TkRadioButton v-model="selectedValue" :value="0" name="demo" size="large">Large</TkRadioButton>
-<TkRadioButton v-model="selectedValue" :value="1" name="demo" size="medium">Medium</TkRadioButton>
-<TkRadioButton v-model="selectedValue" :value="2" name="demo" size="small">Small</TkRadioButton>
+<TkRadioButton v-model="selectedValue" :value="0" name="demo">0</TkRadioButton>
+<TkRadioButton v-model="selectedValue" :value="1" name="demo">1</TkRadioButton>
+<TkRadioButton v-model="selectedValue" :value="2" name="demo">2</TkRadioButton>
 ```
 
 It can also be used inside `TkRadioButtons`, which manages the shared group state for its child radio buttons.
@@ -169,4 +169,25 @@ It can also be used inside `TkRadioButtons`, which manages the shared group stat
   <TkRadioButton :value="1" size="medium">Medium</TkRadioButton>
   <TkRadioButton :value="2" size="small">Small</TkRadioButton>
 </TkRadioButtons>
+```
+
+<a id="tktoggleswitch"></a>
+### <img src="./resources/icon-toggleswitch-light.svg#gh-light-mode-only" width="24" height="16" /><img src="./resources/icon-toggleswitch-dark.svg#gh-dark-mode-only" width="24" height="16" /> TkToggleSwitch
+
+TkToggleSwitch is a switch component that represents a toggleable on/off state.
+
+It supports `small`, `medium`, and `large` sizes, and shares the same visual themes as TkToggleButton.
+The layout between the switch and its content can be adjusted via the `orientation` prop.
+
+When turned off, the switch uses a neutral background regardless of theme.
+When turned on, it adopts the selected theme color, similar to a physical switch flipped to the on position.
+
+#### Usage
+
+TkToggleSwitch represents a boolean on/off state and is controlled via `v-model`.
+
+```html
+<TkToggleSwitch v-model="isOn" theme="primary">
+  Primary
+</TkToggleSwitch>
 ```

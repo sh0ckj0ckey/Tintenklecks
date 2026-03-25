@@ -1,25 +1,25 @@
 <template>
   <div class="tk-toggle-switch-page">
     <div style="display: flex; gap: 8px">
-      <TkToggleSwitch v-model="isPrimaryOn" theme="primary" size="small" :deboss="true">Primary</TkToggleSwitch>
-      <TkToggleSwitch v-model="isSecondaryOn" theme="secondary" size="small" :deboss="true">Secondary</TkToggleSwitch>
-      <TkToggleSwitch v-model="isSuccessOn" theme="success" size="small" :deboss="true">Success</TkToggleSwitch>
-      <TkToggleSwitch v-model="isWarningOn" theme="warning" size="small" :deboss="true">Warning</TkToggleSwitch>
-      <TkToggleSwitch v-model="isDangerOn" theme="danger" size="small" :deboss="true">Danger</TkToggleSwitch>
+      <TkToggleSwitch v-model="isPrimaryOn" theme="primary" size="small">Primary</TkToggleSwitch>
+      <TkToggleSwitch v-model="isSecondaryOn" theme="secondary" size="small">Secondary</TkToggleSwitch>
+      <TkToggleSwitch v-model="isSuccessOn" theme="success" size="small">Success</TkToggleSwitch>
+      <TkToggleSwitch v-model="isWarningOn" theme="warning" size="small">Warning</TkToggleSwitch>
+      <TkToggleSwitch v-model="isDangerOn" theme="danger" size="small">Danger</TkToggleSwitch>
     </div>
     <div style="display: flex; gap: 8px">
-      <TkToggleSwitch v-model="isPrimaryOn" theme="primary" size="medium" :deboss="true">Primary</TkToggleSwitch>
-      <TkToggleSwitch v-model="isSecondaryOn" theme="secondary" size="medium" :deboss="true">Secondary</TkToggleSwitch>
-      <TkToggleSwitch v-model="isSuccessOn" theme="success" size="medium" :deboss="true">Success</TkToggleSwitch>
-      <TkToggleSwitch v-model="isWarningOn" theme="warning" size="medium" :deboss="true">Warning</TkToggleSwitch>
-      <TkToggleSwitch v-model="isDangerOn" theme="danger" size="medium" :deboss="true">Danger</TkToggleSwitch>
+      <TkToggleSwitch v-model="isPrimaryOn" theme="primary" size="medium">Primary</TkToggleSwitch>
+      <TkToggleSwitch v-model="isSecondaryOn" theme="secondary" size="medium">Secondary</TkToggleSwitch>
+      <TkToggleSwitch v-model="isSuccessOn" theme="success" size="medium">Success</TkToggleSwitch>
+      <TkToggleSwitch v-model="isWarningOn" theme="warning" size="medium">Warning</TkToggleSwitch>
+      <TkToggleSwitch v-model="isDangerOn" theme="danger" size="medium">Danger</TkToggleSwitch>
     </div>
     <div style="display: flex; gap: 8px">
-      <TkToggleSwitch v-model="isPrimaryOn" theme="primary" size="large" :deboss="true">Primary</TkToggleSwitch>
-      <TkToggleSwitch v-model="isSecondaryOn" theme="secondary" size="large" :deboss="true">Secondary</TkToggleSwitch>
-      <TkToggleSwitch v-model="isSuccessOn" theme="success" size="large" :deboss="true">Success</TkToggleSwitch>
-      <TkToggleSwitch v-model="isWarningOn" theme="warning" size="large" :deboss="true">Warning</TkToggleSwitch>
-      <TkToggleSwitch v-model="isDangerOn" theme="danger" size="large" :deboss="true">Danger</TkToggleSwitch>
+      <TkToggleSwitch v-model="isPrimaryOn" theme="primary" size="large">Primary</TkToggleSwitch>
+      <TkToggleSwitch v-model="isSecondaryOn" theme="secondary" size="large">Secondary</TkToggleSwitch>
+      <TkToggleSwitch v-model="isSuccessOn" theme="success" size="large">Success</TkToggleSwitch>
+      <TkToggleSwitch v-model="isWarningOn" theme="warning" size="large">Warning</TkToggleSwitch>
+      <TkToggleSwitch v-model="isDangerOn" theme="danger" size="large">Danger</TkToggleSwitch>
     </div>
   </div>
 </template>
