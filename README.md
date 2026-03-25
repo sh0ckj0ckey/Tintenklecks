@@ -140,3 +140,33 @@ const isIndeterminate = computed(() => {
   return checked > 0 && checked < items.length
 })
 ```
+
+<a id="tkradiobutton"></a>
+### <img src="./resources/icon-radiobutton-light.svg#gh-light-mode-only" width="24" height="16" /><img src="./resources/icon-radiobutton-dark.svg#gh-dark-mode-only" width="24" height="16" /> TkRadioButton
+
+TkRadioButton is a radio button component that represents a single selectable option in a mutually exclusive set.
+
+It supports `small`, `medium`, and `large` sizes.
+The layout between the radio circle and its content can be adjusted via the `orientation` prop.
+
+TkRadioButton can be used independently, or placed inside `TkRadioButtons` for grouped selection. In that case, shared group state such as `v-model`, `name`, and `disabled` is managed by the parent container.
+
+#### Usage
+
+TkRadioButton can be used on its own by sharing the same `v-model` and `name` across multiple options.
+
+```html
+<TkRadioButton v-model="selectedValue" :value="0" name="demo" size="large">Large</TkRadioButton>
+<TkRadioButton v-model="selectedValue" :value="1" name="demo" size="medium">Medium</TkRadioButton>
+<TkRadioButton v-model="selectedValue" :value="2" name="demo" size="small">Small</TkRadioButton>
+```
+
+It can also be used inside `TkRadioButtons`, which manages the shared group state for its child radio buttons.
+
+```html
+<TkRadioButtons v-model="selectedValue" direction="row">
+  <TkRadioButton :value="0" size="large">Large</TkRadioButton>
+  <TkRadioButton :value="1" size="medium">Medium</TkRadioButton>
+  <TkRadioButton :value="2" size="small">Small</TkRadioButton>
+</TkRadioButtons>
+```
