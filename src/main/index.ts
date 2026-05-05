@@ -19,11 +19,16 @@ function createWindow(): void {
     // ...(process.platform !== 'darwin' ? { titleBarOverlay: { color: '#efeae7', height: 42 } } : {}),
     // ...(process.platform === 'linux' ? { icon } : {}),
     icon,
+    trafficLightPosition: { x: 16, y: 16 },
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     }
   })
+
+  if (process.platform === 'darwin') {
+    app.dock?.setIcon(icon)
+  }
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -60,9 +65,13 @@ function createWindow(): void {
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    const url = new URL(process.env['ELECTRON_RENDERER_URL'])
+    url.searchParams.set('os', process.platform)
+    mainWindow.loadURL(url.toString())
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'), {
+      query: { os: process.platform }
+    })
   }
 }
 
@@ -111,9 +120,11 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  // if (process.platform !== 'darwin') {
+  //   app.quit()
+  // }
+
+  app.quit()
 })
 
 // In this file you can include the rest of your app's specific main process

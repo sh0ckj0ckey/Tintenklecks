@@ -25,11 +25,15 @@
 
   --tk-color-foreground: #272320; */
 
-  --tk-color-background: #20202000;
+  --tk-color-background: #202020;
 
   --tk-color-background-deep: #3a3a3a4c;
 
   --tk-color-foreground: #ffffff;
+}
+
+:root[data-os='win32'] {
+  --tk-color-background: #20202000;
 }
 
 body {

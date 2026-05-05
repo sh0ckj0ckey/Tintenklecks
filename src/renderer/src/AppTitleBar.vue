@@ -10,7 +10,7 @@
       <span>Tintenklecks Gallery</span>
     </div>
 
-    <div class="app-title-bar-caption-buttons">
+    <div v-if="currentOS !== 'darwin'" class="app-title-bar-caption-buttons">
       <button class="app-title-bar-caption-button" @click="minimizeAppWindow">
         <IconWindowMinimize class="app-title-bar-caption-button-icon" />
       </button>
@@ -38,6 +38,8 @@ import IconWindowRestore from '@renderer/components/TkIcons/IconWindowRestore.vu
 import IconWindowBack from '@renderer/components/TkIcons/IconWindowBack.vue'
 
 const { canGoBack, tryGoBack } = useBackNavigation()
+
+const currentOS = document.documentElement.getAttribute('data-os') || 'unknown'
 
 const isAppWindowMaximized = ref<boolean>(false)
 const isAppWindowFocused = ref<boolean>(true)
