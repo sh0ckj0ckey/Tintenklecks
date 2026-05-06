@@ -146,6 +146,7 @@ const footerGroups: NavigationGroup[] = [
   flex-direction: column;
   width: 100%;
   height: 100%;
+  -webkit-app-region: drag;
 
   .app-navigation-title {
     flex: none;
@@ -153,7 +154,8 @@ const footerGroups: NavigationGroup[] = [
     align-items: center;
     justify-content: flex-start;
     padding: 0 12px 0 8px;
-    margin: 0 0 4px 0;
+    margin-top: 16px;
+    margin-bottom: 8px;
 
     &.app-navigation-title-macos {
       margin-top: var(--tk-title-bar-height);
@@ -170,6 +172,7 @@ const footerGroups: NavigationGroup[] = [
       align-items: center;
       cursor: default;
       transition: padding 0.2s ease-out;
+      -webkit-app-region: no-drag;
 
       &:hover {
         padding: 0 0 0 0;
@@ -205,6 +208,7 @@ const footerGroups: NavigationGroup[] = [
     padding: 8px 12px 8px 8px;
     margin-right: 4px;
     gap: 12px;
+    -webkit-app-region: no-drag;
   }
 
   .app-navigation-section-footer {
@@ -214,6 +218,7 @@ const footerGroups: NavigationGroup[] = [
     padding: 8px 12px 8px 8px;
     margin-right: 4px;
     gap: 12px;
+    -webkit-app-region: no-drag;
   }
 
   .app-navigation-section-body {
@@ -225,6 +230,7 @@ const footerGroups: NavigationGroup[] = [
     padding: 12px 4px 8px 8px;
     margin-right: 4px;
     gap: 12px;
+    -webkit-app-region: no-drag;
 
     &::-webkit-scrollbar {
       width: 8px;

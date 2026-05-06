@@ -19,6 +19,9 @@
   /* 应用程序标题栏高度 */
   --tk-title-bar-height: 48px;
 
+  /* 导航面板宽度 */
+  --tk-navigation-panel-width: 232px;
+
   /* --tk-color-background: #f3f3f300;
 
   --tk-color-background-deep: #ffffff80;

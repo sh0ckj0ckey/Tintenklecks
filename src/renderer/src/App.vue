@@ -37,9 +37,8 @@ onMounted(async () => {
     display: flex;
     flex: none;
     overflow: hidden;
-    width: 232px;
+    width: var(--tk-navigation-panel-width);
     height: 100%;
-    /* padding-top: var(--tk-title-bar-height); */
     box-sizing: border-box;
     background-color: var(--tk-color-background);
     z-index: 1;
@@ -61,7 +60,7 @@ onMounted(async () => {
   .tintenklecks-app-title-bar {
     position: absolute;
     top: 0;
-    left: 0;
+    left: var(--tk-navigation-panel-width);
     right: 0;
     height: var(--tk-title-bar-height);
     z-index: var(--tk-z-app-title-bar);
