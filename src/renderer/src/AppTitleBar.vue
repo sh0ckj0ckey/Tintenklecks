@@ -1,14 +1,6 @@
 <template>
   <header :class="['app-title-bar', { 'app-title-bar-blurred': !isAppWindowFocused }]">
-    <div class="app-title-bar-navigation-buttons">
-      <TkHyperlinkButton v-if="canGoBack" theme="secondary" :emboss="false" class="app-title-bar-navigation-button" @click="tryGoBack">
-        <IconWindowBack class="app-title-bar-navigation-button-icon" />
-      </TkHyperlinkButton>
-    </div>
-
-    <div class="app-title-bar-drag-region" @dblclick="toggleMaximizeAppWindow">
-      <span>Tintenklecks Gallery</span>
-    </div>
+    <div class="app-title-bar-drag-region" @dblclick="toggleMaximizeAppWindow"></div>
 
     <div v-if="currentOS !== 'darwin'" class="app-title-bar-caption-buttons">
       <button class="app-title-bar-caption-button" @click="minimizeAppWindow">
@@ -29,15 +21,10 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { useBackNavigation } from '@renderer/composables/useBackNavigation'
-import TkHyperlinkButton from './components/TkButtons/TkHyperlinkButton.vue'
 import IconWindowClose from '@renderer/components/TkIcons/IconWindowClose.vue'
 import IconWindowMaximize from '@renderer/components/TkIcons/IconWindowMaximize.vue'
 import IconWindowMinimize from '@renderer/components/TkIcons/IconWindowMinimize.vue'
 import IconWindowRestore from '@renderer/components/TkIcons/IconWindowRestore.vue'
-import IconWindowBack from '@renderer/components/TkIcons/IconWindowBack.vue'
-
-const { canGoBack, tryGoBack } = useBackNavigation()
 
 const currentOS = document.documentElement.getAttribute('data-os') || 'unknown'
 
@@ -88,41 +75,12 @@ const closeAppWindow = (): void => {
     opacity: 0.7;
   }
 
-  .app-title-bar-navigation-buttons {
-    flex: none;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    -webkit-app-region: no-drag;
-
-    .app-title-bar-navigation-button {
-      height: calc(100% - 10px);
-      aspect-ratio: 1 / 1;
-      margin-left: 5px;
-      color: var(--tk-color-foreground);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: default;
-
-      .app-title-bar-navigation-button-icon {
-        width: 12px;
-        height: 12px;
-        object-fit: contain;
-      }
-    }
-  }
-
   .app-title-bar-drag-region {
     flex: auto;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding-left: 12px;
-    font-size: 12px;
-    font-weight: 400;
     -webkit-app-region: drag;
   }
 

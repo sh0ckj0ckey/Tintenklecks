@@ -1,5 +1,14 @@
 <template>
   <nav class="app-navigation">
+    <div :class="['app-navigation-title', { 'app-navigation-title-macos': currentOS === 'darwin' }]">
+      <TkHyperlinkButton v-if="canGoBack" class="app-navigation-title-button" theme="secondary" :emboss="false" @click="tryGoBack">
+        <IconWindowBack class="app-navigation-title-button-icon" />
+      </TkHyperlinkButton>
+
+      <img class="app-navigation-title-icon" src="/icon.png" alt="" />
+      <span class="app-navigation-title-text">Tintenklecks Gallery</span>
+    </div>
+
     <div class="app-navigation-section-header">
       <template v-for="(group, index) in headerGroups" :key="index">
         <div class="app-navigation-group">
@@ -48,8 +57,11 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useBackNavigation } from '@renderer/composables/useBackNavigation'
 import { RouteName } from '@renderer/router'
 import TkSeparator from '@renderer/components/TkSeparator/TkSeparator.vue'
+import TkHyperlinkButton from './components/TkButtons/TkHyperlinkButton.vue'
+import IconWindowBack from '@renderer/components/TkIcons/IconWindowBack.vue'
 import IconNavigationHome from '@renderer/components/TkIcons/IconHome.vue'
 import IconNavigationSetting from '@renderer/components/TkIcons/IconSetting.vue'
 import IconNavigationButton from '@renderer/components/TkIcons/navigation/IconNavigationButton.vue'
@@ -63,6 +75,10 @@ import IconNavigationPopup from '@renderer/components/TkIcons/navigation/IconNav
 import IconNavigationSeparator from '@renderer/components/TkIcons/navigation/IconNavigationSeparator.vue'
 import IconNavigationToast from '@renderer/components/TkIcons/navigation/IconNavigationToast.vue'
 import IconNavigationMarquee from '@renderer/components/TkIcons/navigation/IconNavigationMarquee.vue'
+
+const { canGoBack, tryGoBack } = useBackNavigation()
+
+const currentOS = document.documentElement.getAttribute('data-os') || 'unknown'
 
 type NavigationGroup = {
   title: string
@@ -130,6 +146,57 @@ const footerGroups: NavigationGroup[] = [
   flex-direction: column;
   width: 100%;
   height: 100%;
+
+  .app-navigation-title {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 12px 0 8px;
+    margin: 0 0 4px 0;
+
+    &.app-navigation-title-macos {
+      margin-top: var(--tk-title-bar-height);
+    }
+
+    .app-navigation-title-button {
+      flex: none;
+      height: 100%;
+      width: 38px;
+      padding: 0 0 0 10px;
+      color: var(--tk-color-foreground);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: default;
+      transition: padding 0.2s ease-out;
+
+      &:hover {
+        padding: 0 0 0 0;
+      }
+
+      .app-navigation-title-button-icon {
+        width: 14px;
+        height: 14px;
+        object-fit: contain;
+      }
+    }
+
+    .app-navigation-title-icon {
+      flex: none;
+      margin-left: 8px;
+      height: 36px;
+      width: 36px;
+    }
+
+    .app-navigation-title-text {
+      flex: auto;
+      margin-left: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 16px;
+    }
+  }
 
   .app-navigation-section-header {
     flex: none;

@@ -39,13 +39,14 @@ onMounted(async () => {
     overflow: hidden;
     width: 232px;
     height: 100%;
-    padding-top: var(--tk-title-bar-height);
+    /* padding-top: var(--tk-title-bar-height); */
     box-sizing: border-box;
     background-color: var(--tk-color-background);
     z-index: 1;
   }
 
   .tintenklecks-app-frame {
+    display: flex;
     flex: auto;
     overflow: hidden;
     width: 100%;
