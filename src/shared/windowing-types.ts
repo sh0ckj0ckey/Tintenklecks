@@ -41,7 +41,7 @@ export type WindowingIpcMessageType =
   /** Notify a window that its state has changed */
   | 'windowing:window-state-changed'
 
-  /** Notify a window that one of its opened windows has been closed */
+  /** Notify a window that one of the windows it opened has been closed */
   | 'windowing:window-closed'
 
 /**
@@ -90,10 +90,10 @@ export interface WindowState {
  * Request the main process to open a managed window
  */
 export interface WindowingOpenRequest {
-  /** Window width, default is 540px */
+  /** Window width, default is 720px */
   width?: number
 
-  /** Window height, default is 280px */
+  /** Window height, default is 480px */
   height?: number
 
   /** Hide the window from the taskbar, default is false */
@@ -135,7 +135,7 @@ export interface WindowingOpenResponse {
 export type WindowingReadyNotice = Record<string, never>
 
 /**
- * Request the main process to update the content component and props of a managed window
+ * Request the main process to update the content component and props of a managed window host
  */
 export interface WindowingUpdateRequest {
   /** Target window id */
@@ -314,10 +314,12 @@ export interface WindowingGetStateResponse {
 /**
  * Notice sent by the main process when a window state changes
  */
-export interface WindowingStateChangedNotice extends WindowState {}
+export interface WindowingStateChangedNotice {
+  state: WindowState
+}
 
 /**
- * Notice sent by the main process when one of a window's opened windows is closed
+ * Notice sent by the main process when one of the windows opened by this window is closed
  */
 export interface WindowingClosedNotice {
   /** Closed window id */
