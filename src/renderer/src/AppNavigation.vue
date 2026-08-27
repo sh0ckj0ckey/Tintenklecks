@@ -75,6 +75,7 @@ import IconNavigationPopup from '@renderer/components/TkIcons/navigation/IconNav
 import IconNavigationSeparator from '@renderer/components/TkIcons/navigation/IconNavigationSeparator.vue'
 import IconNavigationToast from '@renderer/components/TkIcons/navigation/IconNavigationToast.vue'
 import IconNavigationMarquee from '@renderer/components/TkIcons/navigation/IconNavigationMarquee.vue'
+import IconNavigationWindowing from '@renderer/components/TkIcons/navigation/IconNavigationWindowing.vue'
 
 const { canGoBack, tryGoBack } = useBackNavigation()
 
@@ -129,6 +130,10 @@ const menuGroups: NavigationGroup[] = [
   {
     title: 'Motion',
     items: [{ label: 'Marquee', routeName: RouteName.Marquee, icon: IconNavigationMarquee }]
+  },
+  {
+    title: 'Windowing',
+    items: [{ label: 'Windowing', routeName: RouteName.Windowing, icon: IconNavigationWindowing }]
   }
 ]
 
