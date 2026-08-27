@@ -163,11 +163,11 @@ export class WindowingManager {
       }
     }
 
-    const onWindowingUpdateRequested = (_: IpcMainEvent, request: WindowingUpdateRequest): void => {
+    const onWindowingUpdateRequested = (e: IpcMainEvent, request: WindowingUpdateRequest): void => {
       try {
         const sourceWindow = this.resolveSourceWindow(e)
         if (!sourceWindow) {
-          throw new Error('Invalid window opener.')
+          throw new Error('Invalid window source.')
         }
 
         const targetWindow = this.resolveTargetWindow(request.targetId)
@@ -189,8 +189,8 @@ export class WindowingManager {
     const onWindowingEventRequested = (e: IpcMainEvent, request: WindowingEventRequest): void => {
       try {
         const sourceWindow = this.resolveSourceWindow(e)
-        if (!sourceWindow /* || sourceWin.isDestroyed() */) {
-          throw new Error('Invalid window sender.')
+        if (!sourceWindow) {
+          throw new Error('Invalid window source.')
         }
 
         let targetWindow: BrowserWindow | undefined
@@ -203,7 +203,7 @@ export class WindowingManager {
           }
 
           const targetRecord = this.managedWindows.get(request.targetId)
-          fromId = sourceWindow.id === targetRecord?.openerId ? undefined : targetWindow.id
+          fromId = sourceWindow.id === targetRecord?.openerId ? undefined : sourceWindow.id
         } else {
           const sourceRecord = this.managedWindows.get(sourceWindow.id)
           if (!sourceRecord) {
