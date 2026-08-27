@@ -110,7 +110,6 @@ export class WindowingManager {
         this.logError(`Failed to destroy managed window, id=${record.window.id}.`, error)
       }
     })
-
     this.managedWindows.clear()
 
     this.logInfo('WindowingManager disposed.')
@@ -166,6 +165,11 @@ export class WindowingManager {
 
     const onWindowingUpdateRequested = (_: IpcMainEvent, request: WindowingUpdateRequest): void => {
       try {
+        const sourceWindow = this.resolveSourceWindow(e)
+        if (!sourceWindow) {
+          throw new Error('Invalid window opener.')
+        }
+
         const targetWindow = this.resolveTargetWindow(request.targetId)
         if (!targetWindow) {
           throw new Error('Invalid window target.')
@@ -292,7 +296,7 @@ export class WindowingManager {
           throw new Error('Invalid window target.')
         }
 
-        this.minimizeWindow(targetWindow)
+        this.maximizeWindow(targetWindow)
       } catch (error) {
         this.logError(`Failed to minimize window, id=${request?.targetId}.`, error)
       }
