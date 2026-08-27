@@ -2,7 +2,7 @@
   <div class="tk-windowing-page">
     <article>
       <header>
-        <h1>Windowing</h1>
+        <h2>Windowing</h2>
         <p>
           Windowing defines a small IPC-based model for managing Electron windows in a consistent way. If a window knows another window's
           id, it can request operations on that window. The model also lets a window control itself without knowing its own id, and
@@ -11,9 +11,9 @@
       </header>
 
       <section>
-        <h2>Core Concepts</h2>
+        <h3>Core Concepts</h3>
 
-        <h3>Managed Window</h3>
+        <h4>Managed Window</h4>
         <p>A managed window is an Electron <code>BrowserWindow</code> created and tracked by <code>WindowingManager</code>.</p>
         <p>
           <code>managedWindows</code> only contains windows opened through <code>windowing:open</code>. The <code>mainWindow</code> is
@@ -21,7 +21,7 @@
           can both be controlled by id.
         </p>
 
-        <h3>Window Host</h3>
+        <h4>Window Host</h4>
         <p>
           A window host is the renderer-side container loaded inside a managed window. It is responsible for sending
           <code>windowing:ready</code>, receiving <code>windowing:update</code>, and mounting or updating the actual content component.
@@ -31,7 +31,7 @@
           window, while the window host is the content container running inside it.
         </p>
 
-        <h3>Opener</h3>
+        <h4>Opener</h4>
         <p>
           The opener is the window that sends <code>windowing:open</code>. It can be the <code>mainWindow</code> or another managed window.
         </p>
@@ -41,7 +41,7 @@
           <code>windowing:window-closed</code> notice.
         </p>
 
-        <h3>Parent</h3>
+        <h4>Parent</h4>
         <p>
           The parent is the native Electron parent window relationship. The opener and the parent are related by default, but they are not
           the same concept.
@@ -53,21 +53,21 @@
       </section>
 
       <section>
-        <h2>Id Defaults</h2>
+        <h3>Id Defaults</h3>
 
-        <h3>Control Requests</h3>
+        <h4>Control Requests</h4>
         <p>
           For control requests such as <code>close</code>, <code>activate</code>, <code>minimize</code>, <code>maximize</code>,
           <code>restore</code>, <code>resize</code>, <code>move</code>, <code>topmost</code>, and <code>get-window-state</code>, an omitted
           <code>targetId</code> means the request applies to the sender window itself.
         </p>
 
-        <h3>Event Requests</h3>
+        <h4>Event Requests</h4>
         <p>
           For <code>windowing:event</code>, an omitted <code>targetId</code> means the event is sent to the opener of the sender window.
         </p>
 
-        <h3>Event Notices</h3>
+        <h4>Event Notices</h4>
         <p>For delivered event notices, an omitted <code>fromId</code> means the event came from the opener of the receiving window.</p>
 
         <p>
@@ -77,7 +77,7 @@
       </section>
 
       <section>
-        <h2>Open Flow</h2>
+        <h3>Open Flow</h3>
         <ol>
           <li>The opener sends <code>windowing:open</code>.</li>
           <li><code>WindowingManager</code> creates a new managed window.</li>
@@ -96,7 +96,7 @@
       </section>
 
       <section>
-        <h2>Messages</h2>
+        <h3>Messages</h3>
 
         <dl>
           <dt><code>windowing:open</code></dt>
@@ -158,7 +158,7 @@
       </section>
 
       <section>
-        <h2>Data Model</h2>
+        <h3>Data Model</h3>
 
         <dl>
           <dt><code>WindowId</code></dt>
@@ -202,7 +202,7 @@
       </section>
 
       <section>
-        <h2>Summary</h2>
+        <h3>Summary</h3>
         <p>
           The model keeps window management explicit but lightweight. A window can open another window, the opener owns that relationship
           logically, the parent controls the native Electron parent relationship, and the window host manages the renderer-side content.
@@ -224,5 +224,8 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 8px;
+  margin: 0 4px 0 0;
+  padding: 0 16px 0 20px;
+  overflow: auto;
 }
 </style>
