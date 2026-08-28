@@ -35,6 +35,12 @@ export type WindowingIpcMessageType =
   /** Request the main process to set whether a window is always on top */
   | 'windowing:topmost'
 
+  /** Request the main process to enter fullscreen for a window */
+  | 'windowing:enter-fullscreen'
+
+  /** Request the main process to exit fullscreen for a window */
+  | 'windowing:exit-fullscreen'
+
   /** Request the main process to query a window state */
   | 'windowing:get-window-state'
 
@@ -87,7 +93,7 @@ export interface WindowState {
 }
 
 /**
- * Request the main process to open a managed window
+ * Request the main process to create a managed window
  */
 export interface WindowingOpenRequest {
   /** Window width, default is 720px */
@@ -135,7 +141,7 @@ export interface WindowingOpenResponse {
 export type WindowingReadyNotice = Record<string, never>
 
 /**
- * Request the main process to update the content component and props of a managed window host
+ * Request the main process to update the content component and props of a managed window
  */
 export interface WindowingUpdateRequest {
   /** Target window id */
@@ -291,6 +297,28 @@ export interface WindowingTopmostRequest {
 
   /** Whether the window is always on top */
   isTopmost: boolean
+}
+
+/**
+ * Request the main process to enter fullscreen for a window
+ */
+export interface WindowingEnterFullscreenRequest {
+  /**
+   * Target window id.
+   * When omitted, the request applies to the source window itself.
+   */
+  targetId?: WindowId
+}
+
+/**
+ * Request the main process to exit fullscreen for a window
+ */
+export interface WindowingExitFullscreenRequest {
+  /**
+   * Target window id.
+   * When omitted, the request applies to the source window itself.
+   */
+  targetId?: WindowId
 }
 
 /**
