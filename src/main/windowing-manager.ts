@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, type IpcMainEvent, type IpcMainInvokeEvent } from 'electron'
+import { shell, BrowserWindow, ipcMain, type IpcMainEvent, type IpcMainInvokeEvent } from 'electron'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import {
@@ -71,6 +71,7 @@ export class WindowingManager {
 
   private readonly pendingWindowOpenRequests = new Map<WindowId, PendingWindowOpenRequest>()
 
+  private removeMainWindowListeners?: () => void
   private removeIpcListeners?: () => void
 
   constructor(mainWindow: BrowserWindow) {
@@ -79,10 +80,15 @@ export class WindowingManager {
     }
 
     this.mainWindow = mainWindow
-    this.bindWindowClosedListener(this.mainWindow)
-    this.bindWindowStateListeners(this.mainWindow)
 
-    this.initIpcListeners()
+    const removeMainWindowClosedListener = this.bindWindowClosedListener(this.mainWindow)
+    const removeMainWindowStateListener = this.bindWindowStateListeners(this.mainWindow)
+    this.removeMainWindowListeners = () => {
+      removeMainWindowClosedListener()
+      removeMainWindowStateListener()
+    }
+
+    this.removeIpcListeners = this.initIpcListeners()
 
     this.logInfo(`WindowingManager initialized. mainWindowId=${mainWindow.id}.`)
   }
@@ -97,6 +103,8 @@ export class WindowingManager {
       `WindowingManager disposing. managedWindowCount=${this.managedWindows.size}, pendingOpenCount=${this.pendingWindowOpenRequests.size}.`
     )
 
+    this.removeMainWindowListeners?.()
+    this.removeMainWindowListeners = undefined
     this.removeIpcListeners?.()
     this.removeIpcListeners = undefined
 
@@ -106,7 +114,9 @@ export class WindowingManager {
     })
     this.pendingWindowOpenRequests.clear()
 
-    Array.from(this.managedWindows.values()).forEach((record) => {
+    const windows = Array.from(this.managedWindows.values())
+    this.managedWindows.clear()
+    windows.forEach((record) => {
       try {
         if (!record.window.isDestroyed()) {
           record.window.destroy()
@@ -115,12 +125,15 @@ export class WindowingManager {
         this.logError(`Failed to destroy managed window, id=${record.window.id}.`, error)
       }
     })
-    this.managedWindows.clear()
 
     this.logInfo('WindowingManager disposed.')
   }
 
-  private initIpcListeners(): void {
+  private initIpcListeners(): () => void {
+    if (this.disposed) {
+      throw new Error('WindowingManager has been disposed.')
+    }
+
     if (this.removeIpcListeners) {
       throw new Error('WindowingManager IPC listeners have already been initialized.')
     }
@@ -159,18 +172,29 @@ export class WindowingManager {
           throw new Error('Window is not pending open.')
         }
 
-        clearTimeout(pending.timer)
-        this.pendingWindowOpenRequests.delete(sourceWindow.id)
+        try {
+          if (pending.request.showInactive) {
+            sourceWindow.showInactive()
+          } else {
+            sourceWindow.show()
+          }
+        } catch (error) {
+          clearTimeout(pending.timer)
+          this.pendingWindowOpenRequests.delete(sourceWindow.id)
+          pending.reject(error)
 
-        if (pending.request.showInactive) {
-          sourceWindow.showInactive()
-        } else {
-          sourceWindow.show()
+          if (!sourceWindow.isDestroyed()) {
+            sourceWindow.destroy()
+          }
+
+          throw error
         }
 
-        this.logInfo(`Managed window ready, id=${sourceWindow.id}.`)
-
+        clearTimeout(pending.timer)
+        this.pendingWindowOpenRequests.delete(sourceWindow.id)
         pending.resolve({ id: sourceWindow.id })
+
+        this.logInfo(`Managed window ready, id=${sourceWindow.id}.`)
       } catch (error) {
         this.logError('Failed to handle window ready notice.', error)
       }
@@ -515,7 +539,7 @@ export class WindowingManager {
     ipcMain.on(this.WindowingIpcMessage.EXIT_FULLSCREEN, onWindowingExitFullscreenRequested)
     ipcMain.handle(this.WindowingIpcMessage.GET_WINDOW_STATE, handleWindowingStateRequested)
 
-    this.removeIpcListeners = () => {
+    return (): void => {
       ipcMain.removeHandler(this.WindowingIpcMessage.OPEN)
       ipcMain.removeListener(this.WindowingIpcMessage.READY, onWindowingReady)
       ipcMain.removeListener(this.WindowingIpcMessage.UPDATE, onWindowingUpdateRequested)
@@ -531,6 +555,103 @@ export class WindowingManager {
       ipcMain.removeListener(this.WindowingIpcMessage.ENTER_FULLSCREEN, onWindowingEnterFullscreenRequested)
       ipcMain.removeListener(this.WindowingIpcMessage.EXIT_FULLSCREEN, onWindowingExitFullscreenRequested)
       ipcMain.removeHandler(this.WindowingIpcMessage.GET_WINDOW_STATE)
+    }
+  }
+
+  private bindWindowClosedListener(win: BrowserWindow): () => void {
+    if (!win || win.isDestroyed()) {
+      return (): void => {}
+    }
+
+    const windowId = win.id
+
+    const onClosed = (): void => {
+      try {
+        this.logInfo(`Window closed, id=${windowId}.`)
+
+        const pending = this.pendingWindowOpenRequests.get(windowId)
+        if (pending) {
+          clearTimeout(pending.timer)
+          this.pendingWindowOpenRequests.delete(windowId)
+          pending.reject(new Error(`Window was closed before ready, id=${windowId}.`))
+        }
+
+        const record = this.managedWindows.get(windowId)
+        this.managedWindows.delete(windowId)
+        if (!record) {
+          return
+        }
+
+        const notice: WindowingClosedNotice = {
+          id: windowId
+        }
+
+        this.sendToWindow(this.resolveTargetWindow(record.openerId), this.WindowingIpcMessage.WINDOW_CLOSED, notice)
+      } catch (error) {
+        this.logError(`Failed to handle window closed, id=${windowId}.`, error)
+      }
+    }
+
+    win.once('closed', onClosed)
+    return (): void => {
+      win.removeListener('closed', onClosed)
+    }
+  }
+
+  private bindWindowStateListeners(win: BrowserWindow): () => void {
+    if (!win || win.isDestroyed()) {
+      return (): void => {}
+    }
+
+    const onStateChanged = (): void => {
+      try {
+        if (!win || win.isDestroyed()) {
+          return
+        }
+
+        const state = this.getWindowState(win)
+        if (!state) {
+          return
+        }
+
+        const notice: WindowingStateChangedNotice = {
+          state
+        }
+
+        this.sendToWindow(win, this.WindowingIpcMessage.WINDOW_STATE_CHANGED, notice)
+      } catch (error) {
+        this.logError(`Failed to handle window state changed, id=${win.id}.`, error)
+      }
+    }
+
+    win.on('moved', onStateChanged)
+    win.on('resized', onStateChanged)
+    win.on('focus', onStateChanged)
+    win.on('blur', onStateChanged)
+    win.on('minimize', onStateChanged)
+    win.on('maximize', onStateChanged)
+    win.on('unmaximize', onStateChanged)
+    win.on('restore', onStateChanged)
+    win.on('show', onStateChanged)
+    win.on('hide', onStateChanged)
+    win.on('always-on-top-changed', onStateChanged)
+    win.on('enter-full-screen', onStateChanged)
+    win.on('leave-full-screen', onStateChanged)
+
+    return (): void => {
+      win.removeListener('moved', onStateChanged)
+      win.removeListener('resized', onStateChanged)
+      win.removeListener('focus', onStateChanged)
+      win.removeListener('blur', onStateChanged)
+      win.removeListener('minimize', onStateChanged)
+      win.removeListener('maximize', onStateChanged)
+      win.removeListener('unmaximize', onStateChanged)
+      win.removeListener('restore', onStateChanged)
+      win.removeListener('show', onStateChanged)
+      win.removeListener('hide', onStateChanged)
+      win.removeListener('always-on-top-changed', onStateChanged)
+      win.removeListener('enter-full-screen', onStateChanged)
+      win.removeListener('leave-full-screen', onStateChanged)
     }
   }
 
@@ -553,8 +674,10 @@ export class WindowingManager {
   }
 
   private resolveTargetWindow(targetId: WindowId): BrowserWindow | undefined {
-    if (targetId === this.mainWindow.id) {
-      return this.mainWindow.isDestroyed() ? undefined : this.mainWindow
+    if (this.mainWindow) {
+      if (targetId === this.mainWindow.id) {
+        return this.mainWindow.isDestroyed() ? undefined : this.mainWindow
+      }
     }
 
     const record = this.managedWindows.get(targetId)
@@ -567,18 +690,92 @@ export class WindowingManager {
     return window
   }
 
-  private openWindow(openerId: WindowId, request: WindowingOpenRequest): Promise<WindowingOpenResponse> {
+  private sendToWindow(win: BrowserWindow | null | undefined, channel: WindowingIpcMessageType, payload: unknown): void {
+    if (!win || win.isDestroyed()) {
+      return
+    }
+
+    try {
+      win.webContents.send(channel, payload)
+    } catch (error) {
+      this.logError(`Failed to send IPC message "${channel}", targetWindowId=${win.id}.`, error)
+    }
+  }
+
+  private async createBrowserWindow(openerId: WindowId, request: WindowingOpenRequest): Promise<BrowserWindow> {
+    let parentWindow: BrowserWindow | undefined = undefined
+
+    if (request.parentId !== null) {
+      const parentId: number = request.parentId === undefined ? openerId : request.parentId
+      parentWindow = this.resolveTargetWindow(parentId)
+
+      if (!parentWindow || parentWindow.isDestroyed()) {
+        throw new Error(`Parent window ${parentId} does not exist.`)
+      }
+    }
+
+    if (request.modal && !parentWindow) {
+      throw new Error('Modal window requires a valid parent window.')
+    }
+
+    const window = new BrowserWindow({
+      width: request.width ?? this.DEFAULT_WINDOW_WIDTH,
+      height: request.height ?? this.DEFAULT_WINDOW_HEIGHT,
+      show: false,
+      frame: false,
+      skipTaskbar: request.skipTaskbar ?? false,
+      resizable: request.resizable ?? false,
+      alwaysOnTop: request.alwaysOnTop ?? false,
+      modal: request.modal ?? false,
+      parent: parentWindow,
+      webPreferences: {
+        preload: join(__dirname, '../preload/windowing-preload.js'),
+        sandbox: false,
+        contextIsolation: false,
+        nodeIntegration: false
+      }
+    })
+
+    window.webContents.setWindowOpenHandler((details) => {
+      shell.openExternal(details.url)
+      return { action: 'deny' }
+    })
+
+    try {
+      if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+        const url = new URL(`${process.env['ELECTRON_RENDERER_URL']}/base.html`)
+        url.searchParams.set('type', 'windowing-host')
+        url.searchParams.set('os', process.platform)
+        await window.loadURL(url.toString())
+      } else {
+        await window.loadFile(join(__dirname, '../renderer/base.html'), {
+          query: { type: 'windowing-host', os: process.platform }
+        })
+      }
+    } catch (error) {
+      try {
+        if (!window.isDestroyed()) {
+          window.destroy()
+        }
+      } catch {
+        // best effort cleanup
+      }
+
+      throw error
+    }
+
+    return window
+  }
+
+  private async openWindow(openerId: WindowId, request: WindowingOpenRequest): Promise<WindowingOpenResponse> {
     if (!request) {
       throw new Error('Invalid window open options.')
     }
 
-    const window = this.createBrowserWindow(openerId, request)
-
+    const window = await this.createBrowserWindow(openerId, request)
     this.managedWindows.set(window.id, { window: window, openerId: openerId })
 
-    this.logInfo(
-      `Managed window created, id=${window.id}, openerId=${openerId}, size=${request.width}x${request.height}, parentId=${request.parentId}.`
-    )
+    this.logInfo(`Managed window created, id=${window.id}, openerId=${openerId}, parentId=${request.parentId}.`)
 
     this.positionWindow(window, request.position ?? 'center-screen')
     this.bindWindowClosedListener(window)
@@ -608,33 +805,6 @@ export class WindowingManager {
 
       this.pendingWindowOpenRequests.set(window.id, pendingWindowOpenRequest)
     })
-
-    const onLoadFailed = (error: unknown): void => {
-      const pending = this.pendingWindowOpenRequests.get(window.id)
-      if (!pending) {
-        return
-      }
-
-      clearTimeout(pending.timer)
-      this.pendingWindowOpenRequests.delete(window.id)
-      pending.reject(error)
-
-      try {
-        if (!window.isDestroyed()) {
-          window.destroy()
-        }
-      } catch (destroyError) {
-        this.logError(`Failed to destroy load failed window, id=${window.id}.`, destroyError)
-      }
-    }
-
-    const search = '?type=windowing-host'
-
-    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-      window.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/base.html${search}`).catch(onLoadFailed)
-    } else {
-      window.loadFile(join(__dirname, '../renderer/base.html'), { search: search }).catch(onLoadFailed)
-    }
 
     return openResult
   }
@@ -762,47 +932,6 @@ export class WindowingManager {
     }
   }
 
-  private createBrowserWindow(openerId: WindowId, request: WindowingOpenRequest): BrowserWindow {
-    let parentWindow: BrowserWindow | undefined = undefined
-
-    if (request.parentId !== null) {
-      const parentId: number = request.parentId === undefined ? openerId : request.parentId
-      parentWindow = this.resolveTargetWindow(parentId)
-
-      if (!parentWindow || parentWindow.isDestroyed()) {
-        throw new Error(`Parent window ${parentId} does not exist.`)
-      }
-    }
-
-    if (request.modal && !parentWindow) {
-      throw new Error('Modal window requires a valid parent window.')
-    }
-
-    const win = new BrowserWindow({
-      width: request.width ?? this.DEFAULT_WINDOW_WIDTH,
-      height: request.height ?? this.DEFAULT_WINDOW_HEIGHT,
-      show: false,
-      frame: false,
-      skipTaskbar: request.skipTaskbar ?? false,
-      resizable: request.resizable ?? false,
-      alwaysOnTop: request.alwaysOnTop ?? false,
-      modal: request.modal ?? false,
-      parent: parentWindow,
-      webPreferences: {
-        preload: join(__dirname, '../preload/windowing-preload.js'),
-        sandbox: false,
-        contextIsolation: false,
-        nodeIntegration: false
-      }
-    })
-
-    win.webContents.setWindowOpenHandler(() => {
-      return { action: 'deny' }
-    })
-
-    return win
-  }
-
   private positionWindow(win: BrowserWindow, position?: WindowPosition): void {
     if (!win || win.isDestroyed()) {
       return
@@ -844,96 +973,6 @@ export class WindowingManager {
         return
       }
     }
-  }
-
-  private sendToWindow(win: BrowserWindow | null | undefined, channel: WindowingIpcMessageType, payload: unknown): void {
-    if (!win || win.isDestroyed()) {
-      return
-    }
-
-    try {
-      win.webContents.send(channel, payload)
-    } catch (error) {
-      this.logError(`Failed to send IPC message "${channel}", targetWindowId=${win.id}.`, error)
-    }
-  }
-
-  private bindWindowClosedListener(win: BrowserWindow): void {
-    if (!win || win.isDestroyed()) {
-      return
-    }
-
-    const windowId = win.id
-
-    win.once('closed', () => {
-      try {
-        this.logInfo(`Window closed, id=${windowId}.`)
-
-        const pending = this.pendingWindowOpenRequests.get(windowId)
-        if (pending) {
-          clearTimeout(pending.timer)
-          this.pendingWindowOpenRequests.delete(windowId)
-          pending.reject(new Error(`Window was closed before ready, id=${windowId}.`))
-        }
-
-        const record = this.managedWindows.get(windowId)
-        this.managedWindows.delete(windowId)
-
-        if (!record) {
-          return
-        }
-
-        const notice: WindowingClosedNotice = {
-          id: windowId
-        }
-
-        this.sendToWindow(this.resolveTargetWindow(record.openerId), this.WindowingIpcMessage.WINDOW_CLOSED, notice)
-      } catch (error) {
-        this.logError('Failed to handle window closed event.', error)
-      }
-    })
-  }
-
-  private bindWindowStateListeners(win: BrowserWindow): void {
-    if (!win || win.isDestroyed()) {
-      return
-    }
-
-    const notify = (): void => {
-      try {
-        if (!win || win.isDestroyed()) {
-          return
-        }
-
-        const state = this.getWindowState(win)
-
-        if (!state) {
-          return
-        }
-
-        const notice: WindowingStateChangedNotice = {
-          state
-        }
-
-        this.sendToWindow(win, this.WindowingIpcMessage.WINDOW_STATE_CHANGED, notice)
-      } catch (error) {
-        this.logError(`Failed to notify window state changed, id=${win.id}.`, error)
-      }
-    }
-
-    win.on('moved', notify)
-    win.on('resized', notify)
-    win.on('focus', notify)
-    win.on('blur', notify)
-    win.on('minimize', notify)
-    win.on('maximize', notify)
-    win.on('unmaximize', notify)
-    win.on('restore', notify)
-    win.on('show', notify)
-    win.on('hide', notify)
-    win.on('always-on-top-changed', notify)
-    win.on('enter-full-screen', notify)
-    win.on('leave-full-screen', notify)
   }
 
   private logInfo(message: string): void {
