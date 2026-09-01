@@ -817,143 +817,20 @@ export class WindowingManager {
     return openResult
   }
 
-  private closeWindow(win: BrowserWindow | null | undefined): void {
+  private positionWindow(win: BrowserWindow, position: WindowPosition): void {
     if (!win || win.isDestroyed()) {
-      return
-    }
-
-    win.close()
-  }
-
-  private activateWindow(win: BrowserWindow | null | undefined): void {
-    if (!win || win.isDestroyed()) {
-      return
-    }
-
-    if (win.isMinimized()) {
-      win.restore()
-    }
-    if (!win.isVisible()) {
-      win.show()
-    }
-    win.focus()
-  }
-
-  private minimizeWindow(win: BrowserWindow | null | undefined): void {
-    if (!win || win.isDestroyed()) {
-      return
-    }
-
-    win.minimize()
-  }
-
-  private maximizeWindow(win: BrowserWindow | null | undefined): void {
-    if (!win || win.isDestroyed()) {
-      return
-    }
-
-    if (win.isMinimized()) {
-      win.restore()
-    }
-    win.maximize()
-  }
-
-  private restoreWindow(win: BrowserWindow | null | undefined): void {
-    if (!win || win.isDestroyed()) {
-      return
-    }
-
-    if (win.isMinimized()) {
-      win.restore()
-    }
-    if (win.isMaximized()) {
-      win.unmaximize()
-    }
-    if (!win.isVisible()) {
-      win.show()
-    }
-  }
-
-  private resizeWindow(win: BrowserWindow | null | undefined, width: number, height: number): void {
-    if (!win || win.isDestroyed()) {
-      return
-    }
-
-    const nextWidth = Math.round(width)
-    const nextHeight = Math.round(height)
-
-    if (!Number.isFinite(nextWidth) || !Number.isFinite(nextHeight) || nextWidth <= 0 || nextHeight <= 0) {
-      return
-    }
-
-    win.setSize(nextWidth, nextHeight)
-  }
-
-  private moveWindow(win: BrowserWindow | null | undefined, position: WindowPosition): void {
-    if (!win || win.isDestroyed()) {
-      return
-    }
-
-    this.positionWindow(win, position)
-  }
-
-  private setWindowTopmost(win: BrowserWindow | null | undefined, isTopmost: boolean): void {
-    if (!win || win.isDestroyed()) {
-      return
-    }
-
-    win.setAlwaysOnTop(isTopmost)
-  }
-
-  private enterFullscreenWindow(win: BrowserWindow | null | undefined): void {
-    if (!win || win.isDestroyed()) {
-      return
-    }
-
-    if (win.isMinimized()) {
-      win.restore()
-    }
-    win.setFullScreen(true)
-  }
-
-  private exitFullscreenWindow(win: BrowserWindow | null | undefined): void {
-    if (!win || win.isDestroyed()) {
-      return
-    }
-
-    win.setFullScreen(false)
-  }
-
-  private getWindowState(win: BrowserWindow | null | undefined): WindowState | null {
-    if (!win || win.isDestroyed()) {
-      return null
-    }
-
-    return {
-      bounds: win.getBounds(),
-      minimized: win.isMinimized(),
-      maximized: win.isMaximized(),
-      fullscreen: win.isFullScreen(),
-      visible: win.isVisible(),
-      alwaysOnTop: win.isAlwaysOnTop(),
-      focused: win.isFocused()
-    }
-  }
-
-  private positionWindow(win: BrowserWindow, position?: WindowPosition): void {
-    if (!win || win.isDestroyed()) {
-      return
+      throw new Error('Invalid window.')
     }
 
     if (!position) {
-      return
+      throw new Error('Invalid window position.')
     }
 
     if (typeof position === 'object') {
       const x = Math.round(position.x)
       const y = Math.round(position.y)
       if (!Number.isFinite(x) || !Number.isFinite(y)) {
-        return
+        throw new Error(`Invalid window position (${position.x}, ${position.y}).`)
       }
 
       win.setPosition(x, y)
@@ -968,7 +845,7 @@ export class WindowingManager {
       case 'center-parent': {
         const parentWindow = win.getParentWindow()
         if (!parentWindow || parentWindow.isDestroyed()) {
-          this.positionWindow(win, 'center-screen')
+          win.center()
           return
         }
 
@@ -980,7 +857,134 @@ export class WindowingManager {
         )
         return
       }
+      default: {
+        throw new Error(`Invalid window position (${String(position)}).`)
+      }
     }
+  }
+
+  private closeWindow(win: BrowserWindow): void {
+    if (!win || win.isDestroyed()) {
+      throw new Error('Invalid window.')
+    }
+
+    win.close()
+  }
+
+  private activateWindow(win: BrowserWindow): void {
+    if (!win || win.isDestroyed()) {
+      throw new Error('Invalid window.')
+    }
+
+    if (win.isMinimized()) {
+      win.restore()
+    }
+    if (!win.isVisible()) {
+      win.show()
+    }
+    win.focus()
+  }
+
+  private minimizeWindow(win: BrowserWindow): void {
+    if (!win || win.isDestroyed()) {
+      throw new Error('Invalid window.')
+    }
+
+    win.minimize()
+  }
+
+  private maximizeWindow(win: BrowserWindow): void {
+    if (!win || win.isDestroyed()) {
+      throw new Error('Invalid window.')
+    }
+
+    if (win.isMinimized()) {
+      win.restore()
+    }
+    win.maximize()
+  }
+
+  private restoreWindow(win: BrowserWindow): void {
+    if (!win || win.isDestroyed()) {
+      throw new Error('Invalid window.')
+    }
+
+    if (win.isMinimized()) {
+      win.restore()
+    }
+    if (win.isMaximized()) {
+      win.unmaximize()
+    }
+    if (!win.isVisible()) {
+      win.show()
+    }
+  }
+
+  private resizeWindow(win: BrowserWindow, width: number, height: number): void {
+    if (!win || win.isDestroyed()) {
+      throw new Error('Invalid window.')
+    }
+
+    const nextWidth = Math.round(width)
+    const nextHeight = Math.round(height)
+    if (!Number.isFinite(nextWidth) || !Number.isFinite(nextHeight) || nextWidth <= 0 || nextHeight <= 0) {
+      throw new Error(`Invalid window size (${width} x ${height}).`)
+    }
+
+    win.setSize(nextWidth, nextHeight)
+  }
+
+  private moveWindow(win: BrowserWindow, position: WindowPosition): void {
+    if (!win || win.isDestroyed()) {
+      throw new Error('Invalid window.')
+    }
+
+    this.positionWindow(win, position)
+  }
+
+  private setWindowTopmost(win: BrowserWindow, isTopmost: boolean): void {
+    if (!win || win.isDestroyed()) {
+      throw new Error('Invalid window.')
+    }
+
+    win.setAlwaysOnTop(isTopmost)
+  }
+
+  private enterFullscreenWindow(win: BrowserWindow): void {
+    if (!win || win.isDestroyed()) {
+      throw new Error('Invalid window.')
+    }
+
+    if (win.isMinimized()) {
+      win.restore()
+    }
+    win.setFullScreen(true)
+  }
+
+  private exitFullscreenWindow(win: BrowserWindow): void {
+    if (!win || win.isDestroyed()) {
+      throw new Error('Invalid window.')
+    }
+
+    win.setFullScreen(false)
+  }
+
+  private getWindowState(win: BrowserWindow): WindowState {
+    if (!win || win.isDestroyed()) {
+      throw new Error('Invalid window.')
+    }
+
+    const windowState: WindowState = {
+      bounds: win.getBounds(),
+      minimized: win.isMinimized(),
+      maximized: win.isMaximized(),
+      fullscreen: win.isFullScreen(),
+      visible: win.isVisible(),
+      alwaysOnTop: win.isAlwaysOnTop(),
+      focused: win.isFocused()
+    }
+
+    return windowState
   }
 
   private logInfo(message: string): void {
