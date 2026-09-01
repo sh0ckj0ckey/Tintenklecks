@@ -18,7 +18,7 @@ function createWindow(): void {
     titleBarOverlay: false,
     // ...(process.platform !== 'darwin' ? { titleBarOverlay: { color: '#efeae7', height: 42 } } : {}),
     // ...(process.platform === 'linux' ? { icon } : {}),
-    icon,
+    icon: icon,
     trafficLightPosition: { x: 16, y: 16 },
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
