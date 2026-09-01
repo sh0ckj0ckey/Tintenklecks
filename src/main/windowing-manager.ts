@@ -141,6 +141,10 @@ export class WindowingManager {
           throw new Error('WindowingManager has been disposed.')
         }
 
+        if (!request) {
+          throw new Error('Invalid request.')
+        }
+
         const sourceWindow = this.resolveSourceWindow(e)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
@@ -206,6 +210,10 @@ export class WindowingManager {
           throw new Error('WindowingManager has been disposed.')
         }
 
+        if (!request) {
+          throw new Error('Invalid request.')
+        }
+
         const sourceWindow = this.resolveSourceWindow(e)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
@@ -231,6 +239,10 @@ export class WindowingManager {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
+        }
+
+        if (!request) {
+          throw new Error('Invalid request.')
         }
 
         const sourceWindow = this.resolveSourceWindow(e)
@@ -281,12 +293,16 @@ export class WindowingManager {
           throw new Error('WindowingManager has been disposed.')
         }
 
+        if (!request) {
+          throw new Error('Invalid request.')
+        }
+
         const sourceWindow = this.resolveSourceWindow(e)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
-        const targetWindow = typeof request?.targetId === 'number' ? this.resolveTargetWindow(request.targetId) : sourceWindow
+        const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -303,12 +319,16 @@ export class WindowingManager {
           throw new Error('WindowingManager has been disposed.')
         }
 
+        if (!request) {
+          throw new Error('Invalid request.')
+        }
+
         const sourceWindow = this.resolveSourceWindow(e)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
-        const targetWindow = typeof request?.targetId === 'number' ? this.resolveTargetWindow(request.targetId) : sourceWindow
+        const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -325,12 +345,16 @@ export class WindowingManager {
           throw new Error('WindowingManager has been disposed.')
         }
 
+        if (!request) {
+          throw new Error('Invalid request.')
+        }
+
         const sourceWindow = this.resolveSourceWindow(e)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
-        const targetWindow = typeof request?.targetId === 'number' ? this.resolveTargetWindow(request.targetId) : sourceWindow
+        const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -347,12 +371,16 @@ export class WindowingManager {
           throw new Error('WindowingManager has been disposed.')
         }
 
+        if (!request) {
+          throw new Error('Invalid request.')
+        }
+
         const sourceWindow = this.resolveSourceWindow(e)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
-        const targetWindow = typeof request?.targetId === 'number' ? this.resolveTargetWindow(request.targetId) : sourceWindow
+        const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -369,12 +397,16 @@ export class WindowingManager {
           throw new Error('WindowingManager has been disposed.')
         }
 
+        if (!request) {
+          throw new Error('Invalid request.')
+        }
+
         const sourceWindow = this.resolveSourceWindow(e)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
-        const targetWindow = typeof request?.targetId === 'number' ? this.resolveTargetWindow(request.targetId) : sourceWindow
+        const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -391,12 +423,16 @@ export class WindowingManager {
           throw new Error('WindowingManager has been disposed.')
         }
 
+        if (!request) {
+          throw new Error('Invalid request.')
+        }
+
         const sourceWindow = this.resolveSourceWindow(e)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
-        const targetWindow = typeof request?.targetId === 'number' ? this.resolveTargetWindow(request.targetId) : sourceWindow
+        const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -413,12 +449,16 @@ export class WindowingManager {
           throw new Error('WindowingManager has been disposed.')
         }
 
+        if (!request) {
+          throw new Error('Invalid request.')
+        }
+
         const sourceWindow = this.resolveSourceWindow(e)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
-        const targetWindow = typeof request?.targetId === 'number' ? this.resolveTargetWindow(request.targetId) : sourceWindow
+        const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -435,12 +475,16 @@ export class WindowingManager {
           throw new Error('WindowingManager has been disposed.')
         }
 
+        if (!request) {
+          throw new Error('Invalid request.')
+        }
+
         const sourceWindow = this.resolveSourceWindow(e)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
-        const targetWindow = typeof request?.targetId === 'number' ? this.resolveTargetWindow(request.targetId) : sourceWindow
+        const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -457,12 +501,16 @@ export class WindowingManager {
           throw new Error('WindowingManager has been disposed.')
         }
 
+        if (!request) {
+          throw new Error('Invalid request.')
+        }
+
         const sourceWindow = this.resolveSourceWindow(e)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
-        const targetWindow = typeof request?.targetId === 'number' ? this.resolveTargetWindow(request.targetId) : sourceWindow
+        const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -479,12 +527,16 @@ export class WindowingManager {
           throw new Error('WindowingManager has been disposed.')
         }
 
+        if (!request) {
+          throw new Error('Invalid request.')
+        }
+
         const sourceWindow = this.resolveSourceWindow(e)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
-        const targetWindow = typeof request?.targetId === 'number' ? this.resolveTargetWindow(request.targetId) : sourceWindow
+        const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -501,12 +553,16 @@ export class WindowingManager {
           throw new Error('WindowingManager has been disposed.')
         }
 
+        if (!request) {
+          throw new Error('Invalid request.')
+        }
+
         const sourceWindow = this.resolveSourceWindow(e)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
-        const targetWindow = typeof request?.targetId === 'number' ? this.resolveTargetWindow(request.targetId) : sourceWindow
+        const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
