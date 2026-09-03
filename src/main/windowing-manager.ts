@@ -83,9 +83,20 @@ export class WindowingManager {
 
     this.mainWindow = mainWindow
 
-    const removeMainWindowClosedListener = this.bindWindowClosedListener(this.mainWindow)
-    const removeMainWindowStateListener = this.bindWindowStateListeners(this.mainWindow)
-    const removeIpcListeners = this.initIpcListeners()
+    let removeMainWindowClosedListener: (() => void) | undefined
+    let removeMainWindowStateListener: (() => void) | undefined
+    let removeIpcListeners: (() => void) | undefined
+
+    try {
+      removeMainWindowClosedListener = this.bindWindowClosedListener(this.mainWindow)
+      removeMainWindowStateListener = this.bindWindowStateListeners(this.mainWindow)
+      removeIpcListeners = this.initIpcListeners()
+    } catch (error) {
+      removeMainWindowClosedListener?.()
+      removeMainWindowStateListener?.()
+      removeIpcListeners?.()
+      throw error
+    }
 
     this.removeListeners = () => {
       removeMainWindowClosedListener()
@@ -633,10 +644,11 @@ export class WindowingManager {
         }
 
         const record = this.managedWindows.get(windowId)
-        this.managedWindows.delete(windowId)
         if (!record) {
           return
         }
+
+        this.managedWindows.delete(windowId)
 
         const notice: WindowingClosedNotice = {
           id: windowId
@@ -745,22 +757,24 @@ export class WindowingManager {
   }
 
   private sendToWindow(win: BrowserWindow | null | undefined, channel: WindowingIpcMessageType, payload: unknown): void {
+    try {
     if (!win || win.isDestroyed() || win.webContents.isDestroyed()) {
-      return
+        throw new Error('Invalid window.')
     }
 
-    try {
       win.webContents.send(channel, payload)
     } catch (error) {
-      this.logError(`Failed to send IPC message "${channel}", targetId=${win.id}.`, error)
+      this.logError(`Failed to send IPC message "${channel}", targetId=${win?.id}.`, error)
     }
   }
 
-  private async createBrowserWindow(openerId: WindowId, request: WindowingOpenRequest): Promise<BrowserWindow> {
+  private createBrowserWindow(openerId: WindowId, request: WindowingOpenRequest): BrowserWindow {
     let parentWindow: BrowserWindow | undefined = undefined
+
     if (request.parentId !== null) {
       const parentId: number = request.parentId === undefined ? openerId : request.parentId
       parentWindow = this.resolveTargetWindow(parentId)
+
       if (!parentWindow || parentWindow.isDestroyed()) {
         throw new Error(`Parent window ${parentId} does not exist.`)
       }
@@ -772,6 +786,7 @@ export class WindowingManager {
 
     const width = Math.round(request.width ?? this.DEFAULT_WINDOW_WIDTH)
     const height = Math.round(request.height ?? this.DEFAULT_WINDOW_HEIGHT)
+
     if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
       throw new Error(`Invalid window size (${request.width} x ${request.height}).`)
     }
@@ -805,7 +820,14 @@ export class WindowingManager {
       return { action: 'deny' }
     })
 
-    try {
+    return window
+  }
+
+  private async loadBrowserWindow(window: BrowserWindow): Promise<void> {
+    if (!window || window.isDestroyed()) {
+      throw new Error('Invalid window.')
+    }
+
       if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
         const url = new URL(`${process.env['ELECTRON_RENDERER_URL']}/base.html`)
         url.searchParams.set('type', 'windowing-host')
@@ -816,19 +838,6 @@ export class WindowingManager {
           query: { type: 'windowing-host', os: process.platform }
         })
       }
-    } catch (error) {
-      try {
-        if (!window.isDestroyed()) {
-          window.destroy()
-        }
-      } catch (error) {
-        this.logError(`Failed to destroy window after load failure, id=${window.id}.`, error)
-      }
-
-      throw error
-    }
-
-    return window
   }
 
   private async openWindow(openerId: WindowId, request: WindowingOpenRequest): Promise<WindowingOpenResponse> {
@@ -854,7 +863,7 @@ export class WindowingManager {
             window.destroy()
           }
         } catch (error) {
-          this.logError(`Failed to destroy window after time out, id=${window.id}.`, error)
+          this.logError(`Failed to destroy window after timeout, id=${window.id}.`, error)
         }
 
         reject(new Error(`Window did not become ready in time.`))
