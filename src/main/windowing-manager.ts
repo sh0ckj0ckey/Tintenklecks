@@ -197,8 +197,8 @@ export class WindowingManager {
           pending.reject(error)
 
           try {
-          if (!sourceWindow.isDestroyed()) {
-            sourceWindow.destroy()
+            if (!sourceWindow.isDestroyed()) {
+              sourceWindow.destroy()
             }
           } catch (error) {
             this.logError(`Failed to destroy window after show failure, id=${sourceWindow.id}.`, error)
@@ -742,8 +742,8 @@ export class WindowingManager {
   }
 
   private resolveTargetWindow(targetId: WindowId): BrowserWindow | undefined {
-      if (targetId === this.mainWindow.id) {
-        return this.mainWindow.isDestroyed() ? undefined : this.mainWindow
+    if (targetId === this.mainWindow.id) {
+      return this.mainWindow.isDestroyed() ? undefined : this.mainWindow
     }
 
     const record = this.managedWindows.get(targetId)
@@ -758,9 +758,9 @@ export class WindowingManager {
 
   private sendToWindow(win: BrowserWindow | null | undefined, channel: WindowingIpcMessageType, payload: unknown): void {
     try {
-    if (!win || win.isDestroyed() || win.webContents.isDestroyed()) {
+      if (!win || win.isDestroyed() || win.webContents.isDestroyed()) {
         throw new Error('Invalid window.')
-    }
+      }
 
       win.webContents.send(channel, payload)
     } catch (error) {
@@ -828,16 +828,16 @@ export class WindowingManager {
       throw new Error('Invalid window.')
     }
 
-      if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-        const url = new URL(`${process.env['ELECTRON_RENDERER_URL']}/base.html`)
-        url.searchParams.set('type', 'windowing-host')
-        url.searchParams.set('os', process.platform)
-        await window.loadURL(url.toString())
-      } else {
-        await window.loadFile(join(__dirname, '../renderer/base.html'), {
-          query: { type: 'windowing-host', os: process.platform }
-        })
-      }
+    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+      const url = new URL(`${process.env['ELECTRON_RENDERER_URL']}/base.html`)
+      url.searchParams.set('type', 'windowing-host')
+      url.searchParams.set('os', process.platform)
+      await window.loadURL(url.toString())
+    } else {
+      await window.loadFile(join(__dirname, '../renderer/base.html'), {
+        query: { type: 'windowing-host', os: process.platform }
+      })
+    }
   }
 
   private async openWindow(openerId: WindowId, request: WindowingOpenRequest): Promise<WindowingOpenResponse> {
