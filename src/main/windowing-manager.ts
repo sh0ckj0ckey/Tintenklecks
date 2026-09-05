@@ -32,6 +32,7 @@ import icon from '../../resources/icon.png?asset'
 interface ManagedWindowRecord {
   window: BrowserWindow
   openerId: WindowId
+  removeWindowListeners: () => void
 }
 
 interface PendingWindowOpenRequest {
@@ -126,9 +127,16 @@ export class WindowingManager {
     })
     this.pendingWindowOpenRequests.clear()
 
-    const windows = Array.from(this.managedWindows.values())
+    const records = Array.from(this.managedWindows.values())
     this.managedWindows.clear()
-    windows.forEach((record) => {
+
+    records.forEach((record) => {
+      try {
+        record.removeWindowListeners()
+      } catch (error) {
+        this.logError(`Failed to remove managed window listeners, id=${record.window.id}.`, error)
+      }
+
       try {
         if (!record.window.isDestroyed()) {
           record.window.destroy()
@@ -179,37 +187,53 @@ export class WindowingManager {
           throw new Error('Invalid window source.')
         }
 
-        const pending = this.pendingWindowOpenRequests.get(sourceWindow.id)
+        const windowId = sourceWindow.id
+
+        const pending = this.pendingWindowOpenRequests.get(windowId)
         if (!pending) {
-          throw new Error('Window is not pending open.')
+          throw new Error('The window is not pending an open request.')
         }
 
-        this.pendingWindowOpenRequests.delete(sourceWindow.id)
-        clearTimeout(pending.timer)
+        const record = this.managedWindows.get(windowId)
+        if (!record || record.window.isDestroyed()) {
+          throw new Error(`Managed window (${windowId}) does not exist.`)
+        }
 
         try {
           if (pending.request.showInactive) {
-            sourceWindow.showInactive()
+            record.window.showInactive()
           } else {
-            sourceWindow.show()
+            record.window.show()
           }
         } catch (error) {
+          this.pendingWindowOpenRequests.delete(windowId)
+          clearTimeout(pending.timer)
           pending.reject(error)
 
+          this.managedWindows.delete(windowId)
+
           try {
-            if (!sourceWindow.isDestroyed()) {
-              sourceWindow.destroy()
-            }
+            record.removeWindowListeners()
           } catch (error) {
-            this.logError(`Failed to destroy window after show failure, id=${sourceWindow.id}.`, error)
+            this.logError(`Failed to remove window listeners after show failure, id=${record.window.id}.`, error)
+          }
+
+          try {
+            if (!record.window.isDestroyed()) {
+              record.window.destroy()
+            }
+          } catch (destroyError) {
+            this.logError(`Failed to destroy window after show failure, id=${record.window.id}.`, destroyError)
           }
 
           throw error
         }
 
-        pending.resolve({ id: sourceWindow.id })
+        this.pendingWindowOpenRequests.delete(windowId)
+        clearTimeout(pending.timer)
+        pending.resolve({ id: windowId })
 
-        this.logInfo(`Managed window ready, id=${sourceWindow.id}.`)
+        this.logInfo(`Managed window ready, id=${windowId}.`)
       } catch (error) {
         this.logError('Failed to handle window ready notice.', error)
       }
@@ -638,10 +662,12 @@ export class WindowingManager {
 
         const pending = this.pendingWindowOpenRequests.get(windowId)
         if (pending) {
-          clearTimeout(pending.timer)
           this.pendingWindowOpenRequests.delete(windowId)
-          pending.reject(new Error(`Window was closed before ready, id=${windowId}.`))
+          clearTimeout(pending.timer)
+          pending.reject(new Error(`Window (${windowId}) was closed before ready.`))
         }
+
+        const isWindowWaitingReady: boolean = !!pending
 
         const record = this.managedWindows.get(windowId)
         if (!record) {
@@ -649,6 +675,16 @@ export class WindowingManager {
         }
 
         this.managedWindows.delete(windowId)
+
+        try {
+          record.removeWindowListeners()
+        } catch (error) {
+          this.logError(`Failed to remove window listeners after window closed, id=${record.window.id}.`, error)
+        }
+
+        if (isWindowWaitingReady) {
+          return
+        }
 
         const notice: WindowingClosedNotice = {
           id: windowId
@@ -776,7 +812,7 @@ export class WindowingManager {
       parentWindow = this.resolveTargetWindow(parentId)
 
       if (!parentWindow || parentWindow.isDestroyed()) {
-        throw new Error(`Parent window ${parentId} does not exist.`)
+        throw new Error(`Parent window (${parentId}) does not exist.`)
       }
     }
 
@@ -840,33 +876,73 @@ export class WindowingManager {
     }
   }
 
-  private async openWindow(openerId: WindowId, request: WindowingOpenRequest): Promise<WindowingOpenResponse> {
+  private openWindow(openerId: WindowId, request: WindowingOpenRequest): Promise<WindowingOpenResponse> {
     if (!request) {
       throw new Error('Invalid window open request.')
     }
 
-    const window = await this.createBrowserWindow(openerId, request)
-    this.managedWindows.set(window.id, { window: window, openerId: openerId })
+    const window = this.createBrowserWindow(openerId, request)
+
+    let removeWindowClosedListener: (() => void) | undefined
+    let removeWindowStateListener: (() => void) | undefined
+    try {
+      this.positionWindow(window, request.position ?? 'center-screen')
+      removeWindowClosedListener = this.bindWindowClosedListener(window)
+      removeWindowStateListener = this.bindWindowStateListeners(window)
+
+      const windowRecord: ManagedWindowRecord = {
+        window: window,
+        openerId: openerId,
+        removeWindowListeners: () => {
+          removeWindowClosedListener?.()
+          removeWindowStateListener?.()
+        }
+      }
+
+      this.managedWindows.set(window.id, windowRecord)
+    } catch (error) {
+      this.managedWindows.delete(window.id)
+
+      removeWindowClosedListener?.()
+      removeWindowStateListener?.()
+
+      try {
+        if (!window.isDestroyed()) {
+          window.destroy()
+        }
+      } catch (destroyError) {
+        this.logError(`Failed to destroy window after open setup failure, id=${window.id}.`, destroyError)
+      }
+
+      throw error
+    }
 
     this.logInfo(`Managed window created, id=${window.id}, openerId=${openerId}, parentId=${request.parentId}.`)
 
-    this.positionWindow(window, request.position ?? 'center-screen')
-    this.bindWindowClosedListener(window)
-    this.bindWindowStateListeners(window)
-
     const openResult = new Promise<WindowingOpenResponse>((resolve, reject) => {
       const timer = setTimeout(() => {
-        this.pendingWindowOpenRequests.delete(window.id)
-
-        try {
-          if (!window.isDestroyed()) {
-            window.destroy()
-          }
-        } catch (error) {
-          this.logError(`Failed to destroy window after timeout, id=${window.id}.`, error)
+        const pending = this.pendingWindowOpenRequests.get(window.id)
+        if (!pending) {
+          return
         }
 
-        reject(new Error(`Window did not become ready in time.`))
+        this.pendingWindowOpenRequests.delete(window.id)
+
+        const record = this.managedWindows.get(window.id)
+        if (record) {
+          this.managedWindows.delete(window.id)
+          record.removeWindowListeners()
+
+          try {
+            if (!record.window.isDestroyed()) {
+              record.window.destroy()
+            }
+          } catch (error) {
+            this.logError(`Failed to destroy window after timeout, id=${window.id}.`, error)
+          }
+        }
+
+        pending.reject(new Error(`Window did not become ready in time.`))
       }, this.OPEN_READY_TIMEOUT)
 
       const pendingWindowOpenRequest: PendingWindowOpenRequest = {
@@ -877,6 +953,34 @@ export class WindowingManager {
       }
 
       this.pendingWindowOpenRequests.set(window.id, pendingWindowOpenRequest)
+    })
+
+    void this.loadBrowserWindow(window).catch((error) => {
+      const pending = this.pendingWindowOpenRequests.get(window.id)
+      if (!pending) {
+        // There is no pending request because another lifecycle handler, such as READY, timeout, close, or dispose,
+        // has already completed this open request and handled the corresponding cleanup.
+        // Return here to avoid cleaning up the same request twice.
+        return
+      }
+
+      this.pendingWindowOpenRequests.delete(window.id)
+      clearTimeout(pending.timer)
+      pending.reject(error)
+
+      const record = this.managedWindows.get(window.id)
+      if (record) {
+        this.managedWindows.delete(window.id)
+        record.removeWindowListeners()
+
+        try {
+          if (!record.window.isDestroyed()) {
+            record.window.destroy()
+          }
+        } catch (destroyError) {
+          this.logError(`Failed to destroy window after load failure, id=${window.id}.`, destroyError)
+        }
+      }
     })
 
     return openResult
