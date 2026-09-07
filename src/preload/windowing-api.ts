@@ -1,6 +1,7 @@
 import { ipcRenderer, type IpcRendererEvent } from 'electron'
+import { windowingIpcMessage } from '../shared/windowing-ipc'
+import type { WindowingAPI, WindowingUnsubscribe } from '../shared/windowing-api'
 import type {
-  WindowingIpcMessageType,
   WindowingOpenRequest,
   WindowingOpenResponse,
   WindowingReadyNotice,
@@ -23,28 +24,6 @@ import type {
   WindowingStateChangedNotice,
   WindowingClosedNotice
 } from '../shared/windowing-types'
-
-const windowingIpcMessage = {
-  OPEN: 'windowing:open',
-  READY: 'windowing:ready',
-  UPDATE: 'windowing:update',
-  EVENT: 'windowing:event',
-  CLOSE: 'windowing:close',
-  ACTIVATE: 'windowing:activate',
-  MINIMIZE: 'windowing:minimize',
-  MAXIMIZE: 'windowing:maximize',
-  RESTORE: 'windowing:restore',
-  RESIZE: 'windowing:resize',
-  MOVE: 'windowing:move',
-  TOPMOST: 'windowing:topmost',
-  ENTER_FULLSCREEN: 'windowing:enter-fullscreen',
-  EXIT_FULLSCREEN: 'windowing:exit-fullscreen',
-  GET_WINDOW_STATE: 'windowing:get-window-state',
-  WINDOW_STATE_CHANGED: 'windowing:window-state-changed',
-  WINDOW_CLOSED: 'windowing:window-closed'
-} as const satisfies Record<string, WindowingIpcMessageType>
-
-type Unsubscribe = () => void
 
 const windowingAPI = {
   open(request: WindowingOpenRequest): Promise<WindowingOpenResponse> {
@@ -107,7 +86,7 @@ const windowingAPI = {
     return ipcRenderer.invoke(windowingIpcMessage.GET_WINDOW_STATE, request)
   },
 
-  onUpdate(callback: (notice: WindowingUpdateNotice) => void): Unsubscribe {
+  onUpdate(callback: (notice: WindowingUpdateNotice) => void): WindowingUnsubscribe {
     const listener = (_event: IpcRendererEvent, notice: WindowingUpdateNotice): void => {
       callback(notice)
     }
@@ -119,7 +98,7 @@ const windowingAPI = {
     }
   },
 
-  onEvent<T = unknown>(callback: (notice: WindowingEventNotice<T>) => void): Unsubscribe {
+  onEvent<T = unknown>(callback: (notice: WindowingEventNotice<T>) => void): WindowingUnsubscribe {
     const listener = (_event: IpcRendererEvent, notice: WindowingEventNotice<T>): void => {
       callback(notice)
     }
@@ -131,7 +110,7 @@ const windowingAPI = {
     }
   },
 
-  onStateChanged(callback: (notice: WindowingStateChangedNotice) => void): Unsubscribe {
+  onStateChanged(callback: (notice: WindowingStateChangedNotice) => void): WindowingUnsubscribe {
     const listener = (_event: IpcRendererEvent, notice: WindowingStateChangedNotice): void => {
       callback(notice)
     }
@@ -143,7 +122,7 @@ const windowingAPI = {
     }
   },
 
-  onClosed(callback: (notice: WindowingClosedNotice) => void): Unsubscribe {
+  onClosed(callback: (notice: WindowingClosedNotice) => void): WindowingUnsubscribe {
     const listener = (_event: IpcRendererEvent, notice: WindowingClosedNotice): void => {
       callback(notice)
     }
@@ -154,8 +133,6 @@ const windowingAPI = {
       ipcRenderer.removeListener(windowingIpcMessage.WINDOW_CLOSED, listener)
     }
   }
-}
+} satisfies WindowingAPI
 
 export { windowingAPI }
-
-export type WindowingAPI = typeof windowingAPI

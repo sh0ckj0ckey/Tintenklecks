@@ -1,6 +1,7 @@
 import { shell, BrowserWindow, ipcMain, type IpcMainEvent, type IpcMainInvokeEvent } from 'electron'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
+import { windowingIpcMessage } from '../shared/windowing-ipc'
 import type {
   WindowId,
   WindowPosition,
@@ -46,26 +47,6 @@ export class WindowingManager {
   private readonly OPEN_READY_TIMEOUT = 30000
   private readonly DEFAULT_WINDOW_WIDTH = 720
   private readonly DEFAULT_WINDOW_HEIGHT = 480
-
-  private readonly WindowingIpcMessage = {
-    OPEN: 'windowing:open',
-    READY: 'windowing:ready',
-    UPDATE: 'windowing:update',
-    EVENT: 'windowing:event',
-    CLOSE: 'windowing:close',
-    ACTIVATE: 'windowing:activate',
-    MINIMIZE: 'windowing:minimize',
-    MAXIMIZE: 'windowing:maximize',
-    RESTORE: 'windowing:restore',
-    RESIZE: 'windowing:resize',
-    MOVE: 'windowing:move',
-    TOPMOST: 'windowing:topmost',
-    ENTER_FULLSCREEN: 'windowing:enter-fullscreen',
-    EXIT_FULLSCREEN: 'windowing:exit-fullscreen',
-    GET_WINDOW_STATE: 'windowing:get-window-state',
-    WINDOW_STATE_CHANGED: 'windowing:window-state-changed',
-    WINDOW_CLOSED: 'windowing:window-closed'
-  } as const satisfies Record<string, WindowingIpcMessageType>
 
   private disposed = false
 
@@ -264,7 +245,7 @@ export class WindowingManager {
           props: request.props
         }
 
-        this.sendToWindow(targetWindow, this.WindowingIpcMessage.UPDATE, notice)
+        this.sendToWindow(targetWindow, windowingIpcMessage.UPDATE, notice)
       } catch (error) {
         this.logError(`Failed to update managed window, targetId=${request?.targetId}.`, error)
       }
@@ -316,7 +297,7 @@ export class WindowingManager {
           payload: request.payload
         }
 
-        this.sendToWindow(targetWindow, this.WindowingIpcMessage.EVENT, notice)
+        this.sendToWindow(targetWindow, windowingIpcMessage.EVENT, notice)
       } catch (error) {
         this.logError(`Failed to forward window event, targetId=${request?.targetId}.`, error)
       }
@@ -614,38 +595,38 @@ export class WindowingManager {
       }
     }
 
-    ipcMain.handle(this.WindowingIpcMessage.OPEN, handleWindowingOpenRequested)
-    ipcMain.on(this.WindowingIpcMessage.READY, onWindowingReady)
-    ipcMain.on(this.WindowingIpcMessage.UPDATE, onWindowingUpdateRequested)
-    ipcMain.on(this.WindowingIpcMessage.EVENT, onWindowingEventRequested)
-    ipcMain.on(this.WindowingIpcMessage.CLOSE, onWindowingCloseRequested)
-    ipcMain.on(this.WindowingIpcMessage.ACTIVATE, onWindowingActivateRequested)
-    ipcMain.on(this.WindowingIpcMessage.MINIMIZE, onWindowingMinimizeRequested)
-    ipcMain.on(this.WindowingIpcMessage.MAXIMIZE, onWindowingMaximizeRequested)
-    ipcMain.on(this.WindowingIpcMessage.RESTORE, onWindowingRestoreRequested)
-    ipcMain.on(this.WindowingIpcMessage.RESIZE, onWindowingResizeRequested)
-    ipcMain.on(this.WindowingIpcMessage.MOVE, onWindowingMoveRequested)
-    ipcMain.on(this.WindowingIpcMessage.TOPMOST, onWindowingTopmostRequested)
-    ipcMain.on(this.WindowingIpcMessage.ENTER_FULLSCREEN, onWindowingEnterFullscreenRequested)
-    ipcMain.on(this.WindowingIpcMessage.EXIT_FULLSCREEN, onWindowingExitFullscreenRequested)
-    ipcMain.handle(this.WindowingIpcMessage.GET_WINDOW_STATE, handleWindowingStateRequested)
+    ipcMain.handle(windowingIpcMessage.OPEN, handleWindowingOpenRequested)
+    ipcMain.on(windowingIpcMessage.READY, onWindowingReady)
+    ipcMain.on(windowingIpcMessage.UPDATE, onWindowingUpdateRequested)
+    ipcMain.on(windowingIpcMessage.EVENT, onWindowingEventRequested)
+    ipcMain.on(windowingIpcMessage.CLOSE, onWindowingCloseRequested)
+    ipcMain.on(windowingIpcMessage.ACTIVATE, onWindowingActivateRequested)
+    ipcMain.on(windowingIpcMessage.MINIMIZE, onWindowingMinimizeRequested)
+    ipcMain.on(windowingIpcMessage.MAXIMIZE, onWindowingMaximizeRequested)
+    ipcMain.on(windowingIpcMessage.RESTORE, onWindowingRestoreRequested)
+    ipcMain.on(windowingIpcMessage.RESIZE, onWindowingResizeRequested)
+    ipcMain.on(windowingIpcMessage.MOVE, onWindowingMoveRequested)
+    ipcMain.on(windowingIpcMessage.TOPMOST, onWindowingTopmostRequested)
+    ipcMain.on(windowingIpcMessage.ENTER_FULLSCREEN, onWindowingEnterFullscreenRequested)
+    ipcMain.on(windowingIpcMessage.EXIT_FULLSCREEN, onWindowingExitFullscreenRequested)
+    ipcMain.handle(windowingIpcMessage.GET_WINDOW_STATE, handleWindowingStateRequested)
 
     return (): void => {
-      ipcMain.removeHandler(this.WindowingIpcMessage.OPEN)
-      ipcMain.removeListener(this.WindowingIpcMessage.READY, onWindowingReady)
-      ipcMain.removeListener(this.WindowingIpcMessage.UPDATE, onWindowingUpdateRequested)
-      ipcMain.removeListener(this.WindowingIpcMessage.EVENT, onWindowingEventRequested)
-      ipcMain.removeListener(this.WindowingIpcMessage.CLOSE, onWindowingCloseRequested)
-      ipcMain.removeListener(this.WindowingIpcMessage.ACTIVATE, onWindowingActivateRequested)
-      ipcMain.removeListener(this.WindowingIpcMessage.MINIMIZE, onWindowingMinimizeRequested)
-      ipcMain.removeListener(this.WindowingIpcMessage.MAXIMIZE, onWindowingMaximizeRequested)
-      ipcMain.removeListener(this.WindowingIpcMessage.RESTORE, onWindowingRestoreRequested)
-      ipcMain.removeListener(this.WindowingIpcMessage.RESIZE, onWindowingResizeRequested)
-      ipcMain.removeListener(this.WindowingIpcMessage.MOVE, onWindowingMoveRequested)
-      ipcMain.removeListener(this.WindowingIpcMessage.TOPMOST, onWindowingTopmostRequested)
-      ipcMain.removeListener(this.WindowingIpcMessage.ENTER_FULLSCREEN, onWindowingEnterFullscreenRequested)
-      ipcMain.removeListener(this.WindowingIpcMessage.EXIT_FULLSCREEN, onWindowingExitFullscreenRequested)
-      ipcMain.removeHandler(this.WindowingIpcMessage.GET_WINDOW_STATE)
+      ipcMain.removeHandler(windowingIpcMessage.OPEN)
+      ipcMain.removeListener(windowingIpcMessage.READY, onWindowingReady)
+      ipcMain.removeListener(windowingIpcMessage.UPDATE, onWindowingUpdateRequested)
+      ipcMain.removeListener(windowingIpcMessage.EVENT, onWindowingEventRequested)
+      ipcMain.removeListener(windowingIpcMessage.CLOSE, onWindowingCloseRequested)
+      ipcMain.removeListener(windowingIpcMessage.ACTIVATE, onWindowingActivateRequested)
+      ipcMain.removeListener(windowingIpcMessage.MINIMIZE, onWindowingMinimizeRequested)
+      ipcMain.removeListener(windowingIpcMessage.MAXIMIZE, onWindowingMaximizeRequested)
+      ipcMain.removeListener(windowingIpcMessage.RESTORE, onWindowingRestoreRequested)
+      ipcMain.removeListener(windowingIpcMessage.RESIZE, onWindowingResizeRequested)
+      ipcMain.removeListener(windowingIpcMessage.MOVE, onWindowingMoveRequested)
+      ipcMain.removeListener(windowingIpcMessage.TOPMOST, onWindowingTopmostRequested)
+      ipcMain.removeListener(windowingIpcMessage.ENTER_FULLSCREEN, onWindowingEnterFullscreenRequested)
+      ipcMain.removeListener(windowingIpcMessage.EXIT_FULLSCREEN, onWindowingExitFullscreenRequested)
+      ipcMain.removeHandler(windowingIpcMessage.GET_WINDOW_STATE)
     }
   }
 
@@ -690,7 +671,7 @@ export class WindowingManager {
           id: windowId
         }
 
-        this.sendToWindow(this.resolveTargetWindow(record.openerId), this.WindowingIpcMessage.WINDOW_CLOSED, notice)
+        this.sendToWindow(this.resolveTargetWindow(record.openerId), windowingIpcMessage.WINDOW_CLOSED, notice)
       } catch (error) {
         this.logError(`Failed to handle window closed, id=${windowId}.`, error)
       }
@@ -722,7 +703,7 @@ export class WindowingManager {
           state
         }
 
-        this.sendToWindow(win, this.WindowingIpcMessage.WINDOW_STATE_CHANGED, notice)
+        this.sendToWindow(win, windowingIpcMessage.WINDOW_STATE_CHANGED, notice)
       } catch (error) {
         this.logError(`Failed to handle window state changed, id=${win.id}.`, error)
       }
