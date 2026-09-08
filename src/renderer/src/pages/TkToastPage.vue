@@ -15,7 +15,9 @@
       </div>
     </div>
     <div style="display: flex; gap: 8px">
-      <TkHyperlinkButton theme="secondary" :emboss="true" @click="onClickShowToastInComponent('info')"> Hyperlink Button </TkHyperlinkButton>
+      <TkHyperlinkButton theme="secondary" :emboss="true" @click="onClickShowToastInComponent('info')">
+        Hyperlink Button
+      </TkHyperlinkButton>
       <TkButton ref="vueComponentToastContainer" style="position: relative" theme="primary" :deboss="true">
         <img src="@renderer/assets/images/avatar.jpg" alt="Avatar" style="width: 128px; border-radius: 4px; object-fit: contain" />
       </TkButton>
