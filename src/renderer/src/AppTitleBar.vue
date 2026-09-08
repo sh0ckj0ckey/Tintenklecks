@@ -20,44 +20,30 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
 import IconWindowClose from '@renderer/components/TkIcons/IconWindowClose.vue'
 import IconWindowMaximize from '@renderer/components/TkIcons/IconWindowMaximize.vue'
 import IconWindowMinimize from '@renderer/components/TkIcons/IconWindowMinimize.vue'
 import IconWindowRestore from '@renderer/components/TkIcons/IconWindowRestore.vue'
+import { useWindowingHost } from '@renderer/composables/useWindowingHost'
 
 const currentOS = document.documentElement.getAttribute('data-os') || 'unknown'
 
-const isAppWindowMaximized = ref<boolean>(false)
-const isAppWindowFocused = ref<boolean>(true)
-
-let cleanupWindowStateListener: (() => void) | null = null
-let cleanupWindowFocusListener: (() => void) | null = null
-
-onMounted(() => {
-  cleanupWindowStateListener = window.appWindowAPI.onWindowStateChange((state) => {
-    isAppWindowMaximized.value = state === 'maximized'
-  })
-  cleanupWindowFocusListener = window.appWindowAPI.onWindowFocusChange((isFocused) => {
-    isAppWindowFocused.value = isFocused
-  })
-})
-
-onBeforeUnmount(() => {
-  cleanupWindowStateListener?.()
-  cleanupWindowFocusListener?.()
-})
-
-const minimizeAppWindow = (): void => {
-  window.appWindowAPI.minimize()
-}
+const {
+  isFocused: isAppWindowFocused,
+  isMaximized: isAppWindowMaximized,
+  minimize: minimizeAppWindow,
+  maximize: maximizeAppWindow,
+  restore: restoreAppWindow,
+  close: closeAppWindow
+} = useWindowingHost()
 
 const toggleMaximizeAppWindow = (): void => {
-  window.appWindowAPI.maximize()
-}
+  if (isAppWindowMaximized.value) {
+    restoreAppWindow()
+    return
+  }
 
-const closeAppWindow = (): void => {
-  window.appWindowAPI.close()
+  maximizeAppWindow()
 }
 </script>
 
