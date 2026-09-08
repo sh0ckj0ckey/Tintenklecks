@@ -1,108 +1,280 @@
 import { computed, toValue } from 'vue'
-import type { MaybeRefOrGetter } from 'vue'
+import type { ComputedRef, MaybeRefOrGetter } from 'vue'
+
+export type TextureType = 'paper' | 'rough-paper' | 'canvas' | 'fiber' | 'sand'
 
 export interface TextureOptions {
-  /** 不透明度 (0.0 - 1.0)，控制纹理的深浅 */
+  /**
+   * Texture appearance.
+   *
+   * Defaults to "paper".
+   */
+  type?: TextureType
+
+  /**
+   * Texture opacity from 0 to 1.
+   *
+   * Defaults to 0.12.
+   */
   opacity?: number
 
-  /** 缩放比例 (0.1 - 10)，控制纹理颗粒的大小 */
+  /**
+   * Texture scale from 0.1 to 10.
+   *
+   * Larger values create larger visible grains.
+   *
+   * Defaults to 1.
+   */
   scale?: number
 
-  /** 随机种子，传入不同的数字可以生成不同的纹理分布，传入 null 则随机生成 */
+  /**
+   * Texture seed.
+   *
+   * Pass null to generate a random seed for this composable instance.
+   *
+   * Defaults to null.
+   */
   seed?: number | null
+
+  /**
+   * Texture color.
+   *
+   * Defaults to a neutral gray.
+   */
+  color?: string
 }
 
-const createSvgUrl = (svgContent: string): string => {
-  const encoded = encodeURIComponent(svgContent.trim().replace(/\s+/g, ' '))
-  return `url("data:image/svg+xml,${encoded}")`
+export interface TextureStyle {
+  backgroundImage: string
+  backgroundRepeat: 'repeat'
+  backgroundSize: string
 }
 
-/**
- * 纸张纹理生成器
- * @param options 配置项，支持响应式引用
- */
-export function useTexture(options: MaybeRefOrGetter<TextureOptions> = {}) {
-  const generateSvg = (type: 'noise' | 'canvas' | 'paper', opacity: number, scale: number, seed: number) => {
-    // 基础频率，根据 scale 调整
-    // scale 越大，baseFrequency 越小，颗粒越大
-    const freq = (val: number) => val / scale
+export interface UseTextureReturn {
+  backgroundImage: ComputedRef<string>
+  backgroundRepeat: ComputedRef<'repeat'>
+  backgroundSize: ComputedRef<string>
+  style: ComputedRef<TextureStyle>
+}
 
-    let filterContent = ''
+interface ResolvedTextureOptions {
+  type: TextureType
+  opacity: number
+  scale: number
+  seed: number
+  color: string
+}
 
-    switch (type) {
-      case 'noise':
-        filterContent = `
-          <filter id='noise'>
-            <feTurbulence type='fractalNoise' baseFrequency='${freq(0.65)}' numOctaves='3' stitchTiles='stitch' seed='${seed}'/>
-          </filter>
-          <rect width='100%' height='100%' filter='url(#noise)' opacity='${opacity}'/>
-        `
-        break
+interface TextureDefinition {
+  baseFrequency: string
+  numOctaves: number
+  contrast: number
+  brightness: number
+  blendMode: 'multiply' | 'screen' | 'normal'
+}
 
-      case 'canvas':
-        // 粗糙画布/纤维感 (双层叠加)
-        filterContent = `
-          <filter id='canvas'>
-            <feTurbulence type='fractalNoise' baseFrequency='${freq(0.05)} ${freq(2)}' numOctaves='3' seed='${seed}' result='h'/>
-            <feTurbulence type='fractalNoise' baseFrequency='${freq(2)} ${freq(0.05)}' numOctaves='3' seed='${seed + 1}' result='v'/>
-            <feComposite operator='arithmetic' in='h' in2='v' k2='0.5' k3='0.5'/>
-          </filter>
-          <rect width='100%' height='100%' filter='url(#canvas)' opacity='${opacity}'/>
-        `
-        break
+const DEFAULT_TEXTURE_TYPE: TextureType = 'paper'
+const DEFAULT_OPACITY = 0.12
+const DEFAULT_SCALE = 1
+const DEFAULT_COLOR = '#6f665d'
+const DEFAULT_BACKGROUND_SIZE = '240px 240px'
 
-      case 'paper':
-        // 柔和的纸张褶皱/水彩纸
-        filterContent = `
-          <filter id='paper'>
-            <feTurbulence type='fractalNoise' baseFrequency='${freq(0.04)}' numOctaves='5' seed='${seed}'/>
-            <feDiffuseLighting lighting-color='#ffffff' surfaceScale='2'>
-              <feDistantLight azimuth='45' elevation='60'/>
-            </feDiffuseLighting>
-          </filter>
-          <rect width='100%' height='100%' filter='url(#paper)' opacity='${opacity}' style='mix-blend-mode: multiply'/>
-        `
-        break
-    }
+const MIN_OPACITY = 0
+const MAX_OPACITY = 1
 
-    return `<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'>${filterContent}</svg>`
+const MIN_SCALE = 0.1
+const MAX_SCALE = 10
+
+const createRandomSeed = (): number => {
+  return Math.floor(Math.random() * 100000)
+}
+
+const clamp = (value: number, minimum: number, maximum: number): number => {
+  return Math.min(Math.max(value, minimum), maximum)
+}
+
+const normalizeOpacity = (opacity: number): number => {
+  if (!Number.isFinite(opacity)) {
+    return DEFAULT_OPACITY
   }
 
-  // 统一处理参数
-  const getParams = (): {
-    opacity: number
-    scale: number
-    seed: number
-  } => {
-    const opts = toValue(options)
+  return clamp(opacity, MIN_OPACITY, MAX_OPACITY)
+}
+
+const normalizeScale = (scale: number): number => {
+  if (!Number.isFinite(scale)) {
+    return DEFAULT_SCALE
+  }
+
+  return clamp(scale, MIN_SCALE, MAX_SCALE)
+}
+
+const normalizeSeed = (seed: number): number => {
+  if (!Number.isFinite(seed)) {
+    return createRandomSeed()
+  }
+
+  return Math.round(seed)
+}
+
+const createCssUrl = (svgContent: string): string => {
+  const encodedSvg = encodeURIComponent(svgContent.trim().replace(/\s+/g, ' '))
+  return `url("data:image/svg+xml,${encodedSvg}")`
+}
+
+const getTextureDefinition = (type: TextureType, scale: number): TextureDefinition => {
+  switch (type) {
+    case 'rough-paper':
+      return {
+        baseFrequency: `${0.035 / scale}`,
+        numOctaves: 4,
+        contrast: 1.25,
+        brightness: 0.98,
+        blendMode: 'multiply'
+      }
+
+    case 'canvas':
+      return {
+        baseFrequency: `${0.045 / scale} ${0.75 / scale}`,
+        numOctaves: 3,
+        contrast: 1.35,
+        brightness: 0.95,
+        blendMode: 'multiply'
+      }
+
+    case 'fiber':
+      return {
+        baseFrequency: `${0.025 / scale} ${1.8 / scale}`,
+        numOctaves: 3,
+        contrast: 1.5,
+        brightness: 0.96,
+        blendMode: 'multiply'
+      }
+
+    case 'sand':
+      return {
+        baseFrequency: `${0.9 / scale}`,
+        numOctaves: 2,
+        contrast: 1.4,
+        brightness: 0.95,
+        blendMode: 'multiply'
+      }
+
+    case 'paper':
+    default:
+      return {
+        baseFrequency: `${0.06 / scale}`,
+        numOctaves: 3,
+        contrast: 1.1,
+        brightness: 1,
+        blendMode: 'multiply'
+      }
+  }
+}
+
+const createTextureSvg = (options: ResolvedTextureOptions): string => {
+  const definition = getTextureDefinition(options.type, options.scale)
+  const intercept = definition.brightness - 0.5
+
+  return `
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="240"
+      height="240"
+      viewBox="0 0 240 240"
+    >
+      <filter id="texture-filter">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="${definition.baseFrequency}"
+          numOctaves="${definition.numOctaves}"
+          seed="${options.seed}"
+          stitchTiles="stitch"
+          result="noise"
+        />
+
+        <feColorMatrix
+          in="noise"
+          type="saturate"
+          values="0"
+          result="grayscale-noise"
+        />
+
+        <feComponentTransfer
+          in="grayscale-noise"
+          result="adjusted-noise"
+        >
+          <feFuncR
+            type="linear"
+            slope="${definition.contrast}"
+            intercept="${intercept}"
+          />
+          <feFuncG
+            type="linear"
+            slope="${definition.contrast}"
+            intercept="${intercept}"
+          />
+          <feFuncB
+            type="linear"
+            slope="${definition.contrast}"
+            intercept="${intercept}"
+          />
+        </feComponentTransfer>
+      </filter>
+
+      <rect
+        width="100%"
+        height="100%"
+        fill="${options.color}"
+        opacity="${options.opacity}"
+        filter="url(#texture-filter)"
+        style="mix-blend-mode: ${definition.blendMode}"
+      />
+    </svg>
+  `
+}
+
+export function useTexture(options: MaybeRefOrGetter<TextureOptions> = {}): UseTextureReturn {
+  const randomSeed = createRandomSeed()
+
+  const resolvedOptions = computed<ResolvedTextureOptions>(() => {
+    const currentOptions = toValue(options)
+
+    const seed = currentOptions.seed === null || currentOptions.seed === undefined ? randomSeed : normalizeSeed(currentOptions.seed)
+
     return {
-      opacity: opts.opacity ?? 0.1,
-      scale: opts.scale ?? 1,
-      seed: opts.seed ?? Math.floor(Math.random() * 1000)
+      type: currentOptions.type ?? DEFAULT_TEXTURE_TYPE,
+      opacity: normalizeOpacity(currentOptions.opacity ?? DEFAULT_OPACITY),
+      scale: normalizeScale(currentOptions.scale ?? DEFAULT_SCALE),
+      seed: seed,
+      color: currentOptions.color ?? DEFAULT_COLOR
     }
-  }
-
-  // 1. 沙沙噪点 (适合通用背景)
-  const noiseTexture = computed(() => {
-    const { opacity, scale, seed } = getParams()
-    return createSvgUrl(generateSvg('noise', opacity, scale, seed))
   })
 
-  // 2. 粗糙画布 (适合卡片、侧边栏)
-  const canvasTexture = computed(() => {
-    const { opacity, scale, seed } = getParams()
-    return createSvgUrl(generateSvg('canvas', opacity, scale, seed))
+  const backgroundImage = computed<string>(() => {
+    return createCssUrl(createTextureSvg(resolvedOptions.value))
   })
 
-  // 3. 褶皱纸张 (适合正文区域)
-  const paperTexture = computed(() => {
-    const { opacity, scale, seed } = getParams()
-    return createSvgUrl(generateSvg('paper', opacity, scale, seed))
+  const backgroundRepeat = computed<'repeat'>(() => {
+    return 'repeat'
+  })
+
+  const backgroundSize = computed<string>(() => {
+    return DEFAULT_BACKGROUND_SIZE
+  })
+
+  const style = computed<TextureStyle>(() => {
+    return {
+      backgroundImage: backgroundImage.value,
+      backgroundRepeat: backgroundRepeat.value,
+      backgroundSize: backgroundSize.value
+    }
   })
 
   return {
-    noiseTexture,
-    canvasTexture,
-    paperTexture
+    backgroundImage: backgroundImage,
+    backgroundRepeat: backgroundRepeat,
+    backgroundSize: backgroundSize,
+    style: style
   }
 }
