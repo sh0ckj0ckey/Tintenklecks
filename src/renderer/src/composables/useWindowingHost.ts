@@ -2,6 +2,40 @@ import { computed, onScopeDispose, ref } from 'vue'
 import type { ComputedRef } from 'vue'
 import type { WindowPosition, WindowBounds, WindowState } from '../../../shared/windowing-types'
 
+const windowState = ref<WindowState | null>(null)
+
+const windowBounds = computed<WindowBounds | null>(() => windowState.value?.bounds ?? null)
+const isMinimized = computed<boolean>(() => windowState.value?.minimized ?? false)
+const isMaximized = computed<boolean>(() => windowState.value?.maximized ?? false)
+const isFullscreen = computed<boolean>(() => windowState.value?.fullscreen ?? false)
+const isVisible = computed<boolean>(() => windowState.value?.visible ?? false)
+const isTopmost = computed<boolean>(() => windowState.value?.alwaysOnTop ?? false)
+const isFocused = computed<boolean>(() => windowState.value?.focused ?? false)
+
+const stateChangedUnsubscriber = window.windowingAPI.onStateChanged((notice) => {
+  windowState.value = notice.state
+})
+
+const updateWindowState = async (): Promise<void> => {
+  try {
+    const response = await window.windowingAPI.getWindowState({})
+
+    if (windowState.value === null) {
+      windowState.value = response.state
+    }
+  } catch {
+    // Keep the initial state as null when the initial query fails.
+  }
+}
+
+void updateWindowState()
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    stateChangedUnsubscriber()
+  })
+}
+
 export interface UseWindowingHostReturn {
   windowBounds: ComputedRef<WindowBounds | null>
   isMinimized: ComputedRef<boolean>
@@ -25,35 +59,7 @@ export interface UseWindowingHostReturn {
 }
 
 export function useWindowingHost(): UseWindowingHostReturn {
-  const windowState = ref<WindowState | null>(null)
-
-  const windowBounds = computed<WindowBounds | null>(() => windowState.value?.bounds ?? null)
-  const isMinimized = computed<boolean>(() => windowState.value?.minimized ?? false)
-  const isMaximized = computed<boolean>(() => windowState.value?.maximized ?? false)
-  const isFullscreen = computed<boolean>(() => windowState.value?.fullscreen ?? false)
-  const isVisible = computed<boolean>(() => windowState.value?.visible ?? false)
-  const isTopmost = computed<boolean>(() => windowState.value?.alwaysOnTop ?? false)
-  const isFocused = computed<boolean>(() => windowState.value?.focused ?? false)
-
   const eventUnsubscribers = new Set<() => void>()
-
-  const stateChangedUnsubscriber = window.windowingAPI.onStateChanged((notice) => {
-    windowState.value = notice.state
-  })
-
-  const updateWindowState = async (): Promise<void> => {
-    try {
-      const response = await window.windowingAPI.getWindowState({})
-
-      if (windowState.value === null) {
-        windowState.value = response.state
-      }
-    } catch {
-      // Keep the initial state as null when the initial query fails.
-    }
-  }
-
-  void updateWindowState()
 
   const onEvent = <T = unknown>(action: string, handler: (payload: T | undefined) => void): (() => void) => {
     const removeListener = window.windowingAPI.onEvent<T>((notice) => {
@@ -126,8 +132,6 @@ export function useWindowingHost(): UseWindowingHostReturn {
   }
 
   onScopeDispose(() => {
-    stateChangedUnsubscriber()
-
     for (const unsubscribe of Array.from(eventUnsubscribers)) {
       unsubscribe()
     }
