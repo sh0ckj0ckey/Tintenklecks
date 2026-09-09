@@ -2,35 +2,6 @@ import { computed, onScopeDispose, ref } from 'vue'
 import type { ComputedRef } from 'vue'
 import type { WindowPosition, WindowBounds, WindowState } from '../../../shared/windowing-types'
 
-const windowState = ref<WindowState | null>(null)
-
-const windowBounds = computed<WindowBounds | null>(() => windowState.value?.bounds ?? null)
-const isMinimized = computed<boolean>(() => windowState.value?.minimized ?? false)
-const isMaximized = computed<boolean>(() => windowState.value?.maximized ?? false)
-const isFullscreen = computed<boolean>(() => windowState.value?.fullscreen ?? false)
-const isVisible = computed<boolean>(() => windowState.value?.visible ?? false)
-const isTopmost = computed<boolean>(() => windowState.value?.alwaysOnTop ?? false)
-const isFocused = computed<boolean>(() => windowState.value?.focused ?? false)
-
-// This listener intentionally follows the entire renderer lifecycle.
-window.windowingAPI.onStateChanged((notice) => {
-  windowState.value = notice.state
-})
-
-const updateWindowState = async (): Promise<void> => {
-  try {
-    const response = await window.windowingAPI.getWindowState({})
-
-    if (windowState.value === null) {
-      windowState.value = response.state
-    }
-  } catch {
-    // Keep the initial state as null when the initial query fails.
-  }
-}
-
-void updateWindowState()
-
 export interface UseWindowingHostReturn {
   windowBounds: ComputedRef<WindowBounds | null>
   isMinimized: ComputedRef<boolean>
@@ -53,17 +24,60 @@ export interface UseWindowingHostReturn {
   exitFullscreen(): void
 }
 
+const windowState = ref<WindowState | null>(null)
+
+const windowBounds = computed<WindowBounds | null>(() => windowState.value?.bounds ?? null)
+const isMinimized = computed<boolean>(() => windowState.value?.minimized ?? false)
+const isMaximized = computed<boolean>(() => windowState.value?.maximized ?? false)
+const isFullscreen = computed<boolean>(() => windowState.value?.fullscreen ?? false)
+const isVisible = computed<boolean>(() => windowState.value?.visible ?? false)
+const isTopmost = computed<boolean>(() => windowState.value?.alwaysOnTop ?? false)
+const isFocused = computed<boolean>(() => windowState.value?.focused ?? false)
+
+const updateWindowState = async (): Promise<void> => {
+  try {
+    const response = await window.windowingAPI.getWindowState({})
+
+    // Do not overwrite a newer state notification received while waiting.
+    if (windowState.value === null) {
+      windowState.value = response.state
+    }
+  } catch {
+    // Keep the initial state as null when the initial query fails.
+  }
+}
+
+const eventDispatcher = new EventTarget()
+
+/*
+ * These IPC listeners intentionally follow the entire renderer lifecycle.
+ */
+
+window.windowingAPI.onStateChanged((notice) => {
+  windowState.value = notice.state
+})
+
+window.windowingAPI.onEvent<unknown>((notice) => {
+  const event = new CustomEvent<unknown>(notice.action, {
+    detail: notice.payload
+  })
+
+  eventDispatcher.dispatchEvent(event)
+})
+
+// Start the initial query only after the state listener has been registered.
+void updateWindowState()
+
 export function useWindowingHost(): UseWindowingHostReturn {
   const eventUnsubscribers = new Set<() => void>()
 
   const onEvent = <T = unknown>(action: string, handler: (payload: T | undefined) => void): (() => void) => {
-    const removeListener = window.windowingAPI.onEvent<T>((notice) => {
-      if (notice.action !== action) {
-        return
-      }
+    const eventListener: EventListener = (event: Event): void => {
+      const customEvent = event as CustomEvent<T | undefined>
+      handler(customEvent.detail)
+    }
 
-      handler(notice.payload)
-    })
+    eventDispatcher.addEventListener(action, eventListener)
 
     let removed = false
 
@@ -74,7 +88,7 @@ export function useWindowingHost(): UseWindowingHostReturn {
 
       removed = true
       eventUnsubscribers.delete(unsubscribe)
-      removeListener()
+      eventDispatcher.removeEventListener(action, eventListener)
     }
 
     eventUnsubscribers.add(unsubscribe)
