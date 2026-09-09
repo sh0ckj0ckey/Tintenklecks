@@ -12,7 +12,8 @@ const isVisible = computed<boolean>(() => windowState.value?.visible ?? false)
 const isTopmost = computed<boolean>(() => windowState.value?.alwaysOnTop ?? false)
 const isFocused = computed<boolean>(() => windowState.value?.focused ?? false)
 
-const stateChangedUnsubscriber = window.windowingAPI.onStateChanged((notice) => {
+// This listener intentionally follows the entire renderer lifecycle.
+window.windowingAPI.onStateChanged((notice) => {
   windowState.value = notice.state
 })
 
@@ -29,12 +30,6 @@ const updateWindowState = async (): Promise<void> => {
 }
 
 void updateWindowState()
-
-if (import.meta.hot) {
-  import.meta.hot.dispose(() => {
-    stateChangedUnsubscriber()
-  })
-}
 
 export interface UseWindowingHostReturn {
   windowBounds: ComputedRef<WindowBounds | null>
