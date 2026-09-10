@@ -53,13 +53,13 @@ const eventDispatcher = new EventTarget()
  * These listeners intentionally follow the entire renderer lifecycle.
  */
 
-window.windowingAPI.onStateChanged((notice) => {
-  windowState.value = notice.state
+window.windowingAPI.onStateChanged((message) => {
+  windowState.value = message.state
 })
 
-window.windowingAPI.onEvent<unknown>((notice) => {
-  const event = new CustomEvent<unknown>(notice.action, {
-    detail: notice.payload
+window.windowingAPI.onEvent<unknown>((message) => {
+  const event = new CustomEvent<unknown>(message.type, {
+    detail: message.payload
   })
 
   eventDispatcher.dispatchEvent(event)
@@ -90,7 +90,7 @@ void updateWindowState()
  */
 
 const emitEvent = <T = unknown>(action: string, payload?: T): void => {
-  window.windowingAPI.event<T>({ action, payload })
+  window.windowingAPI.event<T>({ type: action, payload })
 }
 
 const close = (): void => {

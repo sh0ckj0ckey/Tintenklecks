@@ -1,14 +1,14 @@
 import { ipcRenderer, type IpcRendererEvent } from 'electron'
-import { windowingIpcMessage } from '../shared/windowing-ipc'
+import { windowingIpcChannels } from '../shared/windowing-ipc'
 import type { WindowingAPI, WindowingUnsubscribe } from '../shared/windowing-api'
 import type {
   WindowingOpenRequest,
   WindowingOpenResponse,
-  WindowingReadyNotice,
+  WindowingReadyNotification,
   WindowingUpdateRequest,
-  WindowingUpdateNotice,
+  WindowingUpdateNotification,
   WindowingEventRequest,
-  WindowingEventNotice,
+  WindowingEventNotification,
   WindowingCloseRequest,
   WindowingActivateRequest,
   WindowingMinimizeRequest,
@@ -21,116 +21,116 @@ import type {
   WindowingExitFullscreenRequest,
   WindowingGetStateRequest,
   WindowingGetStateResponse,
-  WindowingStateChangedNotice,
-  WindowingClosedNotice
+  WindowingStateChangedNotification,
+  WindowingClosedNotification
 } from '../shared/windowing-types'
 
 const windowingAPI = {
   open(request: WindowingOpenRequest): Promise<WindowingOpenResponse> {
-    return ipcRenderer.invoke(windowingIpcMessage.OPEN, request)
+    return ipcRenderer.invoke(windowingIpcChannels.OPEN, request)
   },
 
-  ready(notice: WindowingReadyNotice): void {
-    ipcRenderer.send(windowingIpcMessage.READY, notice)
+  ready(notification: WindowingReadyNotification): void {
+    ipcRenderer.send(windowingIpcChannels.READY, notification)
   },
 
   update(request: WindowingUpdateRequest): void {
-    ipcRenderer.send(windowingIpcMessage.UPDATE, request)
+    ipcRenderer.send(windowingIpcChannels.UPDATE, request)
   },
 
-  event<T = unknown>(request: WindowingEventRequest<T>): void {
-    ipcRenderer.send(windowingIpcMessage.EVENT, request)
+  sendEvent<T = unknown>(request: WindowingEventRequest<T>): void {
+    ipcRenderer.send(windowingIpcChannels.EVENT, request)
   },
 
   close(request: WindowingCloseRequest): void {
-    ipcRenderer.send(windowingIpcMessage.CLOSE, request)
+    ipcRenderer.send(windowingIpcChannels.CLOSE, request)
   },
 
   activate(request: WindowingActivateRequest): void {
-    ipcRenderer.send(windowingIpcMessage.ACTIVATE, request)
+    ipcRenderer.send(windowingIpcChannels.ACTIVATE, request)
   },
 
   minimize(request: WindowingMinimizeRequest): void {
-    ipcRenderer.send(windowingIpcMessage.MINIMIZE, request)
+    ipcRenderer.send(windowingIpcChannels.MINIMIZE, request)
   },
 
   maximize(request: WindowingMaximizeRequest): void {
-    ipcRenderer.send(windowingIpcMessage.MAXIMIZE, request)
+    ipcRenderer.send(windowingIpcChannels.MAXIMIZE, request)
   },
 
   restore(request: WindowingRestoreRequest): void {
-    ipcRenderer.send(windowingIpcMessage.RESTORE, request)
+    ipcRenderer.send(windowingIpcChannels.RESTORE, request)
   },
 
   resize(request: WindowingResizeRequest): void {
-    ipcRenderer.send(windowingIpcMessage.RESIZE, request)
+    ipcRenderer.send(windowingIpcChannels.RESIZE, request)
   },
 
   move(request: WindowingMoveRequest): void {
-    ipcRenderer.send(windowingIpcMessage.MOVE, request)
+    ipcRenderer.send(windowingIpcChannels.MOVE, request)
   },
 
   setTopmost(request: WindowingTopmostRequest): void {
-    ipcRenderer.send(windowingIpcMessage.TOPMOST, request)
+    ipcRenderer.send(windowingIpcChannels.TOPMOST, request)
   },
 
   enterFullscreen(request: WindowingEnterFullscreenRequest): void {
-    ipcRenderer.send(windowingIpcMessage.ENTER_FULLSCREEN, request)
+    ipcRenderer.send(windowingIpcChannels.ENTER_FULLSCREEN, request)
   },
 
   exitFullscreen(request: WindowingExitFullscreenRequest): void {
-    ipcRenderer.send(windowingIpcMessage.EXIT_FULLSCREEN, request)
+    ipcRenderer.send(windowingIpcChannels.EXIT_FULLSCREEN, request)
   },
 
   getWindowState(request: WindowingGetStateRequest): Promise<WindowingGetStateResponse> {
-    return ipcRenderer.invoke(windowingIpcMessage.GET_WINDOW_STATE, request)
+    return ipcRenderer.invoke(windowingIpcChannels.GET_WINDOW_STATE, request)
   },
 
-  onUpdate(callback: (notice: WindowingUpdateNotice) => void): WindowingUnsubscribe {
-    const listener = (_event: IpcRendererEvent, notice: WindowingUpdateNotice): void => {
-      callback(notice)
+  onUpdate(listener: (notification: WindowingUpdateNotification) => void): WindowingUnsubscribe {
+    const ipcListener = (_event: IpcRendererEvent, notification: WindowingUpdateNotification): void => {
+      listener(notification)
     }
 
-    ipcRenderer.on(windowingIpcMessage.UPDATE, listener)
+    ipcRenderer.on(windowingIpcChannels.UPDATE, ipcListener)
 
     return (): void => {
-      ipcRenderer.removeListener(windowingIpcMessage.UPDATE, listener)
-    }
-  },
-
-  onEvent<T = unknown>(callback: (notice: WindowingEventNotice<T>) => void): WindowingUnsubscribe {
-    const listener = (_event: IpcRendererEvent, notice: WindowingEventNotice<T>): void => {
-      callback(notice)
-    }
-
-    ipcRenderer.on(windowingIpcMessage.EVENT, listener)
-
-    return (): void => {
-      ipcRenderer.removeListener(windowingIpcMessage.EVENT, listener)
+      ipcRenderer.removeListener(windowingIpcChannels.UPDATE, ipcListener)
     }
   },
 
-  onStateChanged(callback: (notice: WindowingStateChangedNotice) => void): WindowingUnsubscribe {
-    const listener = (_event: IpcRendererEvent, notice: WindowingStateChangedNotice): void => {
-      callback(notice)
+  onEvent<T = unknown>(listener: (notification: WindowingEventNotification<T>) => void): WindowingUnsubscribe {
+    const ipcListener = (_event: IpcRendererEvent, notification: WindowingEventNotification<T>): void => {
+      listener(notification)
     }
 
-    ipcRenderer.on(windowingIpcMessage.WINDOW_STATE_CHANGED, listener)
+    ipcRenderer.on(windowingIpcChannels.EVENT, ipcListener)
 
     return (): void => {
-      ipcRenderer.removeListener(windowingIpcMessage.WINDOW_STATE_CHANGED, listener)
+      ipcRenderer.removeListener(windowingIpcChannels.EVENT, ipcListener)
     }
   },
 
-  onClosed(callback: (notice: WindowingClosedNotice) => void): WindowingUnsubscribe {
-    const listener = (_event: IpcRendererEvent, notice: WindowingClosedNotice): void => {
-      callback(notice)
+  onStateChanged(listener: (notification: WindowingStateChangedNotification) => void): WindowingUnsubscribe {
+    const ipcListener = (_event: IpcRendererEvent, notification: WindowingStateChangedNotification): void => {
+      listener(notification)
     }
 
-    ipcRenderer.on(windowingIpcMessage.WINDOW_CLOSED, listener)
+    ipcRenderer.on(windowingIpcChannels.WINDOW_STATE_CHANGED, ipcListener)
 
     return (): void => {
-      ipcRenderer.removeListener(windowingIpcMessage.WINDOW_CLOSED, listener)
+      ipcRenderer.removeListener(windowingIpcChannels.WINDOW_STATE_CHANGED, ipcListener)
+    }
+  },
+
+  onClosed(listener: (notification: WindowingClosedNotification) => void): WindowingUnsubscribe {
+    const ipcListener = (_event: IpcRendererEvent, notification: WindowingClosedNotification): void => {
+      listener(notification)
+    }
+
+    ipcRenderer.on(windowingIpcChannels.WINDOW_CLOSED, ipcListener)
+
+    return (): void => {
+      ipcRenderer.removeListener(windowingIpcChannels.WINDOW_CLOSED, ipcListener)
     }
   }
 } satisfies WindowingAPI

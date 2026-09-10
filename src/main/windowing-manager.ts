@@ -1,18 +1,19 @@
 import { shell, BrowserWindow, ipcMain, type IpcMainEvent, type IpcMainInvokeEvent } from 'electron'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
-import { windowingIpcMessage } from '../shared/windowing-ipc'
+import { windowingIpcChannels } from '../shared/windowing-ipc'
 import type {
   WindowId,
   WindowPosition,
   WindowState,
-  WindowingIpcMessageType,
+  WindowingIpcChannel,
   WindowingOpenRequest,
   WindowingOpenResponse,
+  WindowingReadyNotification,
   WindowingUpdateRequest,
-  WindowingUpdateNotice,
+  WindowingUpdateNotification,
   WindowingEventRequest,
-  WindowingEventNotice,
+  WindowingEventNotification,
   WindowingCloseRequest,
   WindowingActivateRequest,
   WindowingMinimizeRequest,
@@ -25,8 +26,8 @@ import type {
   WindowingExitFullscreenRequest,
   WindowingGetStateRequest,
   WindowingGetStateResponse,
-  WindowingStateChangedNotice,
-  WindowingClosedNotice
+  WindowingStateChangedNotification,
+  WindowingClosedNotification
 } from '../shared/windowing-types'
 import icon from '../../resources/icon.png?asset'
 
@@ -56,7 +57,7 @@ export class WindowingManager {
 
   private readonly pendingWindowOpenRequests = new Map<WindowId, PendingWindowOpenRequest>()
 
-  private removeListeners?: () => void
+  private removeManagerListeners?: () => void
 
   constructor(mainWindow: BrowserWindow) {
     if (!mainWindow || mainWindow.isDestroyed()) {
@@ -80,7 +81,7 @@ export class WindowingManager {
       throw error
     }
 
-    this.removeListeners = () => {
+    this.removeManagerListeners = () => {
       removeMainWindowClosedListener()
       removeMainWindowStateListener()
       removeIpcListeners()
@@ -93,18 +94,19 @@ export class WindowingManager {
     if (this.disposed) {
       return
     }
+
     this.disposed = true
 
     this.logInfo(
       `WindowingManager disposing. managedWindowCount=${this.managedWindows.size}, pendingOpenCount=${this.pendingWindowOpenRequests.size}.`
     )
 
-    this.removeListeners?.()
-    this.removeListeners = undefined
+    this.removeManagerListeners?.()
+    this.removeManagerListeners = undefined
 
-    this.pendingWindowOpenRequests.forEach((pending) => {
-      clearTimeout(pending.timer)
-      pending.reject(new Error('WindowingManager has been disposed.'))
+    this.pendingWindowOpenRequests.forEach((pendingRequest) => {
+      clearTimeout(pendingRequest.timer)
+      pendingRequest.reject(new Error('WindowingManager has been disposed.'))
     })
     this.pendingWindowOpenRequests.clear()
 
@@ -135,7 +137,7 @@ export class WindowingManager {
       throw new Error('WindowingManager has been disposed.')
     }
 
-    const handleWindowingOpenRequested = async (e: IpcMainInvokeEvent, request: WindowingOpenRequest): Promise<WindowingOpenResponse> => {
+    const handleOpenRequest = async (event: IpcMainInvokeEvent, request: WindowingOpenRequest): Promise<WindowingOpenResponse> => {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
@@ -145,7 +147,7 @@ export class WindowingManager {
           throw new Error('Invalid request.')
         }
 
-        const sourceWindow = this.resolveSourceWindow(e)
+        const sourceWindow = this.resolveSourceWindow(event)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
@@ -157,21 +159,21 @@ export class WindowingManager {
       }
     }
 
-    const onWindowingReady = (e: IpcMainEvent): void => {
+    const onReadyNotification = (event: IpcMainEvent, _notification: WindowingReadyNotification): void => {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
         }
 
-        const sourceWindow = this.resolveSourceWindow(e)
+        const sourceWindow = this.resolveSourceWindow(event)
         if (!sourceWindow || sourceWindow.id === this.mainWindow.id) {
           throw new Error('Invalid window source.')
         }
 
         const windowId = sourceWindow.id
 
-        const pending = this.pendingWindowOpenRequests.get(windowId)
-        if (!pending) {
+        const pendingRequest = this.pendingWindowOpenRequests.get(windowId)
+        if (!pendingRequest) {
           throw new Error('The window is not pending an open request.')
         }
 
@@ -181,22 +183,22 @@ export class WindowingManager {
         }
 
         try {
-          if (pending.request.showInactive) {
+          if (pendingRequest.request.showInactive) {
             record.window.showInactive()
           } else {
             record.window.show()
           }
         } catch (error) {
           this.pendingWindowOpenRequests.delete(windowId)
-          clearTimeout(pending.timer)
-          pending.reject(error)
+          clearTimeout(pendingRequest.timer)
+          pendingRequest.reject(error)
 
           this.managedWindows.delete(windowId)
 
           try {
             record.removeWindowListeners()
-          } catch (error) {
-            this.logError(`Failed to remove window listeners after show failure, id=${record.window.id}.`, error)
+          } catch (removeError) {
+            this.logError(`Failed to remove window listeners after show failure, id=${record.window.id}.`, removeError)
           }
 
           try {
@@ -211,16 +213,16 @@ export class WindowingManager {
         }
 
         this.pendingWindowOpenRequests.delete(windowId)
-        clearTimeout(pending.timer)
-        pending.resolve({ id: windowId })
+        clearTimeout(pendingRequest.timer)
+        pendingRequest.resolve({ id: windowId })
 
         this.logInfo(`Managed window ready, id=${windowId}.`)
       } catch (error) {
-        this.logError('Failed to handle window ready notice.', error)
+        this.logError('Failed to handle window ready notification.', error)
       }
     }
 
-    const onWindowingUpdateRequested = (e: IpcMainEvent, request: WindowingUpdateRequest): void => {
+    const onUpdateRequest = (event: IpcMainEvent, request: WindowingUpdateRequest): void => {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
@@ -230,7 +232,7 @@ export class WindowingManager {
           throw new Error('Invalid request.')
         }
 
-        const sourceWindow = this.resolveSourceWindow(e)
+        const sourceWindow = this.resolveSourceWindow(event)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
@@ -240,18 +242,18 @@ export class WindowingManager {
           throw new Error('Invalid window target.')
         }
 
-        const notice: WindowingUpdateNotice = {
+        const notification: WindowingUpdateNotification = {
           component: request.component,
           props: request.props
         }
 
-        this.sendToWindow(targetWindow, windowingIpcMessage.UPDATE, notice)
+        this.sendToWindow(targetWindow, windowingIpcChannels.UPDATE, notification)
       } catch (error) {
         this.logError(`Failed to update managed window, targetId=${request?.targetId}.`, error)
       }
     }
 
-    const onWindowingEventRequested = (e: IpcMainEvent, request: WindowingEventRequest): void => {
+    const onEventRequest = (event: IpcMainEvent, request: WindowingEventRequest): void => {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
@@ -261,7 +263,7 @@ export class WindowingManager {
           throw new Error('Invalid request.')
         }
 
-        const sourceWindow = this.resolveSourceWindow(e)
+        const sourceWindow = this.resolveSourceWindow(event)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
@@ -291,19 +293,19 @@ export class WindowingManager {
           fromId = sourceWindow.id
         }
 
-        const notice: WindowingEventNotice = {
+        const notification: WindowingEventNotification = {
           fromId: fromId,
-          action: request.action,
+          type: request.type,
           payload: request.payload
         }
 
-        this.sendToWindow(targetWindow, windowingIpcMessage.EVENT, notice)
+        this.sendToWindow(targetWindow, windowingIpcChannels.EVENT, notification)
       } catch (error) {
         this.logError(`Failed to forward window event, targetId=${request?.targetId}.`, error)
       }
     }
 
-    const onWindowingCloseRequested = (e: IpcMainEvent, request: WindowingCloseRequest): void => {
+    const onCloseRequest = (event: IpcMainEvent, request: WindowingCloseRequest): void => {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
@@ -313,12 +315,13 @@ export class WindowingManager {
           throw new Error('Invalid request.')
         }
 
-        const sourceWindow = this.resolveSourceWindow(e)
+        const sourceWindow = this.resolveSourceWindow(event)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
+
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -329,7 +332,7 @@ export class WindowingManager {
       }
     }
 
-    const onWindowingActivateRequested = (e: IpcMainEvent, request: WindowingActivateRequest): void => {
+    const onActivateRequest = (event: IpcMainEvent, request: WindowingActivateRequest): void => {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
@@ -339,12 +342,13 @@ export class WindowingManager {
           throw new Error('Invalid request.')
         }
 
-        const sourceWindow = this.resolveSourceWindow(e)
+        const sourceWindow = this.resolveSourceWindow(event)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
+
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -355,7 +359,7 @@ export class WindowingManager {
       }
     }
 
-    const onWindowingMinimizeRequested = (e: IpcMainEvent, request: WindowingMinimizeRequest): void => {
+    const onMinimizeRequest = (event: IpcMainEvent, request: WindowingMinimizeRequest): void => {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
@@ -365,12 +369,13 @@ export class WindowingManager {
           throw new Error('Invalid request.')
         }
 
-        const sourceWindow = this.resolveSourceWindow(e)
+        const sourceWindow = this.resolveSourceWindow(event)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
+
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -381,7 +386,7 @@ export class WindowingManager {
       }
     }
 
-    const onWindowingMaximizeRequested = (e: IpcMainEvent, request: WindowingMaximizeRequest): void => {
+    const onMaximizeRequest = (event: IpcMainEvent, request: WindowingMaximizeRequest): void => {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
@@ -391,12 +396,13 @@ export class WindowingManager {
           throw new Error('Invalid request.')
         }
 
-        const sourceWindow = this.resolveSourceWindow(e)
+        const sourceWindow = this.resolveSourceWindow(event)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
+
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -407,7 +413,7 @@ export class WindowingManager {
       }
     }
 
-    const onWindowingRestoreRequested = (e: IpcMainEvent, request: WindowingRestoreRequest): void => {
+    const onRestoreRequest = (event: IpcMainEvent, request: WindowingRestoreRequest): void => {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
@@ -417,12 +423,13 @@ export class WindowingManager {
           throw new Error('Invalid request.')
         }
 
-        const sourceWindow = this.resolveSourceWindow(e)
+        const sourceWindow = this.resolveSourceWindow(event)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
+
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -433,7 +440,7 @@ export class WindowingManager {
       }
     }
 
-    const onWindowingResizeRequested = (e: IpcMainEvent, request: WindowingResizeRequest): void => {
+    const onResizeRequest = (event: IpcMainEvent, request: WindowingResizeRequest): void => {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
@@ -443,12 +450,13 @@ export class WindowingManager {
           throw new Error('Invalid request.')
         }
 
-        const sourceWindow = this.resolveSourceWindow(e)
+        const sourceWindow = this.resolveSourceWindow(event)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
+
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -459,7 +467,7 @@ export class WindowingManager {
       }
     }
 
-    const onWindowingMoveRequested = (e: IpcMainEvent, request: WindowingMoveRequest): void => {
+    const onMoveRequest = (event: IpcMainEvent, request: WindowingMoveRequest): void => {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
@@ -469,12 +477,13 @@ export class WindowingManager {
           throw new Error('Invalid request.')
         }
 
-        const sourceWindow = this.resolveSourceWindow(e)
+        const sourceWindow = this.resolveSourceWindow(event)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
+
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -485,7 +494,7 @@ export class WindowingManager {
       }
     }
 
-    const onWindowingTopmostRequested = (e: IpcMainEvent, request: WindowingTopmostRequest): void => {
+    const onTopmostRequest = (event: IpcMainEvent, request: WindowingTopmostRequest): void => {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
@@ -495,12 +504,13 @@ export class WindowingManager {
           throw new Error('Invalid request.')
         }
 
-        const sourceWindow = this.resolveSourceWindow(e)
+        const sourceWindow = this.resolveSourceWindow(event)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
+
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -511,7 +521,7 @@ export class WindowingManager {
       }
     }
 
-    const onWindowingEnterFullscreenRequested = (e: IpcMainEvent, request: WindowingEnterFullscreenRequest): void => {
+    const onEnterFullscreenRequest = (event: IpcMainEvent, request: WindowingEnterFullscreenRequest): void => {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
@@ -521,12 +531,13 @@ export class WindowingManager {
           throw new Error('Invalid request.')
         }
 
-        const sourceWindow = this.resolveSourceWindow(e)
+        const sourceWindow = this.resolveSourceWindow(event)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
+
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -537,7 +548,7 @@ export class WindowingManager {
       }
     }
 
-    const onWindowingExitFullscreenRequested = (e: IpcMainEvent, request: WindowingExitFullscreenRequest): void => {
+    const onExitFullscreenRequest = (event: IpcMainEvent, request: WindowingExitFullscreenRequest): void => {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
@@ -547,12 +558,13 @@ export class WindowingManager {
           throw new Error('Invalid request.')
         }
 
-        const sourceWindow = this.resolveSourceWindow(e)
+        const sourceWindow = this.resolveSourceWindow(event)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
+
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -563,7 +575,7 @@ export class WindowingManager {
       }
     }
 
-    const handleWindowingStateRequested = (e: IpcMainInvokeEvent, request: WindowingGetStateRequest): WindowingGetStateResponse => {
+    const handleGetStateRequest = (event: IpcMainInvokeEvent, request: WindowingGetStateRequest): WindowingGetStateResponse => {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
@@ -573,60 +585,63 @@ export class WindowingManager {
           throw new Error('Invalid request.')
         }
 
-        const sourceWindow = this.resolveSourceWindow(e)
+        const sourceWindow = this.resolveSourceWindow(event)
         if (!sourceWindow) {
           throw new Error('Invalid window source.')
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
+
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
 
         const state = this.getWindowState(targetWindow)
+
         return {
           state: state
         }
       } catch (error) {
         this.logError(`Failed to get window state, targetId=${request?.targetId}.`, error)
+
         return {
           state: null
         }
       }
     }
 
-    ipcMain.handle(windowingIpcMessage.OPEN, handleWindowingOpenRequested)
-    ipcMain.on(windowingIpcMessage.READY, onWindowingReady)
-    ipcMain.on(windowingIpcMessage.UPDATE, onWindowingUpdateRequested)
-    ipcMain.on(windowingIpcMessage.EVENT, onWindowingEventRequested)
-    ipcMain.on(windowingIpcMessage.CLOSE, onWindowingCloseRequested)
-    ipcMain.on(windowingIpcMessage.ACTIVATE, onWindowingActivateRequested)
-    ipcMain.on(windowingIpcMessage.MINIMIZE, onWindowingMinimizeRequested)
-    ipcMain.on(windowingIpcMessage.MAXIMIZE, onWindowingMaximizeRequested)
-    ipcMain.on(windowingIpcMessage.RESTORE, onWindowingRestoreRequested)
-    ipcMain.on(windowingIpcMessage.RESIZE, onWindowingResizeRequested)
-    ipcMain.on(windowingIpcMessage.MOVE, onWindowingMoveRequested)
-    ipcMain.on(windowingIpcMessage.TOPMOST, onWindowingTopmostRequested)
-    ipcMain.on(windowingIpcMessage.ENTER_FULLSCREEN, onWindowingEnterFullscreenRequested)
-    ipcMain.on(windowingIpcMessage.EXIT_FULLSCREEN, onWindowingExitFullscreenRequested)
-    ipcMain.handle(windowingIpcMessage.GET_WINDOW_STATE, handleWindowingStateRequested)
+    ipcMain.handle(windowingIpcChannels.OPEN, handleOpenRequest)
+    ipcMain.on(windowingIpcChannels.READY, onReadyNotification)
+    ipcMain.on(windowingIpcChannels.UPDATE, onUpdateRequest)
+    ipcMain.on(windowingIpcChannels.EVENT, onEventRequest)
+    ipcMain.on(windowingIpcChannels.CLOSE, onCloseRequest)
+    ipcMain.on(windowingIpcChannels.ACTIVATE, onActivateRequest)
+    ipcMain.on(windowingIpcChannels.MINIMIZE, onMinimizeRequest)
+    ipcMain.on(windowingIpcChannels.MAXIMIZE, onMaximizeRequest)
+    ipcMain.on(windowingIpcChannels.RESTORE, onRestoreRequest)
+    ipcMain.on(windowingIpcChannels.RESIZE, onResizeRequest)
+    ipcMain.on(windowingIpcChannels.MOVE, onMoveRequest)
+    ipcMain.on(windowingIpcChannels.TOPMOST, onTopmostRequest)
+    ipcMain.on(windowingIpcChannels.ENTER_FULLSCREEN, onEnterFullscreenRequest)
+    ipcMain.on(windowingIpcChannels.EXIT_FULLSCREEN, onExitFullscreenRequest)
+    ipcMain.handle(windowingIpcChannels.GET_WINDOW_STATE, handleGetStateRequest)
 
     return (): void => {
-      ipcMain.removeHandler(windowingIpcMessage.OPEN)
-      ipcMain.removeListener(windowingIpcMessage.READY, onWindowingReady)
-      ipcMain.removeListener(windowingIpcMessage.UPDATE, onWindowingUpdateRequested)
-      ipcMain.removeListener(windowingIpcMessage.EVENT, onWindowingEventRequested)
-      ipcMain.removeListener(windowingIpcMessage.CLOSE, onWindowingCloseRequested)
-      ipcMain.removeListener(windowingIpcMessage.ACTIVATE, onWindowingActivateRequested)
-      ipcMain.removeListener(windowingIpcMessage.MINIMIZE, onWindowingMinimizeRequested)
-      ipcMain.removeListener(windowingIpcMessage.MAXIMIZE, onWindowingMaximizeRequested)
-      ipcMain.removeListener(windowingIpcMessage.RESTORE, onWindowingRestoreRequested)
-      ipcMain.removeListener(windowingIpcMessage.RESIZE, onWindowingResizeRequested)
-      ipcMain.removeListener(windowingIpcMessage.MOVE, onWindowingMoveRequested)
-      ipcMain.removeListener(windowingIpcMessage.TOPMOST, onWindowingTopmostRequested)
-      ipcMain.removeListener(windowingIpcMessage.ENTER_FULLSCREEN, onWindowingEnterFullscreenRequested)
-      ipcMain.removeListener(windowingIpcMessage.EXIT_FULLSCREEN, onWindowingExitFullscreenRequested)
-      ipcMain.removeHandler(windowingIpcMessage.GET_WINDOW_STATE)
+      ipcMain.removeHandler(windowingIpcChannels.OPEN)
+      ipcMain.removeListener(windowingIpcChannels.READY, onReadyNotification)
+      ipcMain.removeListener(windowingIpcChannels.UPDATE, onUpdateRequest)
+      ipcMain.removeListener(windowingIpcChannels.EVENT, onEventRequest)
+      ipcMain.removeListener(windowingIpcChannels.CLOSE, onCloseRequest)
+      ipcMain.removeListener(windowingIpcChannels.ACTIVATE, onActivateRequest)
+      ipcMain.removeListener(windowingIpcChannels.MINIMIZE, onMinimizeRequest)
+      ipcMain.removeListener(windowingIpcChannels.MAXIMIZE, onMaximizeRequest)
+      ipcMain.removeListener(windowingIpcChannels.RESTORE, onRestoreRequest)
+      ipcMain.removeListener(windowingIpcChannels.RESIZE, onResizeRequest)
+      ipcMain.removeListener(windowingIpcChannels.MOVE, onMoveRequest)
+      ipcMain.removeListener(windowingIpcChannels.TOPMOST, onTopmostRequest)
+      ipcMain.removeListener(windowingIpcChannels.ENTER_FULLSCREEN, onEnterFullscreenRequest)
+      ipcMain.removeListener(windowingIpcChannels.EXIT_FULLSCREEN, onExitFullscreenRequest)
+      ipcMain.removeHandler(windowingIpcChannels.GET_WINDOW_STATE)
     }
   }
 
@@ -641,14 +656,15 @@ export class WindowingManager {
       try {
         this.logInfo(`Window closed, id=${windowId}.`)
 
-        const pending = this.pendingWindowOpenRequests.get(windowId)
-        if (pending) {
+        const pendingRequest = this.pendingWindowOpenRequests.get(windowId)
+
+        if (pendingRequest) {
           this.pendingWindowOpenRequests.delete(windowId)
-          clearTimeout(pending.timer)
-          pending.reject(new Error(`Window (${windowId}) was closed before ready.`))
+          clearTimeout(pendingRequest.timer)
+          pendingRequest.reject(new Error(`Window (${windowId}) was closed before ready.`))
         }
 
-        const isWindowWaitingReady: boolean = !!pending
+        const isWindowWaitingReady: boolean = !!pendingRequest
 
         const record = this.managedWindows.get(windowId)
         if (!record) {
@@ -667,17 +683,18 @@ export class WindowingManager {
           return
         }
 
-        const notice: WindowingClosedNotice = {
+        const notification: WindowingClosedNotification = {
           id: windowId
         }
 
-        this.sendToWindow(this.resolveTargetWindow(record.openerId), windowingIpcMessage.WINDOW_CLOSED, notice)
+        this.sendToWindow(this.resolveTargetWindow(record.openerId), windowingIpcChannels.WINDOW_CLOSED, notification)
       } catch (error) {
         this.logError(`Failed to handle window closed, id=${windowId}.`, error)
       }
     }
 
     win.once('closed', onClosed)
+
     return (): void => {
       win.removeListener('closed', onClosed)
     }
@@ -699,11 +716,11 @@ export class WindowingManager {
           return
         }
 
-        const notice: WindowingStateChangedNotice = {
-          state
+        const notification: WindowingStateChangedNotification = {
+          state: state
         }
 
-        this.sendToWindow(win, windowingIpcMessage.WINDOW_STATE_CHANGED, notice)
+        this.sendToWindow(win, windowingIpcChannels.WINDOW_STATE_CHANGED, notification)
       } catch (error) {
         this.logError(`Failed to handle window state changed, id=${win.id}.`, error)
       }
@@ -740,8 +757,8 @@ export class WindowingManager {
     }
   }
 
-  private resolveSourceWindow(e: IpcMainEvent | IpcMainInvokeEvent): BrowserWindow | undefined {
-    const window = BrowserWindow.fromWebContents(e.sender)
+  private resolveSourceWindow(event: IpcMainEvent | IpcMainInvokeEvent): BrowserWindow | undefined {
+    const window = BrowserWindow.fromWebContents(event.sender)
 
     if (!window || window.isDestroyed()) {
       return undefined
@@ -773,7 +790,7 @@ export class WindowingManager {
     return window
   }
 
-  private sendToWindow(win: BrowserWindow | null | undefined, channel: WindowingIpcMessageType, payload: unknown): void {
+  private sendToWindow(win: BrowserWindow | null | undefined, channel: WindowingIpcChannel, payload: unknown): void {
     try {
       if (!win || win.isDestroyed() || win.webContents.isDestroyed()) {
         throw new Error('Invalid window.')
@@ -790,6 +807,7 @@ export class WindowingManager {
 
     if (request.parentId !== null) {
       const parentId: number = request.parentId === undefined ? openerId : request.parentId
+
       parentWindow = this.resolveTargetWindow(parentId)
 
       if (!parentWindow || parentWindow.isDestroyed()) {
@@ -818,7 +836,10 @@ export class WindowingManager {
       titleBarStyle: 'hidden',
       titleBarOverlay: false,
       icon: icon,
-      trafficLightPosition: { x: 16, y: 16 },
+      trafficLightPosition: {
+        x: 16,
+        y: 16
+      },
       skipTaskbar: request.skipTaskbar ?? false,
       resizable: request.resizable ?? false,
       alwaysOnTop: request.alwaysOnTop ?? false,
@@ -834,7 +855,10 @@ export class WindowingManager {
 
     window.webContents.setWindowOpenHandler((details) => {
       shell.openExternal(details.url)
-      return { action: 'deny' }
+
+      return {
+        action: 'deny'
+      }
     })
 
     return window
@@ -847,12 +871,17 @@ export class WindowingManager {
 
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
       const url = new URL(`${process.env['ELECTRON_RENDERER_URL']}/base.html`)
+
       url.searchParams.set('type', 'windowing-host')
       url.searchParams.set('os', process.platform)
+
       await window.loadURL(url.toString())
     } else {
       await window.loadFile(join(__dirname, '../renderer/base.html'), {
-        query: { type: 'windowing-host', os: process.platform }
+        query: {
+          type: 'windowing-host',
+          os: process.platform
+        }
       })
     }
   }
@@ -866,9 +895,12 @@ export class WindowingManager {
 
     let removeWindowClosedListener: (() => void) | undefined
     let removeWindowStateListener: (() => void) | undefined
+
     try {
       this.positionWindow(window, request.position ?? 'center-screen')
+
       removeWindowClosedListener = this.bindWindowClosedListener(window)
+
       removeWindowStateListener = this.bindWindowStateListeners(window)
 
       const windowRecord: ManagedWindowRecord = {
@@ -902,14 +934,16 @@ export class WindowingManager {
 
     const openResult = new Promise<WindowingOpenResponse>((resolve, reject) => {
       const timer = setTimeout(() => {
-        const pending = this.pendingWindowOpenRequests.get(window.id)
-        if (!pending) {
+        const pendingRequest = this.pendingWindowOpenRequests.get(window.id)
+
+        if (!pendingRequest) {
           return
         }
 
         this.pendingWindowOpenRequests.delete(window.id)
 
         const record = this.managedWindows.get(window.id)
+
         if (record) {
           this.managedWindows.delete(window.id)
           record.removeWindowListeners()
@@ -923,7 +957,7 @@ export class WindowingManager {
           }
         }
 
-        pending.reject(new Error(`Window did not become ready in time.`))
+        pendingRequest.reject(new Error('Window did not become ready in time.'))
       }, this.OPEN_READY_TIMEOUT)
 
       const pendingWindowOpenRequest: PendingWindowOpenRequest = {
@@ -937,19 +971,26 @@ export class WindowingManager {
     })
 
     void this.loadBrowserWindow(window).catch((error) => {
-      const pending = this.pendingWindowOpenRequests.get(window.id)
-      if (!pending) {
-        // There is no pending request because another lifecycle handler, such as READY, timeout, close, or dispose,
-        // has already completed this open request and handled the corresponding cleanup.
-        // Return here to avoid cleaning up the same request twice.
+      const pendingRequest = this.pendingWindowOpenRequests.get(window.id)
+
+      if (!pendingRequest) {
+        /*
+         * There is no pending request because another lifecycle handler,
+         * such as the READY notification, timeout, close, or dispose,
+         * has already completed this open request and handled the
+         * corresponding cleanup.
+         *
+         * Return here to avoid cleaning up the same request twice.
+         */
         return
       }
 
       this.pendingWindowOpenRequests.delete(window.id)
-      clearTimeout(pending.timer)
-      pending.reject(error)
+      clearTimeout(pendingRequest.timer)
+      pendingRequest.reject(error)
 
       const record = this.managedWindows.get(window.id)
+
       if (record) {
         this.managedWindows.delete(window.id)
         record.removeWindowListeners()
@@ -979,6 +1020,7 @@ export class WindowingManager {
     if (typeof position === 'object') {
       const x = Math.round(position.x)
       const y = Math.round(position.y)
+
       if (!Number.isFinite(x) || !Number.isFinite(y)) {
         throw new Error(`Invalid window position (${position.x}, ${position.y}).`)
       }
@@ -992,8 +1034,10 @@ export class WindowingManager {
         win.center()
         return
       }
+
       case 'center-parent': {
         const parentWindow = win.getParentWindow()
+
         if (!parentWindow || parentWindow.isDestroyed()) {
           win.center()
           return
@@ -1001,12 +1045,15 @@ export class WindowingManager {
 
         const parentBounds = parentWindow.getBounds()
         const [windowWidth, windowHeight] = win.getSize()
+
         win.setPosition(
           Math.round(parentBounds.x + (parentBounds.width - windowWidth) / 2),
           Math.round(parentBounds.y + (parentBounds.height - windowHeight) / 2)
         )
+
         return
       }
+
       default: {
         throw new Error(`Invalid window position (${String(position)}).`)
       }
@@ -1029,9 +1076,11 @@ export class WindowingManager {
     if (win.isMinimized()) {
       win.restore()
     }
+
     if (!win.isVisible()) {
       win.show()
     }
+
     win.focus()
   }
 
@@ -1051,6 +1100,7 @@ export class WindowingManager {
     if (win.isMinimized()) {
       win.restore()
     }
+
     win.maximize()
   }
 
@@ -1062,9 +1112,11 @@ export class WindowingManager {
     if (win.isMinimized()) {
       win.restore()
     }
+
     if (win.isMaximized()) {
       win.unmaximize()
     }
+
     if (!win.isVisible()) {
       win.show()
     }
@@ -1077,6 +1129,7 @@ export class WindowingManager {
 
     const nextWidth = Math.round(width)
     const nextHeight = Math.round(height)
+
     if (!Number.isFinite(nextWidth) || !Number.isFinite(nextHeight) || nextWidth <= 0 || nextHeight <= 0) {
       throw new Error(`Invalid window size (${width} x ${height}).`)
     }
@@ -1108,6 +1161,7 @@ export class WindowingManager {
     if (win.isMinimized()) {
       win.restore()
     }
+
     win.setFullScreen(true)
   }
 

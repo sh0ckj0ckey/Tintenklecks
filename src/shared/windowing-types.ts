@@ -1,4 +1,4 @@
-export type WindowingIpcMessageType =
+export type WindowingIpcChannel =
   /** Request the main process to create a managed window */
   | 'windowing:open'
 
@@ -137,9 +137,9 @@ export interface WindowingOpenResponse {
  * Notify the main process that the window host is ready
  *
  * The main process resolves the sender window from event.sender,
- * so this notice does not need to include a window id.
+ * so this notification does not need to include a window id.
  */
-export type WindowingReadyNotice = Record<string, never>
+export type WindowingReadyNotification = Record<string, never>
 
 /**
  * Request the main process to update the content component and props of a managed window
@@ -159,9 +159,9 @@ export interface WindowingUpdateRequest {
 }
 
 /**
- * Notice sent from the main process to update a window host
+ * Notification sent from the main process to update a window host
  */
-export interface WindowingUpdateNotice {
+export interface WindowingUpdateNotification {
   /** Component name or path */
   component?: string
 
@@ -183,7 +183,7 @@ export interface WindowingEventRequest<T = unknown> {
   targetId?: WindowId
 
   /** Event name */
-  action: string
+  type: string
 
   /**
    * Event payload.
@@ -193,9 +193,9 @@ export interface WindowingEventRequest<T = unknown> {
 }
 
 /**
- * Notice sent by the main process when a forwarded event is delivered
+ * Notification sent by the main process when a forwarded event is delivered
  */
-export interface WindowingEventNotice<T = unknown> {
+export interface WindowingEventNotification<T = unknown> {
   /**
    * Source window id.
    * When omitted, it means the event came from the opener of the receiving window.
@@ -203,7 +203,7 @@ export interface WindowingEventNotice<T = unknown> {
   fromId?: WindowId
 
   /** Event name */
-  action: string
+  type: string
 
   /**
    * Event payload.
@@ -353,16 +353,16 @@ export interface WindowingGetStateResponse {
 }
 
 /**
- * Notice sent by the main process when a window state changes
+ * Notification sent by the main process when a window state changes
  */
-export interface WindowingStateChangedNotice {
+export interface WindowingStateChangedNotification {
   state: WindowState
 }
 
 /**
- * Notice sent by the main process when one of the windows opened by this window is closed
+ * Notification sent by the main process when one of the windows opened by this window is closed
  */
-export interface WindowingClosedNotice {
+export interface WindowingClosedNotification {
   /** Closed window id */
   id: WindowId
 }

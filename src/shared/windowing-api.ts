@@ -1,11 +1,11 @@
 import type {
   WindowingOpenRequest,
   WindowingOpenResponse,
-  WindowingReadyNotice,
+  WindowingReadyNotification,
   WindowingUpdateRequest,
-  WindowingUpdateNotice,
+  WindowingUpdateNotification,
   WindowingEventRequest,
-  WindowingEventNotice,
+  WindowingEventNotification,
   WindowingCloseRequest,
   WindowingActivateRequest,
   WindowingMinimizeRequest,
@@ -18,8 +18,8 @@ import type {
   WindowingExitFullscreenRequest,
   WindowingGetStateRequest,
   WindowingGetStateResponse,
-  WindowingStateChangedNotice,
-  WindowingClosedNotice
+  WindowingStateChangedNotification,
+  WindowingClosedNotification
 } from './windowing-types'
 
 export type WindowingUnsubscribe = () => void
@@ -27,11 +27,11 @@ export type WindowingUnsubscribe = () => void
 export interface WindowingAPI {
   open(request: WindowingOpenRequest): Promise<WindowingOpenResponse>
 
-  ready(notice: WindowingReadyNotice): void
+  ready(notification: WindowingReadyNotification): void
 
   update(request: WindowingUpdateRequest): void
 
-  event<T = unknown>(request: WindowingEventRequest<T>): void
+  sendEvent<T = unknown>(request: WindowingEventRequest<T>): void
 
   close(request: WindowingCloseRequest): void
 
@@ -55,11 +55,11 @@ export interface WindowingAPI {
 
   getWindowState(request: WindowingGetStateRequest): Promise<WindowingGetStateResponse>
 
-  onUpdate(callback: (notice: WindowingUpdateNotice) => void): WindowingUnsubscribe
+  onUpdate(listener: (notification: WindowingUpdateNotification) => void): WindowingUnsubscribe
 
-  onEvent<T = unknown>(callback: (notice: WindowingEventNotice<T>) => void): WindowingUnsubscribe
+  onEvent<T = unknown>(listener: (notification: WindowingEventNotification<T>) => void): WindowingUnsubscribe
 
-  onStateChanged(callback: (notice: WindowingStateChangedNotice) => void): WindowingUnsubscribe
+  onStateChanged(listener: (notification: WindowingStateChangedNotification) => void): WindowingUnsubscribe
 
-  onClosed(callback: (notice: WindowingClosedNotice) => void): WindowingUnsubscribe
+  onClosed(listener: (notification: WindowingClosedNotification) => void): WindowingUnsubscribe
 }

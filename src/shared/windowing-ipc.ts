@@ -1,6 +1,6 @@
-import type { WindowingIpcMessageType } from './windowing-types'
+import type { WindowingIpcChannel } from './windowing-types'
 
-export const windowingIpcMessage = {
+export const windowingIpcChannels = {
   OPEN: 'windowing:open',
   READY: 'windowing:ready',
   UPDATE: 'windowing:update',
@@ -18,4 +18,4 @@ export const windowingIpcMessage = {
   GET_WINDOW_STATE: 'windowing:get-window-state',
   WINDOW_STATE_CHANGED: 'windowing:window-state-changed',
   WINDOW_CLOSED: 'windowing:window-closed'
-} as const satisfies Record<string, WindowingIpcMessageType>
+} as const satisfies Record<string, WindowingIpcChannel>
