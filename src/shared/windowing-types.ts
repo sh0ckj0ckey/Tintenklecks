@@ -56,7 +56,8 @@ export type WindowingIpcMessageType =
 export type WindowId = number
 
 /**
- * Props passed to a window content component
+ * Props passed to a window content component.
+ * The value must be serializable by Electron IPC.
  */
 export type WindowContentProps = Record<string, unknown>
 
@@ -150,7 +151,10 @@ export interface WindowingUpdateRequest {
   /** Component name or path */
   component?: string
 
-  /** Props passed to the target component */
+  /**
+   * Props passed to the target component.
+   * The props must be serializable by Electron IPC.
+   */
   props?: WindowContentProps
 }
 
@@ -161,7 +165,10 @@ export interface WindowingUpdateNotice {
   /** Component name or path */
   component?: string
 
-  /** Props passed to the target component */
+  /**
+   * Props passed to the target component.
+   * The props must be serializable by Electron IPC.
+   */
   props?: WindowContentProps
 }
 
@@ -178,7 +185,10 @@ export interface WindowingEventRequest<T = unknown> {
   /** Event name */
   action: string
 
-  /** Event payload */
+  /**
+   * Event payload.
+   * The value must be serializable by Electron IPC.
+   */
   payload?: T
 }
 
@@ -195,7 +205,10 @@ export interface WindowingEventNotice<T = unknown> {
   /** Event name */
   action: string
 
-  /** Event payload */
+  /**
+   * Event payload.
+   * The value must be serializable by Electron IPC.
+   */
   payload?: T
 }
 
