@@ -41,7 +41,7 @@ export type WindowingIpcChannel =
   /** Request the main process to exit fullscreen for a window */
   | 'windowing:exit-fullscreen'
 
-  /** Request the main process to query a window state */
+  /** Request the main process to retrieve the current state of a window */
   | 'windowing:get-window-state'
 
   /** Notify a window that its state has changed */
@@ -134,7 +134,7 @@ export interface WindowingOpenResponse {
 }
 
 /**
- * Notify the main process that the window host is ready
+ * Notify the main process that the window host is ready.
  *
  * The main process resolves the sender window from event.sender,
  * so this notification does not need to include a window id.
@@ -335,7 +335,7 @@ export interface WindowingExitFullscreenRequest {
 }
 
 /**
- * Request the main process to query a window state
+ * Request the current state of a window from the main process
  */
 export interface WindowingGetStateRequest {
   /**
@@ -346,7 +346,7 @@ export interface WindowingGetStateRequest {
 }
 
 /**
- * Response returned by a window state query
+ * Response containing the requested window state
  */
 export interface WindowingGetStateResponse {
   state: WindowState | null
