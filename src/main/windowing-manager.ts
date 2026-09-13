@@ -3,13 +3,12 @@ import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import { windowingIpcChannels } from '../shared/windowing-ipc'
 import type {
+  WindowingIpcChannel,
   WindowId,
   WindowPosition,
   WindowState,
-  WindowingIpcChannel,
   WindowingOpenRequest,
   WindowingOpenResponse,
-  WindowingReadyNotification,
   WindowingUpdateRequest,
   WindowingUpdateNotification,
   WindowingEventRequest,
@@ -112,7 +111,6 @@ export class WindowingManager {
 
     const records = Array.from(this.managedWindows.values())
     this.managedWindows.clear()
-
     records.forEach((record) => {
       try {
         record.removeWindowListeners()
@@ -159,7 +157,7 @@ export class WindowingManager {
       }
     }
 
-    const onReadyNotification = (event: IpcMainEvent, _notification: WindowingReadyNotification): void => {
+    const onReadyNotification = (event: IpcMainEvent): void => {
       try {
         if (this.disposed) {
           throw new Error('WindowingManager has been disposed.')
@@ -321,7 +319,6 @@ export class WindowingManager {
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
-
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -348,7 +345,6 @@ export class WindowingManager {
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
-
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -375,7 +371,6 @@ export class WindowingManager {
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
-
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -402,7 +397,6 @@ export class WindowingManager {
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
-
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -429,7 +423,6 @@ export class WindowingManager {
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
-
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -456,7 +449,6 @@ export class WindowingManager {
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
-
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -483,7 +475,6 @@ export class WindowingManager {
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
-
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -510,7 +501,6 @@ export class WindowingManager {
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
-
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -537,7 +527,6 @@ export class WindowingManager {
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
-
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -564,7 +553,6 @@ export class WindowingManager {
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
-
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
@@ -591,19 +579,17 @@ export class WindowingManager {
         }
 
         const targetWindow = request.targetId === undefined ? sourceWindow : this.resolveTargetWindow(request.targetId)
-
         if (!targetWindow) {
           throw new Error('Invalid window target.')
         }
 
-        const state = this.getWindowState(targetWindow)
+        const state: WindowState = this.getWindowState(targetWindow)
 
         return {
           state: state
         }
       } catch (error) {
         this.logError(`Failed to get window state, targetId=${request?.targetId}.`, error)
-
         return {
           state: null
         }
@@ -657,7 +643,6 @@ export class WindowingManager {
         this.logInfo(`Window closed, id=${windowId}.`)
 
         const pendingRequest = this.pendingWindowOpenRequests.get(windowId)
-
         if (pendingRequest) {
           this.pendingWindowOpenRequests.delete(windowId)
           clearTimeout(pendingRequest.timer)
@@ -781,8 +766,8 @@ export class WindowingManager {
     }
 
     const record = this.managedWindows.get(targetId)
-    const window = record?.window
 
+    const window = record?.window
     if (!window || window.isDestroyed()) {
       return undefined
     }
@@ -809,7 +794,6 @@ export class WindowingManager {
       const parentId: number = request.parentId === undefined ? openerId : request.parentId
 
       parentWindow = this.resolveTargetWindow(parentId)
-
       if (!parentWindow || parentWindow.isDestroyed()) {
         throw new Error(`Parent window (${parentId}) does not exist.`)
       }
@@ -821,7 +805,6 @@ export class WindowingManager {
 
     const width = Math.round(request.width ?? this.DEFAULT_WINDOW_WIDTH)
     const height = Math.round(request.height ?? this.DEFAULT_WINDOW_HEIGHT)
-
     if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
       throw new Error(`Invalid window size (${request.width} x ${request.height}).`)
     }
@@ -836,10 +819,7 @@ export class WindowingManager {
       titleBarStyle: 'hidden',
       titleBarOverlay: false,
       icon: icon,
-      trafficLightPosition: {
-        x: 16,
-        y: 16
-      },
+      trafficLightPosition: { x: 16, y: 16 },
       skipTaskbar: request.skipTaskbar ?? false,
       resizable: request.resizable ?? false,
       alwaysOnTop: request.alwaysOnTop ?? false,
@@ -855,10 +835,7 @@ export class WindowingManager {
 
     window.webContents.setWindowOpenHandler((details) => {
       shell.openExternal(details.url)
-
-      return {
-        action: 'deny'
-      }
+      return { action: 'deny' }
     })
 
     return window
@@ -871,17 +848,12 @@ export class WindowingManager {
 
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
       const url = new URL(`${process.env['ELECTRON_RENDERER_URL']}/base.html`)
-
       url.searchParams.set('type', 'windowing-host')
       url.searchParams.set('os', process.platform)
-
       await window.loadURL(url.toString())
     } else {
       await window.loadFile(join(__dirname, '../renderer/base.html'), {
-        query: {
-          type: 'windowing-host',
-          os: process.platform
-        }
+        query: { type: 'windowing-host', os: process.platform }
       })
     }
   }
@@ -895,12 +867,9 @@ export class WindowingManager {
 
     let removeWindowClosedListener: (() => void) | undefined
     let removeWindowStateListener: (() => void) | undefined
-
     try {
       this.positionWindow(window, request.position ?? 'center-screen')
-
       removeWindowClosedListener = this.bindWindowClosedListener(window)
-
       removeWindowStateListener = this.bindWindowStateListeners(window)
 
       const windowRecord: ManagedWindowRecord = {
@@ -935,7 +904,6 @@ export class WindowingManager {
     const openResult = new Promise<WindowingOpenResponse>((resolve, reject) => {
       const timer = setTimeout(() => {
         const pendingRequest = this.pendingWindowOpenRequests.get(window.id)
-
         if (!pendingRequest) {
           return
         }
@@ -943,7 +911,6 @@ export class WindowingManager {
         this.pendingWindowOpenRequests.delete(window.id)
 
         const record = this.managedWindows.get(window.id)
-
         if (record) {
           this.managedWindows.delete(window.id)
           record.removeWindowListeners()
@@ -977,8 +944,7 @@ export class WindowingManager {
         /*
          * There is no pending request because another lifecycle handler,
          * such as the READY notification, timeout, close, or dispose,
-         * has already completed this open request and handled the
-         * corresponding cleanup.
+         * has already completed this open request and handled the corresponding cleanup.
          *
          * Return here to avoid cleaning up the same request twice.
          */
@@ -990,7 +956,6 @@ export class WindowingManager {
       pendingRequest.reject(error)
 
       const record = this.managedWindows.get(window.id)
-
       if (record) {
         this.managedWindows.delete(window.id)
         record.removeWindowListeners()
@@ -1020,7 +985,6 @@ export class WindowingManager {
     if (typeof position === 'object') {
       const x = Math.round(position.x)
       const y = Math.round(position.y)
-
       if (!Number.isFinite(x) || !Number.isFinite(y)) {
         throw new Error(`Invalid window position (${position.x}, ${position.y}).`)
       }
@@ -1034,10 +998,8 @@ export class WindowingManager {
         win.center()
         return
       }
-
       case 'center-parent': {
         const parentWindow = win.getParentWindow()
-
         if (!parentWindow || parentWindow.isDestroyed()) {
           win.center()
           return
@@ -1045,15 +1007,12 @@ export class WindowingManager {
 
         const parentBounds = parentWindow.getBounds()
         const [windowWidth, windowHeight] = win.getSize()
-
         win.setPosition(
           Math.round(parentBounds.x + (parentBounds.width - windowWidth) / 2),
           Math.round(parentBounds.y + (parentBounds.height - windowHeight) / 2)
         )
-
         return
       }
-
       default: {
         throw new Error(`Invalid window position (${String(position)}).`)
       }
@@ -1076,11 +1035,9 @@ export class WindowingManager {
     if (win.isMinimized()) {
       win.restore()
     }
-
     if (!win.isVisible()) {
       win.show()
     }
-
     win.focus()
   }
 
@@ -1100,7 +1057,6 @@ export class WindowingManager {
     if (win.isMinimized()) {
       win.restore()
     }
-
     win.maximize()
   }
 
@@ -1112,11 +1068,9 @@ export class WindowingManager {
     if (win.isMinimized()) {
       win.restore()
     }
-
     if (win.isMaximized()) {
       win.unmaximize()
     }
-
     if (!win.isVisible()) {
       win.show()
     }
@@ -1129,7 +1083,6 @@ export class WindowingManager {
 
     const nextWidth = Math.round(width)
     const nextHeight = Math.round(height)
-
     if (!Number.isFinite(nextWidth) || !Number.isFinite(nextHeight) || nextWidth <= 0 || nextHeight <= 0) {
       throw new Error(`Invalid window size (${width} x ${height}).`)
     }
@@ -1161,7 +1114,6 @@ export class WindowingManager {
     if (win.isMinimized()) {
       win.restore()
     }
-
     win.setFullScreen(true)
   }
 
