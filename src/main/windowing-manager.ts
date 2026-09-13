@@ -1,4 +1,4 @@
-import { shell, BrowserWindow, ipcMain, type IpcMainEvent, type IpcMainInvokeEvent } from 'electron'
+import { BrowserWindow, ipcMain, shell, type IpcMainEvent, type IpcMainInvokeEvent } from 'electron'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import { windowingIpcChannels } from '../shared/windowing-ipc'
@@ -44,7 +44,7 @@ interface PendingWindowOpenRequest {
 }
 
 export class WindowingManager {
-  private readonly OPEN_READY_TIMEOUT = 30000
+  private readonly OPEN_READY_TIMEOUT_MS = 30_000
   private readonly DEFAULT_WINDOW_WIDTH = 720
   private readonly DEFAULT_WINDOW_HEIGHT = 480
 
@@ -66,23 +66,23 @@ export class WindowingManager {
     this.mainWindow = mainWindow
 
     let removeMainWindowClosedListener: (() => void) | undefined
-    let removeMainWindowStateListener: (() => void) | undefined
+    let removeMainWindowStateListeners: (() => void) | undefined
     let removeIpcListeners: (() => void) | undefined
 
     try {
       removeMainWindowClosedListener = this.bindWindowClosedListener(this.mainWindow)
-      removeMainWindowStateListener = this.bindWindowStateListeners(this.mainWindow)
+      removeMainWindowStateListeners = this.bindWindowStateListeners(this.mainWindow)
       removeIpcListeners = this.initIpcListeners()
     } catch (error) {
       removeMainWindowClosedListener?.()
-      removeMainWindowStateListener?.()
+      removeMainWindowStateListeners?.()
       removeIpcListeners?.()
       throw error
     }
 
     this.removeManagerListeners = () => {
       removeMainWindowClosedListener()
-      removeMainWindowStateListener()
+      removeMainWindowStateListeners()
       removeIpcListeners()
     }
 
@@ -533,7 +533,7 @@ export class WindowingManager {
 
         this.enterFullscreenWindow(targetWindow)
       } catch (error) {
-        this.logError(`Failed to enter fullscreen window, targetId=${request?.targetId}.`, error)
+        this.logError(`Failed to make window enter fullscreen, targetId=${request?.targetId}.`, error)
       }
     }
 
@@ -559,7 +559,7 @@ export class WindowingManager {
 
         this.exitFullscreenWindow(targetWindow)
       } catch (error) {
-        this.logError(`Failed to exit fullscreen window, targetId=${request?.targetId}.`, error)
+        this.logError(`Failed to make window exit fullscreen, targetId=${request?.targetId}.`, error)
       }
     }
 
@@ -661,7 +661,7 @@ export class WindowingManager {
         try {
           record.removeWindowListeners()
         } catch (error) {
-          this.logError(`Failed to remove window listeners after window closed, id=${record.window.id}.`, error)
+          this.logError(`Failed to remove window listeners after the window closed, id=${record.window.id}.`, error)
         }
 
         if (isWindowWaitingReady) {
@@ -674,7 +674,7 @@ export class WindowingManager {
 
         this.sendToWindow(this.resolveTargetWindow(record.openerId), windowingIpcChannels.WINDOW_CLOSED, notification)
       } catch (error) {
-        this.logError(`Failed to handle window closed, id=${windowId}.`, error)
+        this.logError(`Failed to handle window closure, id=${windowId}.`, error)
       }
     }
 
@@ -707,7 +707,7 @@ export class WindowingManager {
 
         this.sendToWindow(win, windowingIpcChannels.WINDOW_STATE_CHANGED, notification)
       } catch (error) {
-        this.logError(`Failed to handle window state changed, id=${win.id}.`, error)
+        this.logError(`Failed to handle window state change, id=${win.id}.`, error)
       }
     }
 
@@ -866,18 +866,18 @@ export class WindowingManager {
     const window = this.createBrowserWindow(openerId, request)
 
     let removeWindowClosedListener: (() => void) | undefined
-    let removeWindowStateListener: (() => void) | undefined
+    let removeWindowStateListeners: (() => void) | undefined
     try {
       this.positionWindow(window, request.position ?? 'center-screen')
       removeWindowClosedListener = this.bindWindowClosedListener(window)
-      removeWindowStateListener = this.bindWindowStateListeners(window)
+      removeWindowStateListeners = this.bindWindowStateListeners(window)
 
       const windowRecord: ManagedWindowRecord = {
         window: window,
         openerId: openerId,
         removeWindowListeners: () => {
           removeWindowClosedListener?.()
-          removeWindowStateListener?.()
+          removeWindowStateListeners?.()
         }
       }
 
@@ -886,7 +886,7 @@ export class WindowingManager {
       this.managedWindows.delete(window.id)
 
       removeWindowClosedListener?.()
-      removeWindowStateListener?.()
+      removeWindowStateListeners?.()
 
       try {
         if (!window.isDestroyed()) {
@@ -925,7 +925,7 @@ export class WindowingManager {
         }
 
         pendingRequest.reject(new Error('Window did not become ready in time.'))
-      }, this.OPEN_READY_TIMEOUT)
+      }, this.OPEN_READY_TIMEOUT_MS)
 
       const pendingWindowOpenRequest: PendingWindowOpenRequest = {
         resolve: resolve,
@@ -943,7 +943,7 @@ export class WindowingManager {
       if (!pendingRequest) {
         /*
          * There is no pending request because another lifecycle handler,
-         * such as the READY notification, timeout, close, or dispose,
+         * such as a ready notification, timeout, close, or disposal,
          * has already completed this open request and handled the corresponding cleanup.
          *
          * Return here to avoid cleaning up the same request twice.

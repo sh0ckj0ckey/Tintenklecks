@@ -28,7 +28,7 @@ export interface UseWindowingHostReturn {
   exitFullscreen(): void
 }
 
-/**
+/*
  * Renderer-level window state.
  */
 
@@ -41,31 +41,31 @@ const isVisible = computed<boolean>(() => windowState.value?.visible ?? false)
 const isTopmost = computed<boolean>(() => windowState.value?.alwaysOnTop ?? false)
 const isFocused = computed<boolean>(() => windowState.value?.focused ?? false)
 
-/**
+/*
  * Renderer-level event dispatcher.
  */
 
 const eventDispatcher = new EventTarget()
 
-/**
+/*
  * Renderer-level IPC listeners.
  *
  * These listeners intentionally follow the entire renderer lifecycle.
  */
 
-window.windowingAPI.onStateChanged((message) => {
-  windowState.value = message.state
+window.windowingAPI.onStateChanged((notification) => {
+  windowState.value = notification.state
 })
 
-window.windowingAPI.onEvent<unknown>((message) => {
-  const event = new CustomEvent<unknown>(message.type, {
-    detail: message.payload
+window.windowingAPI.onEvent<unknown>((notification) => {
+  const event = new CustomEvent<unknown>(notification.type, {
+    detail: notification.payload
   })
 
   eventDispatcher.dispatchEvent(event)
 })
 
-/**
+/*
  * Renderer-level initialization.
  */
 
@@ -85,7 +85,7 @@ const updateWindowState = async (): Promise<void> => {
 // Start the initial query only after the state listener has been registered.
 void updateWindowState()
 
-/**
+/*
  * Stateless window commands.
  */
 
@@ -135,13 +135,14 @@ const exitFullscreen = (): void => {
 
 export function useWindowingHost(): UseWindowingHostReturn {
   /**
-   * All EventTarget listeners registered by this composable scope
+   * All `EventTarget` listeners registered by this composable scope
    * share this signal and are removed together when the scope is disposed.
    */
   const eventAbortController = new AbortController()
 
   const onEvent = <T = unknown>(type: string, handler: EventHandler<T>): Unsubscribe => {
     const eventListener: EventListener = (event: Event): void => {
+      // `T` is a caller-provided compile-time contract and is not validated at runtime.
       const customEvent = event as CustomEvent<T | undefined>
       handler(customEvent.detail)
     }

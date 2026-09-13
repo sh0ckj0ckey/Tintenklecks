@@ -64,14 +64,14 @@ export type WindowContentProps = Record<string, unknown>
 /**
  * Window position target.
  *
- * - 'center-screen': center on the screen work area.
- * - 'center-parent': center relative to the parent window; falls back to screen center if no parent exists.
- * - { x, y }: absolute top-left position in screen coordinates.
+ * - `center-screen`: center in the screen work area.
+ * - `center-parent`: center relative to the parent window; falls back to the screen center if no parent exists.
+ * - `{ x, y }`: absolute top-left position in screen coordinates, measured in device-independent pixels.
  */
 export type WindowPosition = 'center-screen' | 'center-parent' | { x: number; y: number }
 
 /**
- * Window bounds.
+ * Window bounds in screen coordinates, measured in device-independent pixels.
  */
 export interface WindowBounds {
   x: number
@@ -98,12 +98,12 @@ export interface WindowState {
  */
 export interface WindowingOpenRequest {
   /**
-   * Window width, default is `720px`.
+   * Window width in device-independent pixels, default is `720`.
    */
   width?: number
 
   /**
-   * Window height, default is `480px`.
+   * Window height in device-independent pixels, default is `480`.
    */
   height?: number
 
@@ -144,7 +144,7 @@ export interface WindowingOpenRequest {
 }
 
 /**
- * Result returned after the managed window is created and ready.
+ * Response returned after the managed window is created and ready.
  */
 export interface WindowingOpenResponse {
   /**
@@ -154,7 +154,7 @@ export interface WindowingOpenResponse {
 }
 
 /**
- * Notify the main process that the window host is ready.
+ * Notification sent to the main process when the window host is ready.
  *
  * The main process resolves the sender window from `event.sender`,
  * so this notification does not need to include a window ID.
@@ -183,7 +183,7 @@ export interface WindowingUpdateRequest {
 }
 
 /**
- * Notification sent from the main process to update a window host.
+ * Notification sent by the main process to update a window host.
  */
 export interface WindowingUpdateNotification {
   /**
@@ -205,6 +205,7 @@ export interface WindowingEventRequest<T = unknown> {
   /**
    * Target window ID.
    * When omitted, the event is sent to the opener of the source window.
+   * The source window must therefore have an opener.
    */
   targetId?: WindowId
 
@@ -226,7 +227,7 @@ export interface WindowingEventRequest<T = unknown> {
 export interface WindowingEventNotification<T = unknown> {
   /**
    * Source window ID.
-   * When omitted, it means the event came from the opener of the receiving window.
+   * When omitted, the event was sent by the opener of the receiving window.
    */
   fromId?: WindowId
 
@@ -308,12 +309,12 @@ export interface WindowingResizeRequest {
   targetId?: WindowId
 
   /**
-   * Target width.
+   * Target width in device-independent pixels.
    */
   width: number
 
   /**
-   * Target height.
+   * Target height in device-independent pixels.
    */
   height: number
 }
@@ -407,6 +408,8 @@ export interface WindowingStateChangedNotification {
  * Notification sent by the main process when one of the windows opened by this window is closed.
  */
 export interface WindowingClosedNotification {
-  /** Closed window ID */
+  /**
+   * Closed window ID.
+   */
   id: WindowId
 }
