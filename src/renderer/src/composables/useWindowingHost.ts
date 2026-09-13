@@ -14,8 +14,8 @@ export interface UseWindowingHostReturn {
   isVisible: ComputedRef<boolean>
   isTopmost: ComputedRef<boolean>
   isFocused: ComputedRef<boolean>
-  onEvent<T = unknown>(action: string, handler: EventHandler<T>): Unsubscribe
-  emitEvent<T = unknown>(action: string, payload?: T): void
+  onEvent<T = unknown>(type: string, handler: EventHandler<T>): Unsubscribe
+  emitEvent<T = unknown>(type: string, payload?: T): void
   close(): void
   activate(): void
   minimize(): void
@@ -29,7 +29,7 @@ export interface UseWindowingHostReturn {
 }
 
 /**
- * Renderer-level window state
+ * Renderer-level window state.
  */
 
 const windowState = ref<WindowState | null>(null)
@@ -42,13 +42,13 @@ const isTopmost = computed<boolean>(() => windowState.value?.alwaysOnTop ?? fals
 const isFocused = computed<boolean>(() => windowState.value?.focused ?? false)
 
 /**
- * Renderer-level event dispatcher
+ * Renderer-level event dispatcher.
  */
 
 const eventDispatcher = new EventTarget()
 
 /**
- * Renderer-level IPC listeners
+ * Renderer-level IPC listeners.
  *
  * These listeners intentionally follow the entire renderer lifecycle.
  */
@@ -66,7 +66,7 @@ window.windowingAPI.onEvent<unknown>((message) => {
 })
 
 /**
- * Renderer-level initialization
+ * Renderer-level initialization.
  */
 
 const updateWindowState = async (): Promise<void> => {
@@ -86,11 +86,11 @@ const updateWindowState = async (): Promise<void> => {
 void updateWindowState()
 
 /**
- * Stateless window commands
+ * Stateless window commands.
  */
 
-const emitEvent = <T = unknown>(action: string, payload?: T): void => {
-  window.windowingAPI.event<T>({ type: action, payload })
+const emitEvent = <T = unknown>(type: string, payload?: T): void => {
+  window.windowingAPI.sendEvent<T>({ type, payload })
 }
 
 const close = (): void => {
@@ -140,18 +140,18 @@ export function useWindowingHost(): UseWindowingHostReturn {
    */
   const eventAbortController = new AbortController()
 
-  const onEvent = <T = unknown>(action: string, handler: EventHandler<T>): Unsubscribe => {
+  const onEvent = <T = unknown>(type: string, handler: EventHandler<T>): Unsubscribe => {
     const eventListener: EventListener = (event: Event): void => {
       const customEvent = event as CustomEvent<T | undefined>
       handler(customEvent.detail)
     }
 
-    eventDispatcher.addEventListener(action, eventListener, {
+    eventDispatcher.addEventListener(type, eventListener, {
       signal: eventAbortController.signal
     })
 
     const unsubscribe = (): void => {
-      eventDispatcher.removeEventListener(action, eventListener)
+      eventDispatcher.removeEventListener(type, eventListener)
     }
 
     return unsubscribe

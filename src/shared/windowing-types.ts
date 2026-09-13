@@ -1,57 +1,57 @@
 export type WindowingIpcChannel =
-  /** Request the main process to create a managed window */
+  /** Request the main process to create a managed window. */
   | 'windowing:open'
 
-  /** Notify the main process that the window host is ready */
+  /** Notify the main process that the window host is ready. */
   | 'windowing:ready'
 
-  /** Request the main process to update the content component and props of a managed window */
+  /** Request the main process to update the content component and props of a managed window. */
   | 'windowing:update'
 
-  /** Request the main process to forward an event to a window */
+  /** Request the main process to forward an event to a window. */
   | 'windowing:event'
 
-  /** Request the main process to close a window */
+  /** Request the main process to close a window. */
   | 'windowing:close'
 
-  /** Request the main process to activate a window */
+  /** Request the main process to activate a window. */
   | 'windowing:activate'
 
-  /** Request the main process to minimize a window */
+  /** Request the main process to minimize a window. */
   | 'windowing:minimize'
 
-  /** Request the main process to maximize a window */
+  /** Request the main process to maximize a window. */
   | 'windowing:maximize'
 
-  /** Request the main process to restore a window */
+  /** Request the main process to restore a window. */
   | 'windowing:restore'
 
-  /** Request the main process to resize a window */
+  /** Request the main process to resize a window. */
   | 'windowing:resize'
 
-  /** Request the main process to move a window */
+  /** Request the main process to move a window. */
   | 'windowing:move'
 
-  /** Request the main process to set whether a window is always on top */
+  /** Request the main process to set whether a window is always on top. */
   | 'windowing:topmost'
 
-  /** Request the main process to enter fullscreen for a window */
+  /** Request the main process to enter fullscreen for a window. */
   | 'windowing:enter-fullscreen'
 
-  /** Request the main process to exit fullscreen for a window */
+  /** Request the main process to exit fullscreen for a window. */
   | 'windowing:exit-fullscreen'
 
-  /** Request the main process to retrieve the current state of a window */
+  /** Request the main process to retrieve the current state of a window. */
   | 'windowing:get-window-state'
 
-  /** Notify a window that its state has changed */
+  /** Notify a window that its state has changed. */
   | 'windowing:window-state-changed'
 
-  /** Notify a window that one of the windows it opened has been closed */
+  /** Notify a window that one of the windows it opened has been closed. */
   | 'windowing:window-closed'
 
 /**
- * Window id, mapped to Electron BrowserWindow.id
+ * Window ID, mapped to Electron `BrowserWindow.id`.
  */
 export type WindowId = number
 
@@ -62,16 +62,16 @@ export type WindowId = number
 export type WindowContentProps = Record<string, unknown>
 
 /**
- * Window position target
+ * Window position target.
  *
- * - 'center-screen': center on the screen work area
- * - 'center-parent': center relative to the parent window; falls back to screen center if no parent exists
- * - { x, y }: absolute top-left position in screen coordinates
+ * - 'center-screen': center on the screen work area.
+ * - 'center-parent': center relative to the parent window; falls back to screen center if no parent exists.
+ * - { x, y }: absolute top-left position in screen coordinates.
  */
 export type WindowPosition = 'center-screen' | 'center-parent' | { x: number; y: number }
 
 /**
- * Window bounds
+ * Window bounds.
  */
 export interface WindowBounds {
   x: number
@@ -81,7 +81,7 @@ export interface WindowBounds {
 }
 
 /**
- * Window state
+ * Window state.
  */
 export interface WindowState {
   bounds: WindowBounds
@@ -94,61 +94,85 @@ export interface WindowState {
 }
 
 /**
- * Request the main process to create a managed window
+ * Request the main process to create a managed window.
  */
 export interface WindowingOpenRequest {
-  /** Window width, default is 720px */
+  /**
+   * Window width, default is `720px`.
+   */
   width?: number
 
-  /** Window height, default is 480px */
+  /**
+   * Window height, default is `480px`.
+   */
   height?: number
 
-  /** Hide the window from the taskbar, default is false */
+  /**
+   * Hide the window from the taskbar, default is `false`.
+   */
   skipTaskbar?: boolean
 
-  /** Allow resizing, default is false */
+  /**
+   * Allow resizing, default is `false`.
+   */
   resizable?: boolean
 
-  /** Keep the window always on top, default is false */
+  /**
+   * Keep the window always on top, default is `false`.
+   */
   alwaysOnTop?: boolean
 
-  /** Open as a modal window, default is false; a valid parent window is required */
+  /**
+   * Open as a modal window, default is `false`; a valid parent window is required.
+   */
   modal?: boolean
 
-  /** Parent window id; defaults to the opener window; null means no parent window */
+  /**
+   * Parent window ID; defaults to the opener window; `null` means no parent window.
+   */
   parentId?: WindowId | null
 
-  /** Window position, default is center-screen */
+  /**
+   * Window position, default is `center-screen`.
+   */
   position?: WindowPosition
 
-  /** Show the window without taking focus, default is false */
+  /**
+   * Show the window without taking focus, default is `false`.
+   */
   showInactive?: boolean
 }
 
 /**
- * Result returned after the managed window is created and ready
+ * Result returned after the managed window is created and ready.
  */
 export interface WindowingOpenResponse {
-  /** Id of the created window */
+  /**
+   * ID of the created window.
+   */
   id: WindowId
 }
 
 /**
  * Notify the main process that the window host is ready.
  *
- * The main process resolves the sender window from event.sender,
- * so this notification does not need to include a window id.
+ * The main process resolves the sender window from `event.sender`,
+ * so this notification does not need to include a window ID.
  */
 export type WindowingReadyNotification = Record<string, never>
 
 /**
- * Request the main process to update the content component and props of a managed window
+ * Request the main process to update the content component and props of a managed window.
  */
 export interface WindowingUpdateRequest {
-  /** Target window id */
+  /**
+   * Target window ID.
+   */
   targetId: WindowId
 
-  /** Component name or path */
+  /**
+   * Component name or path.
+   */
   component?: string
 
   /**
@@ -159,10 +183,12 @@ export interface WindowingUpdateRequest {
 }
 
 /**
- * Notification sent from the main process to update a window host
+ * Notification sent from the main process to update a window host.
  */
 export interface WindowingUpdateNotification {
-  /** Component name or path */
+  /**
+   * Component name or path.
+   */
   component?: string
 
   /**
@@ -173,16 +199,18 @@ export interface WindowingUpdateNotification {
 }
 
 /**
- * Request the main process to forward an event to a window
+ * Request the main process to forward an event to a window.
  */
 export interface WindowingEventRequest<T = unknown> {
   /**
-   * Target window id.
+   * Target window ID.
    * When omitted, the event is sent to the opener of the source window.
    */
   targetId?: WindowId
 
-  /** Event name */
+  /**
+   * Event type.
+   */
   type: string
 
   /**
@@ -193,16 +221,18 @@ export interface WindowingEventRequest<T = unknown> {
 }
 
 /**
- * Notification sent by the main process when a forwarded event is delivered
+ * Notification sent by the main process when a forwarded event is delivered.
  */
 export interface WindowingEventNotification<T = unknown> {
   /**
-   * Source window id.
+   * Source window ID.
    * When omitted, it means the event came from the opener of the receiving window.
    */
   fromId?: WindowId
 
-  /** Event name */
+  /**
+   * Event type.
+   */
   type: string
 
   /**
@@ -213,156 +243,170 @@ export interface WindowingEventNotification<T = unknown> {
 }
 
 /**
- * Request the main process to close a window
+ * Request the main process to close a window.
  */
 export interface WindowingCloseRequest {
   /**
-   * Target window id.
+   * Target window ID.
    * When omitted, the request applies to the source window itself.
    */
   targetId?: WindowId
 }
 
 /**
- * Request the main process to activate a window
+ * Request the main process to activate a window.
  */
 export interface WindowingActivateRequest {
   /**
-   * Target window id.
+   * Target window ID.
    * When omitted, the request applies to the source window itself.
    */
   targetId?: WindowId
 }
 
 /**
- * Request the main process to minimize a window
+ * Request the main process to minimize a window.
  */
 export interface WindowingMinimizeRequest {
   /**
-   * Target window id.
+   * Target window ID.
    * When omitted, the request applies to the source window itself.
    */
   targetId?: WindowId
 }
 
 /**
- * Request the main process to maximize a window
+ * Request the main process to maximize a window.
  */
 export interface WindowingMaximizeRequest {
   /**
-   * Target window id.
+   * Target window ID.
    * When omitted, the request applies to the source window itself.
    */
   targetId?: WindowId
 }
 
 /**
- * Request the main process to restore a window
+ * Request the main process to restore a window.
  */
 export interface WindowingRestoreRequest {
   /**
-   * Target window id.
+   * Target window ID.
    * When omitted, the request applies to the source window itself.
    */
   targetId?: WindowId
 }
 
 /**
- * Request the main process to resize a window
+ * Request the main process to resize a window.
  */
 export interface WindowingResizeRequest {
   /**
-   * Target window id.
+   * Target window ID.
    * When omitted, the request applies to the source window itself.
    */
   targetId?: WindowId
 
-  /** Target width */
+  /**
+   * Target width.
+   */
   width: number
 
-  /** Target height */
+  /**
+   * Target height.
+   */
   height: number
 }
 
 /**
- * Request the main process to move a window
+ * Request the main process to move a window.
  */
 export interface WindowingMoveRequest {
   /**
-   * Target window id.
+   * Target window ID.
    * When omitted, the request applies to the source window itself.
    */
   targetId?: WindowId
 
-  /** Target position */
+  /**
+   * Target position.
+   */
   position: WindowPosition
 }
 
 /**
- * Request the main process to set whether a window is always on top
+ * Request the main process to set whether a window is always on top.
  */
 export interface WindowingTopmostRequest {
   /**
-   * Target window id.
+   * Target window ID.
    * When omitted, the request applies to the source window itself.
    */
   targetId?: WindowId
 
-  /** Whether the window is always on top */
+  /**
+   * Whether the window is always on top.
+   */
   isTopmost: boolean
 }
 
 /**
- * Request the main process to enter fullscreen for a window
+ * Request the main process to enter fullscreen for a window.
  */
 export interface WindowingEnterFullscreenRequest {
   /**
-   * Target window id.
+   * Target window ID.
    * When omitted, the request applies to the source window itself.
    */
   targetId?: WindowId
 }
 
 /**
- * Request the main process to exit fullscreen for a window
+ * Request the main process to exit fullscreen for a window.
  */
 export interface WindowingExitFullscreenRequest {
   /**
-   * Target window id.
+   * Target window ID.
    * When omitted, the request applies to the source window itself.
    */
   targetId?: WindowId
 }
 
 /**
- * Request the current state of a window from the main process
+ * Request the current state of a window from the main process.
  */
 export interface WindowingGetStateRequest {
   /**
-   * Target window id.
+   * Target window ID.
    * When omitted, the request applies to the source window itself.
    */
   targetId?: WindowId
 }
 
 /**
- * Response containing the requested window state
+ * Response containing the requested window state.
  */
 export interface WindowingGetStateResponse {
+  /**
+   * Window state.
+   */
   state: WindowState | null
 }
 
 /**
- * Notification sent by the main process when a window state changes
+ * Notification sent by the main process when a window state changes.
  */
 export interface WindowingStateChangedNotification {
+  /**
+   * Window state.
+   */
   state: WindowState
 }
 
 /**
- * Notification sent by the main process when one of the windows opened by this window is closed
+ * Notification sent by the main process when one of the windows opened by this window is closed.
  */
 export interface WindowingClosedNotification {
-  /** Closed window id */
+  /** Closed window ID */
   id: WindowId
 }
