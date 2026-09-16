@@ -6,7 +6,7 @@ type Unsubscribe = () => void
 
 type EventHandler<T> = (payload: T | undefined) => void
 
-export interface UseWindowingHostReturn {
+export interface WindowingHostHandle {
   windowBounds: ComputedRef<WindowBounds | null>
   isMinimized: ComputedRef<boolean>
   isMaximized: ComputedRef<boolean>
@@ -133,7 +133,7 @@ const exitFullscreen = (): void => {
   window.windowingAPI.exitFullscreen({})
 }
 
-export function useWindowingHost(): UseWindowingHostReturn {
+export function useWindowingHost(): WindowingHostHandle {
   /**
    * All `EventTarget` listeners registered by this composable scope
    * share this signal and are removed together when the scope is disposed.
