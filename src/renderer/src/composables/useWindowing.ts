@@ -160,22 +160,6 @@ export function useWindowing(): ManagedWindowHandle {
   const eventDispatcher = new EventTarget()
   const closedDispatcher = new EventTarget()
 
-  const requireWindowId = (): WindowId => {
-    if (disposed) {
-      throw new Error('The managed window handle has been disposed.')
-    }
-
-    if (windowId === undefined || lifecycleState.value !== 'opened') {
-      throw new Error('The managed window is not open.')
-    }
-
-    return windowId
-  }
-
-  /*
-   * Renderer-level event notification filtering.
-   */
-
   const eventNotificationListener: EventListener = (event: Event): void => {
     const customEvent = event as CustomEvent<InternalEventNotification>
     const notification = customEvent.detail
@@ -194,10 +178,6 @@ export function useWindowing(): ManagedWindowHandle {
   notificationDispatcher.addEventListener(eventNotificationType, eventNotificationListener, {
     signal: handleAbortController.signal
   })
-
-  /*
-   * Renderer-level closed notification filtering.
-   */
 
   const closedNotificationListener: EventListener = (event: Event): void => {
     const customEvent = event as CustomEvent<WindowingClosedNotification>
@@ -219,6 +199,18 @@ export function useWindowing(): ManagedWindowHandle {
   notificationDispatcher.addEventListener(closedNotificationType, closedNotificationListener, {
     signal: handleAbortController.signal
   })
+
+  const requireWindowId = (): WindowId => {
+    if (disposed) {
+      throw new Error('The managed window handle has been disposed.')
+    }
+
+    if (windowId === undefined || lifecycleState.value !== 'opened') {
+      throw new Error('The managed window is not open.')
+    }
+
+    return windowId
+  }
 
   const open = async (content: ManagedWindowContent, options: ManagedWindowOpenOptions): Promise<void> => {
     if (disposed) {
