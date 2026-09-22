@@ -42,10 +42,10 @@ const isTopmost = computed<boolean>(() => windowState.value?.alwaysOnTop ?? fals
 const isFocused = computed<boolean>(() => windowState.value?.focused ?? false)
 
 /*
- * Renderer-level event dispatcher.
+ * Renderer-level event notification dispatcher.
  */
 
-const eventDispatcher = new EventTarget()
+const notificationDispatcher = new EventTarget()
 
 /*
  * Renderer-level IPC listeners.
@@ -62,7 +62,7 @@ window.windowingAPI.onEvent<unknown>((notification) => {
     detail: notification.payload
   })
 
-  eventDispatcher.dispatchEvent(event)
+  notificationDispatcher.dispatchEvent(event)
 })
 
 /*
@@ -147,12 +147,12 @@ export function useWindowingHost(): WindowingHostHandle {
       handler(customEvent.detail)
     }
 
-    eventDispatcher.addEventListener(type, eventListener, {
+    notificationDispatcher.addEventListener(type, eventListener, {
       signal: eventAbortController.signal
     })
 
     const unsubscribe = (): void => {
-      eventDispatcher.removeEventListener(type, eventListener)
+      notificationDispatcher.removeEventListener(type, eventListener)
     }
 
     return unsubscribe

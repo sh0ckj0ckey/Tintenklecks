@@ -8,8 +8,6 @@ type EventHandler<T> = (payload: T | undefined) => void
 
 type ClosedHandler = () => void
 
-type InternalEventNotification = WindowingEventNotification<unknown>
-
 type ManagedWindowLifecycleState = 'idle' | 'opening' | 'opened' | 'closed'
 
 /**
@@ -66,7 +64,7 @@ export interface ManagedWindowOpenOptions {
    * Native parent relationship of the window.
    * Defaults to `opener`.
    */
-  parent?: 'opener' | 'none' | WindowId
+  parent?: 'opener' | 'none'
 
   /**
    * Initial window position.
@@ -101,28 +99,33 @@ export interface ManagedWindowHandle {
 }
 
 /*
+ * Internal notification event types.
+ */
+
+const eventNotificationType = 'windowing-notification-event'
+const closedNotificationType = 'windowing-notification-closed'
+
+/*
  * Renderer-level notification dispatcher.
+ *
+ * Managed-window handles share this dispatcher
+ * so the renderer only registers one IPC listener for each notification channel,
+ * regardless of how many handles are created.
+ * Each handle filters the forwarded notifications using its internally managed window ID.
  */
 
 const notificationDispatcher = new EventTarget()
 
 /*
- * Internal notification event types.
- */
-
-const eventNotificationType = 'window-event'
-const closedNotificationType = 'window-closed'
-
-/*
  * Renderer-level IPC listeners.
  *
  * These listeners intentionally follow the entire renderer lifecycle.
- * Individual managed-window handles filter notifications using their
- * internally managed window IDs.
+ * Individual managed-window handles filter notifications
+ * using their internally managed window IDs.
  */
 
 window.windowingAPI.onEvent<unknown>((notification) => {
-  const event = new CustomEvent<InternalEventNotification>(eventNotificationType, {
+  const event = new CustomEvent<WindowingEventNotification<unknown>>(eventNotificationType, {
     detail: notification
   })
 
@@ -158,10 +161,11 @@ export function useWindowing(): ManagedWindowHandle {
    */
 
   const eventDispatcher = new EventTarget()
+
   const closedDispatcher = new EventTarget()
 
   const eventNotificationListener: EventListener = (event: Event): void => {
-    const customEvent = event as CustomEvent<InternalEventNotification>
+    const customEvent = event as CustomEvent<WindowingEventNotification<unknown>>
     const notification = customEvent.detail
 
     if (windowId === undefined || notification.fromId !== windowId) {
@@ -242,13 +246,14 @@ export function useWindowing(): ManagedWindowHandle {
       })
 
       /*
+       * Store the window ID immediately so the created window can be closed if any subsequent opening step fails.
+       */
+      windowId = response.id
+
+      /*
        * The Vue scope may have been disposed while the main process was waiting for the managed-window host to become ready.
        */
       if (disposed) {
-        window.windowingAPI.close({
-          targetId: response.id
-        })
-
         throw new Error('The managed window handle was disposed while opening.')
       }
 
@@ -261,8 +266,6 @@ export function useWindowing(): ManagedWindowHandle {
         props: content.props
       })
 
-      windowId = response.id
-
       lifecycleState.value = 'opened'
     } catch (error) {
       const openedWindowId = windowId
@@ -274,8 +277,8 @@ export function useWindowing(): ManagedWindowHandle {
       }
 
       /*
-       * If the window was created but sending its initial content failed
-       * synchronously, request that the created window be closed.
+       * If the window was created but the handle could not finish opening,
+       * request that the created window be closed.
        */
       if (openedWindowId !== undefined) {
         window.windowingAPI.close({
@@ -289,8 +292,8 @@ export function useWindowing(): ManagedWindowHandle {
 
   const updateContent = (content: ManagedWindowContent): void => {
     const targetId = requireWindowId()
-    const component = content?.component
-    const props = content?.props
+    const component = content.component
+    const props = content.props
     window.windowingAPI.update({ targetId, component, props })
   }
 
