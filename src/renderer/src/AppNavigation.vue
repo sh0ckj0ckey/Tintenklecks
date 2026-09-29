@@ -10,8 +10,7 @@
     </div>
 
     <div class="app-navigation-section-header">
-      <template v-for="(group, index) in headerGroups" :key="index">
-        <div class="app-navigation-group">
+      <div v-for="(group, index) in headerGroups" :key="index" class="app-navigation-group">
           <div v-if="group.title" class="app-navigation-group-title">{{ group.title }}</div>
 
           <router-link v-for="item in group.items" :key="item.routeName" :to="{ name: item.routeName }" class="app-navigation-item">
@@ -19,14 +18,12 @@
             <span>{{ item.label }}</span>
           </router-link>
         </div>
-      </template>
     </div>
 
     <TkSeparator orientation="horizontal" />
 
     <div class="app-navigation-section-body">
-      <template v-for="(group, index) in menuGroups" :key="index">
-        <div class="app-navigation-group">
+      <div v-for="(group, index) in menuGroups" :key="index" class="app-navigation-group">
           <div v-if="group.title" class="app-navigation-group-title">{{ group.title }}</div>
 
           <router-link v-for="item in group.items" :key="item.routeName" :to="{ name: item.routeName }" class="app-navigation-item">
@@ -34,14 +31,12 @@
             <span>{{ item.label }}</span>
           </router-link>
         </div>
-      </template>
     </div>
 
     <TkSeparator orientation="horizontal" />
 
     <div class="app-navigation-section-footer">
-      <template v-for="(group, index) in footerGroups" :key="index">
-        <div class="app-navigation-group">
+      <div v-for="(group, index) in footerGroups" :key="index" class="app-navigation-group">
           <div v-if="group.title" class="app-navigation-group-title">{{ group.title }}</div>
 
           <router-link v-for="item in group.items" :key="item.routeName" :to="{ name: item.routeName }" class="app-navigation-item">
@@ -49,7 +44,6 @@
             <span>{{ item.label }}</span>
           </router-link>
         </div>
-      </template>
     </div>
   </nav>
 </template>
