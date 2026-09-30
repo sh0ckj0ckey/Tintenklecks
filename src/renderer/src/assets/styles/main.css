@@ -35,7 +35,7 @@
   --tk-color-foreground: #ffffff;
 }
 
-:root[data-os='win32'] {
+:root[data-platform='windows'] {
   --tk-color-background: #20202000;
 }
 

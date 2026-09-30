@@ -1,6 +1,6 @@
 <template>
   <nav class="app-navigation">
-    <div :class="['app-navigation-title', { 'app-navigation-title-macos': currentOS === 'darwin' }]">
+    <div :class="['app-navigation-title', { 'app-navigation-title-macos': platform === 'macos' }]">
       <TkHyperlinkButton v-if="canGoBack" class="app-navigation-title-button" theme="secondary" :emboss="false" @click="tryGoBack">
         <IconWindowBack class="app-navigation-title-button-icon" />
       </TkHyperlinkButton>
@@ -11,39 +11,39 @@
 
     <div class="app-navigation-section-header">
       <div v-for="(group, index) in headerGroups" :key="index" class="app-navigation-group">
-          <div v-if="group.title" class="app-navigation-group-title">{{ group.title }}</div>
+        <div v-if="group.title" class="app-navigation-group-title">{{ group.title }}</div>
 
-          <router-link v-for="item in group.items" :key="item.routeName" :to="{ name: item.routeName }" class="app-navigation-item">
-            <component :is="item.icon" v-if="item.icon" class="app-navigation-item-icon fluent-icon" />
-            <span>{{ item.label }}</span>
-          </router-link>
-        </div>
+        <router-link v-for="item in group.items" :key="item.routeName" :to="{ name: item.routeName }" class="app-navigation-item">
+          <component :is="item.icon" v-if="item.icon" class="app-navigation-item-icon fluent-icon" />
+          <span>{{ item.label }}</span>
+        </router-link>
+      </div>
     </div>
 
     <TkSeparator orientation="horizontal" />
 
     <div class="app-navigation-section-body">
       <div v-for="(group, index) in menuGroups" :key="index" class="app-navigation-group">
-          <div v-if="group.title" class="app-navigation-group-title">{{ group.title }}</div>
+        <div v-if="group.title" class="app-navigation-group-title">{{ group.title }}</div>
 
-          <router-link v-for="item in group.items" :key="item.routeName" :to="{ name: item.routeName }" class="app-navigation-item">
-            <component :is="item.icon" v-if="item.icon" class="app-navigation-item-icon" />
-            <span>{{ item.label }}</span>
-          </router-link>
-        </div>
+        <router-link v-for="item in group.items" :key="item.routeName" :to="{ name: item.routeName }" class="app-navigation-item">
+          <component :is="item.icon" v-if="item.icon" class="app-navigation-item-icon" />
+          <span>{{ item.label }}</span>
+        </router-link>
+      </div>
     </div>
 
     <TkSeparator orientation="horizontal" />
 
     <div class="app-navigation-section-footer">
       <div v-for="(group, index) in footerGroups" :key="index" class="app-navigation-group">
-          <div v-if="group.title" class="app-navigation-group-title">{{ group.title }}</div>
+        <div v-if="group.title" class="app-navigation-group-title">{{ group.title }}</div>
 
-          <router-link v-for="item in group.items" :key="item.routeName" :to="{ name: item.routeName }" class="app-navigation-item">
-            <component :is="item.icon" v-if="item.icon" class="app-navigation-item-icon fluent-icon" />
-            <span>{{ item.label }}</span>
-          </router-link>
-        </div>
+        <router-link v-for="item in group.items" :key="item.routeName" :to="{ name: item.routeName }" class="app-navigation-item">
+          <component :is="item.icon" v-if="item.icon" class="app-navigation-item-icon fluent-icon" />
+          <span>{{ item.label }}</span>
+        </router-link>
+      </div>
     </div>
   </nav>
 </template>
@@ -51,8 +51,9 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
 import { RouterLink } from 'vue-router'
-import { useBackNavigation } from '@renderer/composables/useBackNavigation'
 import { RouteName } from '@renderer/router'
+import { useBackNavigation } from '@renderer/composables/useBackNavigation'
+import { useEnvironment } from '@renderer/composables/useEnvironment'
 import TkSeparator from '@renderer/components/TkSeparator/TkSeparator.vue'
 import TkHyperlinkButton from './components/TkButtons/TkHyperlinkButton.vue'
 import IconWindowBack from '@renderer/components/TkIcons/IconWindowBack.vue'
@@ -72,8 +73,7 @@ import IconNavigationMarquee from '@renderer/components/TkIcons/navigation/IconN
 import IconNavigationWindowing from '@renderer/components/TkIcons/navigation/IconNavigationWindowing.vue'
 
 const { canGoBack, tryGoBack } = useBackNavigation()
-
-const currentOS = document.documentElement.getAttribute('data-os') || 'unknown'
+const { platform } = useEnvironment()
 
 type NavigationGroup = {
   title: string

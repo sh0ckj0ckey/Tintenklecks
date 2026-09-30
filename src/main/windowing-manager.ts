@@ -847,14 +847,9 @@ export class WindowingManager {
     }
 
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-      const url = new URL(`${process.env['ELECTRON_RENDERER_URL']}/base.html`)
-      url.searchParams.set('type', 'windowing-host')
-      url.searchParams.set('os', process.platform)
-      await window.loadURL(url.toString())
+      await window.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/windowing-host.html`)
     } else {
-      await window.loadFile(join(__dirname, '../renderer/base.html'), {
-        query: { type: 'windowing-host', os: process.platform }
-      })
+      await window.loadFile(join(__dirname, '../renderer/windowing-host.html'))
     }
   }
 

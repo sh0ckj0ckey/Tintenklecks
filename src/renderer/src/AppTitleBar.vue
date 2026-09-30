@@ -2,7 +2,11 @@
   <header :class="['app-title-bar', { 'app-title-bar-blurred': !isAppWindowFocused }]">
     <div class="app-title-bar-drag-region" @dblclick="toggleMaximizeAppWindow"></div>
 
-    <div v-if="currentOS !== 'darwin'" class="app-title-bar-caption-buttons">
+    <!--
+      The windows are created with titleBarOverlay disabled, so every platform
+      except macOS has to draw its own caption buttons here.
+    -->
+    <div v-if="platform !== 'macos'" class="app-title-bar-caption-buttons">
       <button class="app-title-bar-caption-button" @click="minimizeAppWindow">
         <IconWindowMinimize class="app-title-bar-caption-button-icon" />
       </button>
@@ -24,9 +28,10 @@ import IconWindowClose from '@renderer/components/TkIcons/IconWindowClose.vue'
 import IconWindowMaximize from '@renderer/components/TkIcons/IconWindowMaximize.vue'
 import IconWindowMinimize from '@renderer/components/TkIcons/IconWindowMinimize.vue'
 import IconWindowRestore from '@renderer/components/TkIcons/IconWindowRestore.vue'
+import { useEnvironment } from '@renderer/composables/useEnvironment'
 import { useWindowingHost } from '@renderer/composables/useWindowingHost'
 
-const currentOS = document.documentElement.getAttribute('data-os') || 'unknown'
+const { platform } = useEnvironment()
 
 const {
   isFocused: isAppWindowFocused,

@@ -1,12 +1,10 @@
 import './assets/styles/main.css'
 
 import { createApp } from 'vue'
-import App from './App.vue'
 import { router } from './router'
+import { applyPlatformAttribute } from './composables/useEnvironment'
+import App from './App.vue'
 
-// Set OS attribute for CSS
-const params = new URLSearchParams(window.location.search)
-const os = params.get('os') || 'unknown'
-document.documentElement.setAttribute('data-os', os)
+applyPlatformAttribute()
 
 createApp(App).use(router).mount('#app')

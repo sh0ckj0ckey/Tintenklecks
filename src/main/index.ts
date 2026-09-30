@@ -50,13 +50,9 @@ function createWindow(): void {
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    const url = new URL(process.env['ELECTRON_RENDERER_URL'])
-    url.searchParams.set('os', process.platform)
-    mainWindow.loadURL(url.toString())
+    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'), {
-      query: { os: process.platform }
-    })
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
 
