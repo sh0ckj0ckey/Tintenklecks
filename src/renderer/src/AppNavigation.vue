@@ -1,6 +1,6 @@
 <template>
   <nav class="app-navigation">
-    <div :class="['app-navigation-title', { 'app-navigation-title-macos': platform === 'macos' }]">
+    <div :class="['app-navigation-title', { 'app-navigation-title-bar-space-reserved': platform === 'macos' && !isFullscreen }]">
       <TkHyperlinkButton v-if="canGoBack" class="app-navigation-title-button" theme="secondary" :emboss="false" @click="tryGoBack">
         <IconWindowBack class="app-navigation-title-button-icon" />
       </TkHyperlinkButton>
@@ -54,6 +54,7 @@ import { RouterLink } from 'vue-router'
 import { RouteName } from '@renderer/router'
 import { useBackNavigation } from '@renderer/composables/useBackNavigation'
 import { useEnvironment } from '@renderer/composables/useEnvironment'
+import { useWindowingHost } from '@renderer/composables/useWindowingHost'
 import TkSeparator from '@renderer/components/TkSeparator/TkSeparator.vue'
 import TkHyperlinkButton from './components/TkButtons/TkHyperlinkButton.vue'
 import IconWindowBack from '@renderer/components/TkIcons/IconWindowBack.vue'
@@ -74,6 +75,7 @@ import IconNavigationWindowing from '@renderer/components/TkIcons/navigation/Ico
 
 const { canGoBack, tryGoBack } = useBackNavigation()
 const { platform } = useEnvironment()
+const { isFullscreen } = useWindowingHost()
 
 type NavigationGroup = {
   title: string
@@ -156,7 +158,7 @@ const footerGroups: NavigationGroup[] = [
     margin-top: 16px;
     margin-bottom: 8px;
 
-    &.app-navigation-title-macos {
+    &.app-navigation-title-bar-space-reserved {
       margin-top: var(--tk-title-bar-height);
     }
 
