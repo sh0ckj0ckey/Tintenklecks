@@ -4,228 +4,170 @@
       <header>
         <h2>Windowing</h2>
         <p>
-          Windowing defines a small IPC-based model for managing Electron windows in a consistent way. If a window knows another window's
-          id, it can request operations on that window. The model also lets a window control itself without knowing its own id, and
-          communicate with its opener without knowing the opener's id.
+          Windowing provides a small IPC-based model for creating, controlling, and connecting Electron windows. Windows can target known
+          window IDs, control themselves without knowing their own IDs, and communicate with their openers through sender-based routing
+          defaults.
         </p>
       </header>
 
       <section>
         <h3>Core Concepts</h3>
 
-        <h4>Managed Window</h4>
-        <p>A managed window is an Electron <code>BrowserWindow</code> created and tracked by <code>WindowingManager</code>.</p>
+        <h4>Managed Window and Window Host</h4>
         <p>
-          <code>managedWindows</code> only contains windows opened through <code>windowing:open</code>. The <code>mainWindow</code> is
-          stored separately, but it is still part of the same control surface. In other words, <code>mainWindow</code> and managed windows
-          can both be controlled by id.
+          A managed window is an Electron <code>BrowserWindow</code> created and tracked by <code>WindowingManager</code>. It loads a shared
+          renderer-side window host that receives content updates and renders the requested component.
+        </p>
+        <p>
+          The managed window is the native Electron window; the window host is its renderer-side content container. The main window also
+          supports window-control requests, but content updates only target managed windows.
         </p>
 
-        <h4>Window Host</h4>
+        <h4>Opener and Parent</h4>
         <p>
-          A window host is the renderer-side container loaded inside a managed window. It is responsible for sending
-          <code>windowing:ready</code>, receiving <code>windowing:update</code>, and mounting or updating the actual content component.
+          The opener is the window that creates a managed window. The manager records this relationship for event routing and closure
+          notifications.
         </p>
         <p>
-          A managed window has one window host. They are closely related, but they are not the same thing: the managed window is the native
-          window, while the window host is the content container running inside it.
-        </p>
-
-        <h4>Opener</h4>
-        <p>
-          The opener is the window that sends <code>windowing:open</code>. It can be the <code>mainWindow</code> or another managed window.
-        </p>
-        <p>
-          The opener receives the new window id when the open request completes. Because of that, it can naturally control the window it
-          opened. When that window is closed, the opener receives a
-          <code>windowing:window-closed</code> notice.
-        </p>
-
-        <h4>Parent</h4>
-        <p>
-          The parent is the native Electron parent window relationship. The opener and the parent are related by default, but they are not
-          the same concept.
-        </p>
-        <p>
-          By default, a new managed window uses its opener as the parent. The caller can set
-          <code>parentId</code> to another known window id, or set it to <code>null</code> to create a window without a parent.
+          The parent is Electron's native parent-window relationship. It defaults to the opener but can be configured independently. At the
+          IPC level, <code>parentId</code> can reference another known window ID or be set to <code>null</code>. The higher-level
+          <code>useWindowing()</code> API exposes the common <code>opener</code> and <code>none</code> choices.
         </p>
       </section>
 
       <section>
-        <h3>Id Defaults</h3>
+        <h3>Lifecycle</h3>
 
-        <h4>Control Requests</h4>
-        <p>
-          For control requests such as <code>close</code>, <code>activate</code>, <code>minimize</code>, <code>maximize</code>,
-          <code>restore</code>, <code>resize</code>, <code>move</code>, <code>topmost</code>, and <code>get-window-state</code>, an omitted
-          <code>targetId</code> means the request applies to the sender window itself.
-        </p>
-
-        <h4>Event Requests</h4>
-        <p>
-          For <code>windowing:event</code>, an omitted <code>targetId</code> means the event is sent to the opener of the sender window.
-        </p>
-
-        <h4>Event Notices</h4>
-        <p>For delivered event notices, an omitted <code>fromId</code> means the event came from the opener of the receiving window.</p>
-
-        <p>
-          These defaults keep common flows simple: a window does not need to know its own id to control itself, and a managed window does
-          not need to know its opener id to send events back to it.
-        </p>
-      </section>
-
-      <section>
-        <h3>Open Flow</h3>
         <ol>
-          <li>The opener sends <code>windowing:open</code>.</li>
-          <li><code>WindowingManager</code> creates a new managed window.</li>
-          <li>The managed window loads its window host.</li>
-          <li>The window host sends <code>windowing:ready</code>.</li>
-          <li><code>WindowingManager</code> resolves the original open request.</li>
-          <li>The opener receives the new window id.</li>
-          <li>The opener sends <code>windowing:update</code> with the content component and props.</li>
-          <li>The window host mounts or updates the actual content component.</li>
-          <li>Later interaction is handled through <code>windowing:event</code>.</li>
+          <li>The opener requests a managed window.</li>
+          <li><code>WindowingManager</code> creates the hidden window and loads its window host.</li>
+          <li>The host registers its update listener and sends <code>windowing:ready</code>.</li>
+          <li>The manager shows the window and returns its ID to the opener.</li>
+          <li>The opener sends the initial content component and props.</li>
+          <li>The host loads and renders the content component.</li>
         </ol>
+
         <p>
-          <code>windowing:ready</code> only means the window host is ready. It does not mean the final business content has already been
-          mounted.
+          Readiness indicates that the host can receive content updates; it does not indicate that the content component has already been
+          rendered. The open request is rejected if host initialization fails or times out.
         </p>
       </section>
 
       <section>
-        <h3>Messages</h3>
+        <h3>Routing Rules</h3>
+
+        <ul>
+          <li>For window-control requests, an omitted <code>targetId</code> targets the sender window.</li>
+          <li>
+            For event requests, an omitted <code>targetId</code> routes the event to the sender's opener. The sender must therefore have an
+            opener.
+          </li>
+          <li>
+            In a delivered event notification, an omitted <code>fromId</code> indicates that the event was sent by the receiving window's
+            opener.
+          </li>
+        </ul>
+
+        <p>
+          Events sent from a managed window to its opener include the managed window's ID as <code>fromId</code>, allowing the opener to
+          route each event to the corresponding managed-window handle.
+        </p>
+        <p>These defaults let managed windows control themselves and communicate with their openers without knowing either window ID.</p>
+      </section>
+
+      <section>
+        <h3>Renderer APIs</h3>
+
+        <h4><code>useWindowing()</code></h4>
+        <p>
+          Opens and controls one managed window. The returned handle stores the window ID, tracks its lifecycle, updates its content, routes
+          its events, and reports when it closes.
+        </p>
+
+        <h4><code>useWindowingHost()</code></h4>
+        <p>
+          Gives a managed-window content component access to its own state and window commands. It also exchanges events with the opener
+          without exposing either window ID to the component.
+        </p>
+
+        <p>Application components should normally use these composables instead of accessing <code>window.windowingAPI</code> directly.</p>
+      </section>
+
+      <section>
+        <h3>IPC Protocol</h3>
 
         <dl>
-          <dt><code>windowing:open</code></dt>
+          <dt>Lifecycle</dt>
+          <dd><code>windowing:open</code> creates a managed window, and <code>windowing:ready</code> completes host initialization.</dd>
+
+          <dt>Content</dt>
           <dd>
-            Requests the main process to create a managed window. The response is returned after the window is created and its host sends
-            <code>windowing:ready</code>.
+            <code>windowing:update</code> sends a component and props to a managed window host. Its <code>targetId</code> is required.
           </dd>
 
-          <dt><code>windowing:ready</code></dt>
+          <dt>Events</dt>
+          <dd><code>windowing:event</code> forwards application events and optional payloads between windows.</dd>
+
+          <dt>Window Control</dt>
           <dd>
-            Notifies the main process that the window host is ready. The sender window is resolved from
-            <code>event.sender</code>, so no window id is needed.
+            <code>windowing:close</code>, <code>windowing:activate</code>, <code>windowing:minimize</code>, <code>windowing:maximize</code>,
+            <code>windowing:restore</code>, <code>windowing:resize</code>, <code>windowing:move</code>, <code>windowing:topmost</code>,
+            <code>windowing:enter-fullscreen</code>, and <code>windowing:exit-fullscreen</code> apply native window operations.
           </dd>
 
-          <dt><code>windowing:update</code></dt>
+          <dt>State</dt>
           <dd>
-            Updates the content component and props mounted by a managed window host.
-            <code>targetId</code> is required.
+            <code>windowing:get-window-state</code> retrieves the current state, and <code>windowing:window-state-changed</code> reports
+            state changes.
           </dd>
 
-          <dt><code>windowing:event</code></dt>
-          <dd>
-            Forwards an event to another window. If <code>targetId</code> is omitted, the event is sent to the sender window's opener.
-          </dd>
-
-          <dt><code>windowing:close</code></dt>
-          <dd>Closes a window. If <code>targetId</code> is omitted, the sender window is closed.</dd>
-
-          <dt><code>windowing:activate</code></dt>
-          <dd>Activates a window. If <code>targetId</code> is omitted, the sender window is activated.</dd>
-
-          <dt><code>windowing:minimize</code></dt>
-          <dd>Minimizes a window. If <code>targetId</code> is omitted, the sender window is minimized.</dd>
-
-          <dt><code>windowing:maximize</code></dt>
-          <dd>Maximizes a window. If <code>targetId</code> is omitted, the sender window is maximized.</dd>
-
-          <dt><code>windowing:restore</code></dt>
-          <dd>Restores a window. If <code>targetId</code> is omitted, the sender window is restored.</dd>
-
-          <dt><code>windowing:resize</code></dt>
-          <dd>Resizes a window. If <code>targetId</code> is omitted, the sender window is resized.</dd>
-
-          <dt><code>windowing:move</code></dt>
-          <dd>Moves a window. If <code>targetId</code> is omitted, the sender window is moved.</dd>
-
-          <dt><code>windowing:topmost</code></dt>
-          <dd>Sets whether a window is always on top. If <code>targetId</code> is omitted, the sender window is updated.</dd>
-
-          <dt><code>windowing:get-window-state</code></dt>
-          <dd>Queries the current state of a window. If <code>targetId</code> is omitted, the sender window is queried.</dd>
-
-          <dt><code>windowing:window-state-changed</code></dt>
-          <dd>Notifies a window that its state has changed. The notice contains a <code>state</code> object.</dd>
-
-          <dt><code>windowing:window-closed</code></dt>
-          <dd>Notifies the opener that one of the windows it opened has been closed.</dd>
+          <dt>Closure</dt>
+          <dd><code>windowing:window-closed</code> notifies the opener when one of its managed windows closes.</dd>
         </dl>
       </section>
 
       <section>
-        <h3>Data Model</h3>
+        <h3>Core Types</h3>
 
         <dl>
           <dt><code>WindowId</code></dt>
-          <dd>A number mapped to <code>Electron.BrowserWindow.id</code>.</dd>
+          <dd>A number mapped to Electron <code>BrowserWindow.id</code>.</dd>
 
           <dt><code>WindowContentProps</code></dt>
-          <dd>A generic property object passed to a window content component.</dd>
+          <dd>A property object passed to a window content component.</dd>
 
           <dt><code>WindowPosition</code></dt>
           <dd>
-            Supports <code>'center-screen'</code>, <code>'center-parent'</code>, or an absolute <code>{ x, y }</code> screen position.
+            Supports <code>center-screen</code>, <code>center-parent</code>, or an absolute <code>{ x, y }</code> position in screen
+            coordinates.
           </dd>
 
           <dt><code>WindowState</code></dt>
-          <dd>
-            Describes <code>bounds</code>, <code>minimized</code>, <code>maximized</code>, <code>fullscreen</code>, <code>visible</code>,
-            <code>alwaysOnTop</code>, and <code>focused</code>.
-          </dd>
-
-          <dt><code>WindowingOpenRequest</code></dt>
-          <dd>
-            Describes how to create a managed window, including size, taskbar behavior, resizability, topmost state, modal behavior, parent,
-            position, and inactive showing.
-          </dd>
-
-          <dt><code>WindowingOpenResponse</code></dt>
-          <dd>Returned after the managed window is created and ready. It contains the new window id.</dd>
-
-          <dt><code>WindowingUpdateRequest</code></dt>
-          <dd>Updates the content mounted by a managed window host.</dd>
-
-          <dt><code>WindowingEventRequest</code></dt>
-          <dd>Forwards an action and optional payload to another window.</dd>
-
-          <dt><code>WindowingEventNotice</code></dt>
-          <dd>Delivered when a forwarded event reaches its target window.</dd>
-
-          <dt><code>WindowingClosedNotice</code></dt>
-          <dd>Contains the id of a closed window.</dd>
+          <dd>Describes the window's bounds, minimized, maximized, fullscreen, visibility, always-on-top, and focus states.</dd>
         </dl>
-      </section>
 
-      <section>
-        <h3>Summary</h3>
         <p>
-          The model keeps window management explicit but lightweight. A window can open another window, the opener owns that relationship
-          logically, the parent controls the native Electron parent relationship, and the window host manages the renderer-side content.
-          Sender-based defaults keep self-control and opener communication simple.
+          Content props and event payloads must be serializable by Electron IPC. Generic payload types are compile-time contracts and are
+          not validated at runtime.
         </p>
+        <p>Request, response, and notification definitions are available in <code>shared/windowing-types.ts</code>.</p>
       </section>
     </article>
   </div>
 </template>
 
-<script setup lang="ts"></script>
-
 <style scoped>
 .tk-windowing-page {
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
   margin: 0 4px 0 0;
   padding: 0 16px 0 20px;
   overflow: auto;
+}
+
+.tk-windowing-page > article {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
 }
 </style>
