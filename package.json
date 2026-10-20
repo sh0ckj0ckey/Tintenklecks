@@ -31,7 +31,7 @@
     "@electron-toolkit/tsconfig": "^1.0.1",
     "@types/node": "^22.16.5",
     "@vitejs/plugin-vue": "^6.0.0",
-    "electron": "^39.2.7",
+    "electron": "^44.9.0",
     "electron-builder": "^26.4.0",
     "electron-vite": "^4.0.0",
     "eslint": "^9.31.0",
