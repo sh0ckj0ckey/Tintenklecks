@@ -7,13 +7,17 @@
       except macOS has to draw its own caption buttons here.
     -->
     <div v-if="platform !== 'macos'" class="app-title-bar-caption-buttons">
-      <button class="app-title-bar-caption-button" @click="minimizeAppWindow">
+      <button v-if="!isAppWindowFullscreen" class="app-title-bar-caption-button" @click="minimizeAppWindow">
         <IconWindowMinimize class="app-title-bar-caption-button-icon" />
       </button>
 
-      <button class="app-title-bar-caption-button" @click="toggleMaximizeAppWindow">
+      <button v-if="!isAppWindowFullscreen" class="app-title-bar-caption-button" @click="toggleMaximizeAppWindow">
         <IconWindowMaximize v-if="!isAppWindowMaximized" class="app-title-bar-caption-button-icon" />
         <IconWindowRestore v-else class="app-title-bar-caption-button-icon" />
+      </button>
+
+      <button v-else class="app-title-bar-caption-button" @click="exitAppWindowFullscreen">
+        <IconWindowBackToWindow class="app-title-bar-caption-button-icon" />
       </button>
 
       <button class="app-title-bar-caption-button close" @click="closeAppWindow">
@@ -28,6 +32,7 @@ import IconWindowClose from '@renderer/components/TkIcons/IconWindowClose.vue'
 import IconWindowMaximize from '@renderer/components/TkIcons/IconWindowMaximize.vue'
 import IconWindowMinimize from '@renderer/components/TkIcons/IconWindowMinimize.vue'
 import IconWindowRestore from '@renderer/components/TkIcons/IconWindowRestore.vue'
+import IconWindowBackToWindow from '@renderer/components/TkIcons/IconWindowBackToWindow.vue'
 import { useEnvironment } from '@renderer/composables/useEnvironment'
 import { useWindowingHost } from '@renderer/composables/useWindowingHost'
 
@@ -36,13 +41,19 @@ const { platform } = useEnvironment()
 const {
   isFocused: isAppWindowFocused,
   isMaximized: isAppWindowMaximized,
+  isFullscreen: isAppWindowFullscreen,
   minimize: minimizeAppWindow,
   maximize: maximizeAppWindow,
   restore: restoreAppWindow,
-  close: closeAppWindow
+  close: closeAppWindow,
+  exitFullscreen: exitAppWindowFullscreen
 } = useWindowingHost()
 
 const toggleMaximizeAppWindow = (): void => {
+  if (isAppWindowFullscreen.value) {
+    return
+  }
+
   if (isAppWindowMaximized.value) {
     restoreAppWindow()
     return
