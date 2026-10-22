@@ -16,11 +16,10 @@ export function useEnvironment(): { platform: Platform } {
 }
 
 /**
- * Set the platform attribute on the document element for stylesheets.
+ * Apply environment data attributes to the document element.
  *
- * The attribute belongs to one document, so every renderer entry point has to
- * call this.
+ * These attributes belong to one document, so every renderer entry point has to call this function.
  */
-export function applyPlatformAttribute(): void {
+export function applyEnvironmentDataAttributes(): void {
   document.documentElement.setAttribute('data-platform', platform)
 }
