@@ -4,25 +4,29 @@ import type { Component } from 'vue'
  * Static registry of components available to managed windows.
  *
  * Each key is a stable component ID used by the windowing protocol,
- * and each value resolves the corresponding Vue component.
+ * and each value is the corresponding Vue component.
+ *
+ * Asynchronous components are recommended for non-trivial window content
+ * to enable lazy loading, but synchronous components are also supported.
  */
-export type WindowingComponentRegistry = Readonly<Record<string, () => Component | Promise<Component>>>
+export type WindowingComponentRegistry = Readonly<Record<string, Component>>
 
 /**
  * Components available to managed windows.
  *
  * Window components may be located anywhere in the application.
- * Add each component to this registry using a stable component ID.
+ * Add each component using a stable component ID.
  */
 export const windowingComponents = {
   /*
-   * Examples:
+   * Recommended asynchronous registration:
    *
-   * settings: () => SettingsWindow,
+   * preview: defineAsyncComponent(
+   *   () => import('../features/preview/PreviewWindow.vue')
+   * ),
    *
-   * preview: async () => {
-   *   const module = await import('../features/preview/PreviewWindow.vue')
-   *   return module.default
-   * }
+   * Synchronous registration is also supported:
+   *
+   * settings: SettingsWindow
    */
 } satisfies WindowingComponentRegistry
