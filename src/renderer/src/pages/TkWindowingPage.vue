@@ -1,5 +1,94 @@
 <template>
   <div class="tk-windowing-page">
+    <section class="windowing-demo">
+      <h2>Windowing Demo</h2>
+
+      <div class="demo-group">
+        <h3>Open Options</h3>
+        <div class="demo-controls">
+          <TkToggleSwitch v-model="useParent" theme="primary" size="small" :disabled="isOpening || isOpened">Use Parent</TkToggleSwitch>
+          <TkToggleSwitch v-model="showInTaskbar" theme="primary" size="small" :disabled="isOpening || isOpened">
+            Show in Taskbar
+          </TkToggleSwitch>
+          <TkToggleSwitch v-model="isModal" theme="primary" size="small" :disabled="isOpening || isOpened || !useParent">
+            Modal
+          </TkToggleSwitch>
+          <TkToggleSwitch v-model="isResizable" theme="primary" size="small" :disabled="isOpening || isOpened">Resizable</TkToggleSwitch>
+          <TkToggleSwitch v-model="isAlwaysOnTop" theme="primary" size="small" :disabled="isOpening || isOpened">
+            Always on Top
+          </TkToggleSwitch>
+          <TkToggleSwitch v-model="showInactive" theme="primary" size="small" :disabled="isOpening || isOpened || isModal">
+            Show Without Focus
+          </TkToggleSwitch>
+        </div>
+        <p class="demo-note">Options apply when opening a new window. Modal requires a parent and blocks interaction with its opener.</p>
+        <p v-if="useParent" class="demo-note">
+          On Windows, a parented window normally has no separate taskbar entry and can minimize to a small native bar. See the notes below.
+        </p>
+      </div>
+
+      <div class="demo-group">
+        <h3>Window Control</h3>
+        <div class="demo-controls">
+          <TkButton theme="primary" :disabled="isOpening || isOpened" @click="openWindow">Open Window</TkButton>
+          <TkButton theme="danger" :disabled="!isOpened" @click="managedWindow?.close()">Close</TkButton>
+          <TkButton theme="secondary" :disabled="!isOpened" @click="managedWindow?.activate()">Activate</TkButton>
+          <TkButton theme="secondary" :disabled="!isOpened" @click="managedWindow?.minimize()">Minimize</TkButton>
+          <TkButton theme="secondary" :disabled="!isOpened" @click="managedWindow?.maximize()">Maximize</TkButton>
+          <TkButton theme="secondary" :disabled="!isOpened" @click="managedWindow?.restore()">Restore</TkButton>
+        </div>
+        <div class="demo-controls">
+          <TkButton theme="secondary" :disabled="!isOpened" @click="managedWindow?.move('center-screen')">Center on Screen</TkButton>
+          <TkButton theme="secondary" :disabled="!isOpened || !useParent" @click="managedWindow?.move('center-parent')">
+            Center on Parent
+          </TkButton>
+          <TkButton theme="secondary" :disabled="!isOpened" @click="toggleWindowSize">Toggle Size</TkButton>
+          <TkButton theme="secondary" :disabled="!isOpened" @click="managedWindow?.enterFullscreen()">Enter Fullscreen</TkButton>
+          <TkButton theme="secondary" :disabled="!isOpened" @click="managedWindow?.exitFullscreen()">Exit Fullscreen</TkButton>
+        </div>
+        <p role="status">Status: {{ windowStatus }}</p>
+        <p v-if="openError" class="demo-error" role="alert">{{ openError }}</p>
+      </div>
+
+      <div class="demo-group">
+        <h3>Content and Props</h3>
+        <div class="demo-controls">
+          <TkButton
+            :theme="activeComponent === 'windowing-demo-message' ? 'primary' : 'secondary'"
+            :disabled="!isOpened || !isContentReady || activeComponent === 'windowing-demo-message'"
+            @click="switchContent('windowing-demo-message')"
+          >
+            Message
+          </TkButton>
+          <TkButton
+            :theme="activeComponent === 'windowing-demo-counter' ? 'primary' : 'secondary'"
+            :disabled="!isOpened || !isContentReady || activeComponent === 'windowing-demo-counter'"
+            @click="switchContent('windowing-demo-counter')"
+          >
+            Counter
+          </TkButton>
+          <TkButton theme="success" :disabled="!isOpened || !isContentReady" @click="updateProps">
+            {{ activeComponent === 'windowing-demo-message' ? 'Change Message' : 'Change Step' }}
+          </TkButton>
+        </div>
+        <template v-if="activeComponent === 'windowing-demo-message'">
+          <p>Title: {{ messageProps.title }}</p>
+          <p>Message: {{ messageProps.message }}</p>
+        </template>
+        <p v-else>Step: {{ counterStep }}. Updating props keeps the current count; switching components resets it.</p>
+      </div>
+
+      <div class="demo-group">
+        <h3>Events</h3>
+        <TkCheckBox v-model="isChecked" :disabled="!isOpened || !isContentReady" @change="sendChecked">
+          Shared checkbox: {{ isChecked ? 'checked' : 'unchecked' }}
+        </TkCheckBox>
+        <p class="demo-note">
+          Check either window to update the other through events. The value also stays in sync after switching content.
+        </p>
+      </div>
+    </section>
+
     <article>
       <header>
         <h2>Windowing</h2>
@@ -175,6 +264,156 @@
   </div>
 </template>
 
+<script setup lang="ts">
+import { computed, effectScope, onBeforeUnmount, ref, shallowRef, watch } from 'vue'
+import type { EffectScope } from 'vue'
+import TkButton from '../components/TkButtons/TkButton.vue'
+import TkCheckBox from '../components/TkCheckBox/TkCheckBox.vue'
+import TkToggleSwitch from '../components/TkToggleSwitch/TkToggleSwitch.vue'
+import { useWindowing } from '../composables/useWindowing'
+import type { ManagedWindowHandle } from '../composables/useWindowing'
+
+type DemoComponent = 'windowing-demo-message' | 'windowing-demo-counter'
+
+const useParent = ref(false)
+const showInTaskbar = ref(true)
+const isModal = ref(false)
+const isResizable = ref(true)
+const isAlwaysOnTop = ref(false)
+const showInactive = ref(false)
+
+const managedWindow = shallowRef<ManagedWindowHandle | null>(null)
+const activeComponent = ref<DemoComponent>('windowing-demo-message')
+const isContentReady = ref(false)
+const isChecked = ref(false)
+const isAlternateMessage = ref(false)
+const counterStep = ref(1)
+const isLargeWindow = ref(false)
+const openError = ref('')
+let windowScope: EffectScope | null = null
+let disposed = false
+
+const isOpening = computed(() => managedWindow.value?.isOpening.value ?? false)
+const isOpened = computed(() => managedWindow.value?.isOpened.value ?? false)
+const windowStatus = computed(() => {
+  if (isOpening.value) return 'Opening'
+  if (isOpened.value) return isContentReady.value ? 'Opened' : 'Loading content'
+  return managedWindow.value?.isClosed.value ? 'Closed' : 'Not opened'
+})
+
+const messageProps = computed(() =>
+  isAlternateMessage.value
+    ? { title: 'Updated from the opener', message: 'The same component is displaying a different set of props.' }
+    : { title: 'Hello from a managed window', message: 'Change this message or switch to the counter from the opener.' }
+)
+
+watch(useParent, (value) => {
+  if (!value) isModal.value = false
+})
+
+watch(isModal, (value) => {
+  if (value) showInactive.value = false
+})
+
+const getContentProps = (): Record<string, unknown> => {
+  return activeComponent.value === 'windowing-demo-message'
+    ? { ...messageProps.value }
+    : { title: 'Counter window', step: counterStep.value }
+}
+
+const openWindow = async (): Promise<void> => {
+  if (isOpening.value || isOpened.value) return
+
+  windowScope?.stop()
+  const scope = effectScope()
+  const handle = scope.run(() => {
+    const handle = useWindowing()
+
+    handle.onClosed(() => {
+      isContentReady.value = false
+      scope.stop()
+      if (windowScope === scope) windowScope = null
+    })
+
+    handle.onEvent<boolean>('demo:checked', (value) => {
+      if (typeof value === 'boolean') isChecked.value = value
+    })
+
+    handle.onEvent<DemoComponent>('demo:ready', (component) => {
+      if (!handle.isOpened.value || component !== activeComponent.value) return
+      isContentReady.value = true
+      handle.emitEvent('demo:checked', isChecked.value)
+    })
+
+    return handle
+  })
+
+  if (!handle) return
+
+  windowScope = scope
+  managedWindow.value = handle
+  isContentReady.value = false
+  isLargeWindow.value = false
+  openError.value = ''
+
+  try {
+    await handle.open(
+      { component: activeComponent.value, props: getContentProps() },
+      {
+        width: 560,
+        height: 420,
+        parent: useParent.value ? 'opener' : 'none',
+        skipTaskbar: !showInTaskbar.value,
+        modal: isModal.value,
+        resizable: isResizable.value,
+        alwaysOnTop: isAlwaysOnTop.value,
+        showInactive: showInactive.value,
+        position: useParent.value ? 'center-parent' : 'center-screen'
+      }
+    )
+  } catch (error) {
+    if (!disposed) openError.value = error instanceof Error ? error.message : String(error)
+    scope.stop()
+    if (windowScope === scope) windowScope = null
+  }
+}
+
+const switchContent = (component: DemoComponent): void => {
+  if (!isOpened.value || !isContentReady.value || component === activeComponent.value) return
+  isContentReady.value = false
+  activeComponent.value = component
+  managedWindow.value?.updateContent({ component, props: getContentProps() })
+}
+
+const updateProps = (): void => {
+  if (!isOpened.value || !isContentReady.value) return
+
+  if (activeComponent.value === 'windowing-demo-message') {
+    isAlternateMessage.value = !isAlternateMessage.value
+  } else {
+    counterStep.value = counterStep.value === 1 ? 5 : counterStep.value === 5 ? 10 : 1
+  }
+
+  managedWindow.value?.updateContent({ props: getContentProps() })
+}
+
+const toggleWindowSize = (): void => {
+  if (!isOpened.value) return
+  isLargeWindow.value = !isLargeWindow.value
+  managedWindow.value?.resize(isLargeWindow.value ? 760 : 560, isLargeWindow.value ? 560 : 420)
+}
+
+const sendChecked = (value: boolean): void => {
+  if (isOpened.value && isContentReady.value) managedWindow.value?.emitEvent('demo:checked', value)
+}
+
+onBeforeUnmount(() => {
+  disposed = true
+  if (managedWindow.value?.isOpened.value) managedWindow.value.close()
+  windowScope?.stop()
+})
+</script>
+
 <style scoped>
 .tk-windowing-page {
   width: 100%;
@@ -184,9 +423,47 @@
   overflow: auto;
 }
 
+.tk-windowing-page > .windowing-demo,
 .tk-windowing-page > article {
   width: 100%;
   max-width: 960px;
   margin: 0 auto;
+}
+
+.windowing-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--tk-color-background-deep);
+
+  h2,
+  h3,
+  p {
+    margin: 0;
+  }
+
+  .demo-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .demo-note {
+    font-size: 13px;
+    opacity: 0.7;
+  }
+
+  .demo-error {
+    color: #ffb4b4;
+  }
 }
 </style>

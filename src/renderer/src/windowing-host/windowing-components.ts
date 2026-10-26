@@ -1,3 +1,4 @@
+import { defineAsyncComponent } from 'vue'
 import type { Component } from 'vue'
 
 /**
@@ -29,4 +30,6 @@ export const windowingComponents = {
    *
    * settings: SettingsWindow
    */
+  'windowing-demo-message': defineAsyncComponent(() => import('../pages/windowing/WindowingDemoMessage.vue')),
+  'windowing-demo-counter': defineAsyncComponent(() => import('../pages/windowing/WindowingDemoCounter.vue'))
 } satisfies WindowingComponentRegistry
