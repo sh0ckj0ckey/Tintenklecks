@@ -33,6 +33,25 @@
           IPC level, <code>parentId</code> can reference another known window ID or be set to <code>null</code>. The higher-level
           <code>useWindowing()</code> API exposes the common <code>opener</code> and <code>none</code> choices.
         </p>
+
+        <h4>Windows Platform Note</h4>
+        <p>
+          On Windows, an owned window with <code>parent</code> normally has no separate taskbar entry, even with
+          <code>skipTaskbar: false</code>. It hides when its parent is minimized and reappears when the parent is restored.
+        </p>
+        <p>
+          Minimizing a non-modal owned window itself can leave a small native bar at the desktop's lower-left corner. This is Windows
+          behavior by design; custom renderer title-bar buttons do not appear in that bar.
+        </p>
+        <p>
+          Prefer omitting the minimize button or hiding instead of minimizing, with a way to show the window again. Use
+          <code>parent: 'none'</code> for independent taskbar and minimization behavior.
+        </p>
+        <p>
+          References: Electron
+          <a href="https://github.com/electron/electron/issues/8637#issuecomment-306391785" target="_blank" rel="noreferrer">#8637</a> and
+          <a href="https://github.com/electron/electron/issues/38425" target="_blank" rel="noreferrer">#38425</a>.
+        </p>
       </section>
 
       <section>
