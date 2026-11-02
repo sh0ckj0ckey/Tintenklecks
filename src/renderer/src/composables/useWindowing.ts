@@ -1,4 +1,4 @@
-import { ref, computed, onScopeDispose } from 'vue'
+import { ref, computed } from 'vue'
 import type { ComputedRef } from 'vue'
 import type { WindowId, WindowPosition, WindowingClosedNotification, WindowingEventNotification } from '../../../shared/windowing-types'
 
@@ -15,7 +15,7 @@ type ManagedWindowLifecycleState = 'idle' | 'opening' | 'opened' | 'closed'
  */
 export interface ManagedWindowContent {
   /**
-   * Component name or path recognized by the managed-window host.
+   * Stable component ID registered by the managed-window host.
    */
   component?: string
 
@@ -141,7 +141,6 @@ window.windowingAPI.onClosed((notification) => {
 })
 
 export function useWindowing(): ManagedWindowHandle {
-  let disposed = false
   let windowId: WindowId | undefined
 
   const lifecycleState = ref<ManagedWindowLifecycleState>('idle')
@@ -151,8 +150,7 @@ export function useWindowing(): ManagedWindowHandle {
 
   /**
    * All listeners belonging to this managed-window handle
-   * share this signal and are removed together
-   * when the handle scope is disposed or its window is closed.
+   * share this signal and are removed together when its window is closed.
    */
   const handleAbortController = new AbortController()
 
@@ -179,10 +177,6 @@ export function useWindowing(): ManagedWindowHandle {
     eventDispatcher.dispatchEvent(managedWindowEvent)
   }
 
-  notificationDispatcher.addEventListener(eventNotificationType, eventNotificationListener, {
-    signal: handleAbortController.signal
-  })
-
   const closedNotificationListener: EventListener = (event: Event): void => {
     const customEvent = event as CustomEvent<WindowingClosedNotification>
     const notification = customEvent.detail
@@ -194,19 +188,17 @@ export function useWindowing(): ManagedWindowHandle {
     windowId = undefined
     lifecycleState.value = 'closed'
 
-    // Notify local listeners before removing all listeners owned by the handle.
-    closedDispatcher.dispatchEvent(new Event('closed'))
-
-    handleAbortController.abort()
+    try {
+      // Notify local listeners before removing all listeners owned by the handle.
+      closedDispatcher.dispatchEvent(new Event('closed'))
+    } finally {
+      handleAbortController.abort()
+    }
   }
 
-  notificationDispatcher.addEventListener(closedNotificationType, closedNotificationListener, {
-    signal: handleAbortController.signal
-  })
-
   const requireWindowId = (): WindowId => {
-    if (disposed) {
-      throw new Error('The managed window handle has been disposed.')
+    if (lifecycleState.value === 'closed') {
+      throw new Error('The managed window has been closed.')
     }
 
     if (windowId === undefined || lifecycleState.value !== 'opened') {
@@ -217,9 +209,6 @@ export function useWindowing(): ManagedWindowHandle {
   }
 
   const open = async (content: ManagedWindowContent, options: ManagedWindowOpenOptions): Promise<void> => {
-    if (disposed) {
-      throw new Error('The managed window handle has been disposed.')
-    }
     if (lifecycleState.value === 'opening') {
       throw new Error('The managed window is already opening.')
     }
@@ -250,12 +239,13 @@ export function useWindowing(): ManagedWindowHandle {
        */
       windowId = response.id
 
-      /*
-       * The Vue scope may have been disposed while the main process was waiting for the managed-window host to become ready.
-       */
-      if (disposed) {
-        throw new Error('The managed window handle was disposed while opening.')
-      }
+      notificationDispatcher.addEventListener(eventNotificationType, eventNotificationListener, {
+        signal: handleAbortController.signal
+      })
+
+      notificationDispatcher.addEventListener(closedNotificationType, closedNotificationListener, {
+        signal: handleAbortController.signal
+      })
 
       /*
        * Send the initial content before marking the handle as opened and resolving open().
@@ -270,20 +260,24 @@ export function useWindowing(): ManagedWindowHandle {
     } catch (error) {
       const openedWindowId = windowId
 
-      windowId = undefined
-
-      if (!disposed) {
+      if (openedWindowId === undefined) {
         lifecycleState.value = 'idle'
+        throw error
       }
 
       /*
        * If the window was created but the handle could not finish opening,
        * request that the created window be closed.
+       *
+       * Keep the window ID and notification listeners until the authoritative
+       * closed notification arrives and permanently closes the handle.
        */
-      if (openedWindowId !== undefined) {
+      try {
         window.windowingAPI.close({
           targetId: openedWindowId
         })
+      } catch {
+        // Preserve the original opening error.
       }
 
       throw error
@@ -298,9 +292,6 @@ export function useWindowing(): ManagedWindowHandle {
   }
 
   const onClosed = (handler: ClosedHandler): Unsubscribe => {
-    if (disposed) {
-      throw new Error('The managed window handle has been disposed.')
-    }
     if (lifecycleState.value === 'closed') {
       throw new Error('The managed window has been closed.')
     }
@@ -321,9 +312,6 @@ export function useWindowing(): ManagedWindowHandle {
   }
 
   const onEvent = <T = unknown>(type: string, handler: EventHandler<T>): Unsubscribe => {
-    if (disposed) {
-      throw new Error('The managed window handle has been disposed.')
-    }
     if (lifecycleState.value === 'closed') {
       throw new Error('The managed window has been closed.')
     }
@@ -399,11 +387,6 @@ export function useWindowing(): ManagedWindowHandle {
     const targetId = requireWindowId()
     window.windowingAPI.exitFullscreen({ targetId })
   }
-
-  onScopeDispose(() => {
-    disposed = true
-    handleAbortController.abort()
-  })
 
   return {
     isOpening: isOpening,

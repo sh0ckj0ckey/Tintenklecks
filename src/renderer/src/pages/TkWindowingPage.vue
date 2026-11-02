@@ -159,6 +159,16 @@
           Readiness indicates that the host can receive content updates; it does not indicate that the content component has already been
           rendered. The open request is rejected if host initialization fails or times out.
         </p>
+        <p>
+          A managed-window handle and its window are independent of the Vue scope that created them. Unmounting the opener component does
+          not close the window or invalidate the handle. The handle can be retained or passed to another module and remains usable until the
+          window closes.
+        </p>
+        <p>
+          When the window closes from either side or through an external action, its handle becomes permanently closed and cannot be
+          reopened. If a window should follow a component's lifetime, the component must explicitly call <code>close()</code> during
+          unmount.
+        </p>
       </section>
 
       <section>
@@ -188,8 +198,13 @@
 
         <h4><code>useWindowing()</code></h4>
         <p>
-          Opens and controls one managed window. The returned handle stores the window ID, tracks its lifecycle, updates its content, routes
-          its events, and reports when it closes.
+          Creates an unopened, one-time managed-window handle. The handle stores the window ID, tracks its lifecycle, updates its content,
+          routes its events, and reports when it closes.
+        </p>
+        <p>
+          <code>onEvent()</code> and <code>onClosed()</code> return unsubscribe functions. Event subscriptions are not automatically tied to
+          Vue scopes, so a component whose lifetime is shorter than the window must unsubscribe during unmount. Closing the window removes
+          all remaining subscriptions automatically.
         </p>
 
         <h4><code>useWindowingHost()</code></h4>
@@ -265,8 +280,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, effectScope, onBeforeUnmount, ref, shallowRef, watch } from 'vue'
-import type { EffectScope } from 'vue'
+import { computed, onBeforeUnmount, ref, shallowRef, watch } from 'vue'
 import TkButton from '../components/TkButtons/TkButton.vue'
 import TkCheckBox from '../components/TkCheckBox/TkCheckBox.vue'
 import TkToggleSwitch from '../components/TkToggleSwitch/TkToggleSwitch.vue'
@@ -290,7 +304,7 @@ const isAlternateMessage = ref(false)
 const counterStep = ref(1)
 const isLargeWindow = ref(false)
 const openError = ref('')
-let windowScope: EffectScope | null = null
+let windowUnsubscribes: Array<() => void> = []
 let disposed = false
 
 const isOpening = computed(() => managedWindow.value?.isOpening.value ?? false)
@@ -321,36 +335,39 @@ const getContentProps = (): Record<string, unknown> => {
     : { title: 'Counter window', step: counterStep.value }
 }
 
+const unsubscribeWindowEvents = (): void => {
+  const unsubscribes = windowUnsubscribes
+  windowUnsubscribes = []
+
+  for (const unsubscribe of unsubscribes) {
+    unsubscribe()
+  }
+}
+
 const openWindow = async (): Promise<void> => {
   if (isOpening.value || isOpened.value) return
 
-  windowScope?.stop()
-  const scope = effectScope()
-  const handle = scope.run(() => {
-    const handle = useWindowing()
+  unsubscribeWindowEvents()
 
+  const handle = useWindowing()
+
+  windowUnsubscribes = [
     handle.onClosed(() => {
       isContentReady.value = false
-      scope.stop()
-      if (windowScope === scope) windowScope = null
-    })
+      windowUnsubscribes = []
+    }),
 
     handle.onEvent<boolean>('demo:checked', (value) => {
       if (typeof value === 'boolean') isChecked.value = value
-    })
+    }),
 
     handle.onEvent<DemoComponent>('demo:ready', (component) => {
       if (!handle.isOpened.value || component !== activeComponent.value) return
       isContentReady.value = true
       handle.emitEvent('demo:checked', isChecked.value)
     })
+  ]
 
-    return handle
-  })
-
-  if (!handle) return
-
-  windowScope = scope
   managedWindow.value = handle
   isContentReady.value = false
   isLargeWindow.value = false
@@ -371,10 +388,11 @@ const openWindow = async (): Promise<void> => {
         position: useParent.value ? 'center-parent' : 'center-screen'
       }
     )
+
+    if (disposed && handle.isOpened.value) handle.close()
   } catch (error) {
     if (!disposed) openError.value = error instanceof Error ? error.message : String(error)
-    scope.stop()
-    if (windowScope === scope) windowScope = null
+    unsubscribeWindowEvents()
   }
 }
 
@@ -409,8 +427,8 @@ const sendChecked = (value: boolean): void => {
 
 onBeforeUnmount(() => {
   disposed = true
+  unsubscribeWindowEvents()
   if (managedWindow.value?.isOpened.value) managedWindow.value.close()
-  windowScope?.stop()
 })
 </script>
 
