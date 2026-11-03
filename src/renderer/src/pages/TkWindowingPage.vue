@@ -281,13 +281,18 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, shallowRef, watch } from 'vue'
+import { useWindowing } from '../composables/useWindowing'
+import type { ManagedWindowHandle } from '../composables/useWindowing'
 import TkButton from '../components/TkButtons/TkButton.vue'
 import TkCheckBox from '../components/TkCheckBox/TkCheckBox.vue'
 import TkToggleSwitch from '../components/TkToggleSwitch/TkToggleSwitch.vue'
-import { useWindowing } from '../composables/useWindowing'
-import type { ManagedWindowHandle } from '../composables/useWindowing'
 
 type DemoComponent = 'windowing-demo-message' | 'windowing-demo-counter'
+
+let isDisposed = false
+let windowSubscriptions: Array<() => void> = []
+
+const managedWindow = shallowRef<ManagedWindowHandle | null>(null)
 
 const useParent = ref(false)
 const showInTaskbar = ref(true)
@@ -296,7 +301,6 @@ const isResizable = ref(true)
 const isAlwaysOnTop = ref(false)
 const showInactive = ref(false)
 
-const managedWindow = shallowRef<ManagedWindowHandle | null>(null)
 const activeComponent = ref<DemoComponent>('windowing-demo-message')
 const isContentReady = ref(false)
 const isChecked = ref(false)
@@ -304,14 +308,19 @@ const isAlternateMessage = ref(false)
 const counterStep = ref(1)
 const isLargeWindow = ref(false)
 const openError = ref('')
-let windowUnsubscribes: Array<() => void> = []
-let disposed = false
 
 const isOpening = computed(() => managedWindow.value?.isOpening.value ?? false)
 const isOpened = computed(() => managedWindow.value?.isOpened.value ?? false)
+
 const windowStatus = computed(() => {
-  if (isOpening.value) return 'Opening'
-  if (isOpened.value) return isContentReady.value ? 'Opened' : 'Loading content'
+  if (isOpening.value) {
+    return 'Opening'
+  }
+
+  if (isOpened.value) {
+    return isContentReady.value ? 'Opened' : 'Loading content'
+  }
+
   return managedWindow.value?.isClosed.value ? 'Closed' : 'Not opened'
 })
 
@@ -322,11 +331,15 @@ const messageProps = computed(() =>
 )
 
 watch(useParent, (value) => {
-  if (!value) isModal.value = false
+  if (!value) {
+    isModal.value = false
+  }
 })
 
 watch(isModal, (value) => {
-  if (value) showInactive.value = false
+  if (value) {
+    showInactive.value = false
+  }
 })
 
 const getContentProps = (): Record<string, unknown> => {
@@ -335,46 +348,53 @@ const getContentProps = (): Record<string, unknown> => {
     : { title: 'Counter window', step: counterStep.value }
 }
 
-const unsubscribeWindowEvents = (): void => {
-  const unsubscribes = windowUnsubscribes
-  windowUnsubscribes = []
+const clearWindowSubscriptions = (): void => {
+  const subscriptions = windowSubscriptions
+  windowSubscriptions = []
 
-  for (const unsubscribe of unsubscribes) {
+  for (const unsubscribe of subscriptions) {
     unsubscribe()
   }
 }
 
 const openWindow = async (): Promise<void> => {
-  if (isOpening.value || isOpened.value) return
+  if (isOpening.value || isOpened.value) {
+    return
+  }
 
-  unsubscribeWindowEvents()
+  clearWindowSubscriptions()
 
-  const handle = useWindowing()
+  const managedWindowHandle = useWindowing()
 
-  windowUnsubscribes = [
-    handle.onClosed(() => {
+  windowSubscriptions = [
+    managedWindowHandle.onClosed(() => {
       isContentReady.value = false
-      windowUnsubscribes = []
+      windowSubscriptions = []
     }),
 
-    handle.onEvent<boolean>('demo:checked', (value) => {
-      if (typeof value === 'boolean') isChecked.value = value
+    managedWindowHandle.onEvent<boolean>('demo:checked', (value) => {
+      if (typeof value === 'boolean') {
+        isChecked.value = value
+      }
     }),
 
-    handle.onEvent<DemoComponent>('demo:ready', (component) => {
-      if (!handle.isOpened.value || component !== activeComponent.value) return
+    managedWindowHandle.onEvent<DemoComponent>('demo:ready', (component) => {
+      if (!managedWindowHandle.isOpened.value || component !== activeComponent.value) {
+        return
+      }
+
       isContentReady.value = true
-      handle.emitEvent('demo:checked', isChecked.value)
+      managedWindowHandle.emitEvent('demo:checked', isChecked.value)
     })
   ]
 
-  managedWindow.value = handle
+  managedWindow.value = managedWindowHandle
   isContentReady.value = false
   isLargeWindow.value = false
   openError.value = ''
 
   try {
-    await handle.open(
+    await managedWindowHandle.open(
       { component: activeComponent.value, props: getContentProps() },
       {
         width: 560,
@@ -389,22 +409,32 @@ const openWindow = async (): Promise<void> => {
       }
     )
 
-    if (disposed && handle.isOpened.value) handle.close()
+    if (isDisposed && managedWindowHandle.isOpened.value) {
+      managedWindowHandle.close()
+    }
   } catch (error) {
-    if (!disposed) openError.value = error instanceof Error ? error.message : String(error)
-    unsubscribeWindowEvents()
+    if (!isDisposed) {
+      openError.value = error instanceof Error ? error.message : String(error)
+    }
+
+    clearWindowSubscriptions()
   }
 }
 
 const switchContent = (component: DemoComponent): void => {
-  if (!isOpened.value || !isContentReady.value || component === activeComponent.value) return
+  if (!isOpened.value || !isContentReady.value || component === activeComponent.value) {
+    return
+  }
+
   isContentReady.value = false
   activeComponent.value = component
   managedWindow.value?.updateContent({ component, props: getContentProps() })
 }
 
 const updateProps = (): void => {
-  if (!isOpened.value || !isContentReady.value) return
+  if (!isOpened.value || !isContentReady.value) {
+    return
+  }
 
   if (activeComponent.value === 'windowing-demo-message') {
     isAlternateMessage.value = !isAlternateMessage.value
@@ -416,19 +446,29 @@ const updateProps = (): void => {
 }
 
 const toggleWindowSize = (): void => {
-  if (!isOpened.value) return
+  if (!isOpened.value) {
+    return
+  }
+
   isLargeWindow.value = !isLargeWindow.value
   managedWindow.value?.resize(isLargeWindow.value ? 760 : 560, isLargeWindow.value ? 560 : 420)
 }
 
 const sendChecked = (value: boolean): void => {
-  if (isOpened.value && isContentReady.value) managedWindow.value?.emitEvent('demo:checked', value)
+  if (!isOpened.value || !isContentReady.value) {
+    return
+  }
+
+  managedWindow.value?.emitEvent('demo:checked', value)
 }
 
 onBeforeUnmount(() => {
-  disposed = true
-  unsubscribeWindowEvents()
-  if (managedWindow.value?.isOpened.value) managedWindow.value.close()
+  isDisposed = true
+  clearWindowSubscriptions()
+
+  if (managedWindow.value?.isOpened.value) {
+    managedWindow.value.close()
+  }
 })
 </script>
 

@@ -14,9 +14,9 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { useWindowingHost } from '../../composables/useWindowingHost'
 import AppTitleBar from '../../AppTitleBar.vue'
 import TkCheckBox from '../../components/TkCheckBox/TkCheckBox.vue'
-import { useWindowingHost } from '../../composables/useWindowingHost'
 
 const props = defineProps<{
   title: string
@@ -28,7 +28,9 @@ const isChecked = ref(false)
 const isSynced = ref(false)
 
 onEvent<boolean>('demo:checked', (value) => {
-  if (typeof value !== 'boolean') return
+  if (typeof value !== 'boolean') {
+    return
+  }
   isChecked.value = value
   isSynced.value = true
 })
